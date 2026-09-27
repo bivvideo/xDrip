@@ -679,7 +679,13 @@ public class UiBasedCollector extends NotificationListenerService {
                         bgr.noRawWillBeAvailable();
                         bgr.injectDisplayGlucose(BestGlucose.getDisplayGlucose());
 
-                        sendLiveCgmToGoogleForm(timestamp, mgdl);
+                        if (ICAN_RU_PACKAGE.equals(lastPackage)) {
+                            sendLiveCgmToGoogleForm(
+                                    timestamp,
+                                    mgdl,
+                                    iCanDeliveryMode
+                            );
+                        }
 
                         return true;
                     }
@@ -692,10 +698,21 @@ public class UiBasedCollector extends NotificationListenerService {
         }
         return false;
     }
-    private void sendLiveCgmToGoogleForm(final long timestamp, final int mgdl) {
+    private void sendLiveCgmToGoogleForm(
+            final long timestamp,
+            final int mgdl,
+            final String deliveryMode
+    ) {
 
         final String formId = BuildConfig.ICAN_GOOGLE_FORM_ID;
 
+        final String sourceApp =
+                "xDrip-iCan-" + deliveryMode;
+
+        if (formId == null || formId.trim().isEmpty()) {
+            UserError.Log.e(TAG, "CGM live upload skipped: Google Form ID is empty");
+            return;
+        }
         if (formId == null || formId.trim().isEmpty()) {
             UserError.Log.e(TAG, "CGM live upload skipped: Google Form ID is empty");
             return;
@@ -732,7 +749,7 @@ public class UiBasedCollector extends NotificationListenerService {
                         )
                                 + "&entry.1843424689="
                                 + URLEncoder.encode(
-                                "xDrip-iCan",
+                                sourceApp,
                                 StandardCharsets.UTF_8.name()
                         );
 
