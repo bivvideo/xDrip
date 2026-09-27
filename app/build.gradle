@@ -39,6 +39,17 @@ repositories {
     }
 }
 
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withInputStream {
+        localProperties.load(it)
+    }
+}
+
+def iCanGoogleFormId = localProperties.getProperty('ICAN_GOOGLE_FORM_ID', '')
+
 android {
     compileSdk 34 // TODO centralize
 
@@ -72,6 +83,7 @@ android {
         buildConfigField "String", "buildUUID", generateRandomUUID()
         buildConfigField "long", "buildTimestamp", generateTimestamp()
         buildConfigField "int", "targetSDK", targetSdkVersion.mApiLevel.toString()
+        buildConfigField "String", "ICAN_GOOGLE_FORM_ID", "\"${iCanGoogleFormId}\""
         //vectorDrawables.useSupportLibrary = true // broken in newer gradle versions
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         multiDexEnabled false
