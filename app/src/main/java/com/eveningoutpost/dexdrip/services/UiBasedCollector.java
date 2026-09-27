@@ -12,7 +12,9 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.provider.Settings;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
@@ -26,6 +28,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import com.eveningoutpost.dexdrip.BestGlucose;
+import com.eveningoutpost.dexdrip.BuildConfig;
 import com.eveningoutpost.dexdrip.R;
 import com.eveningoutpost.dexdrip.alert.Persist;
 import com.eveningoutpost.dexdrip.cgm.dex.BlueTails;
@@ -40,9 +43,17 @@ import com.eveningoutpost.dexdrip.utilitymodels.Unitized;
 import com.eveningoutpost.dexdrip.utils.DexCollectionType;
 import com.eveningoutpost.dexdrip.xdrip;
 
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -67,6 +78,27 @@ public class UiBasedCollector extends NotificationListenerService {
     private static final HashSet<String> companionAppIoBPackages = new HashSet<>();
     private static final HashSet<Pattern> companionAppIoBRegexes = new HashSet<>();
     private static boolean debug = false;
+
+    private static final String ICAN_RU_PACKAGE = "com.sinocare.ican.health.ru";
+    private static final long ICAN_POLL_INTERVAL_MS = 60_000L;
+
+    private final Handler iCanPollHandler = new Handler(Looper.getMainLooper());
+
+    private long lastIcanNotificationToken = 0L;
+    private String iCanDeliveryMode = "PUSH";
+
+    private final Runnable iCanPollRunnable = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                pollIcanActiveNotification();
+            } catch (Exception e) {
+                UserError.Log.e(TAG, "iCan POLL failed: " + e);
+            } finally {
+                iCanPollHandler.postDelayed(this, ICAN_POLL_INTERVAL_MS);
+            }
+        }
+    };
 
     @VisibleForTesting
     String lastPackage;
@@ -155,7 +187,84 @@ public class UiBasedCollector extends NotificationListenerService {
         // MiniMed Mobile (EU): "Aktives Insulin" label and "1,234 IE" value in separate TextViews
         companionAppIoBRegexes.add(Pattern.compile("^([\\d\\,]+) IE$"));
     }
+    @Override
+    public void onListenerConnected() {
+        super.onListenerConnected();
 
+        UserError.Log.d(TAG, "iCan POLL fallback started");
+
+        iCanPollHandler.removeCallbacks(iCanPollRunnable);
+
+        // Первый контрольный опрос через 15 секунд,
+        // дальше — раз в минуту.
+        iCanPollHandler.postDelayed(iCanPollRunnable, 15_000L);
+    }
+
+    @Override
+    public void onDestroy() {
+        iCanPollHandler.removeCallbacks(iCanPollRunnable);
+        super.onDestroy();
+    }
+
+    private void pollIcanActiveNotification() {
+
+        if (getDexCollectionType() != UiBased) {
+            return;
+        }
+
+        final StatusBarNotification[] notifications = getActiveNotifications();
+
+        if (notifications == null) {
+            UserError.Log.d(TAG, "iCan POLL: no active notifications");
+            return;
+        }
+
+        for (final StatusBarNotification sbn : notifications) {
+
+            if (!ICAN_RU_PACKAGE.equals(sbn.getPackageName())) {
+                continue;
+            }
+
+            final Notification notification = sbn.getNotification();
+
+            if (notification == null) {
+                return;
+            }
+
+            // Android normally changes postTime when an ongoing
+            // notification is updated. Notification.when is used
+            // as an additional update token where available.
+            final long token = Math.max(
+                    sbn.getPostTime(),
+                    notification.when
+            );
+
+            if (token > 0 && token <= lastIcanNotificationToken) {
+                UserError.Log.d(TAG, "iCan POLL: notification unchanged");
+                return;
+            }
+
+            if (token > 0) {
+                lastIcanNotificationToken = token;
+            }
+
+            lastPackage = ICAN_RU_PACKAGE;
+            iCanDeliveryMode = "POLL";
+
+            UserError.Log.d(TAG, "iCan POLL: processing active notification");
+
+            try {
+                processNotification(notification);
+                BlueTails.immortality();
+            } finally {
+                iCanDeliveryMode = "PUSH";
+            }
+
+            return;
+        }
+
+        UserError.Log.d(TAG, "iCan POLL: iCan notification not found");
+    }
     @Override
     public void onNotificationPosted(final StatusBarNotification sbn) {
         val fromPackage = sbn.getPackageName();
@@ -164,6 +273,24 @@ public class UiBasedCollector extends NotificationListenerService {
                 UserError.Log.d(TAG, "Notification from: " + fromPackage);
                 if (sbn.isOngoing() || coOptedPackagesAll.contains(fromPackage)) {
                     lastPackage = fromPackage;
+
+                    if (ICAN_RU_PACKAGE.equals(fromPackage)) {
+                        final Notification notification = sbn.getNotification();
+
+                        if (notification != null) {
+                            final long token = Math.max(
+                                    sbn.getPostTime(),
+                                    notification.when
+                            );
+
+                            if (token > 0) {
+                                lastIcanNotificationToken = token;
+                            }
+                        }
+
+                        iCanDeliveryMode = "PUSH";
+                    }
+
                     processNotification(sbn.getNotification());
                     BlueTails.immortality();
                 }
@@ -264,24 +391,144 @@ public class UiBasedCollector extends NotificationListenerService {
             UserError.Log.e(TAG, "Null notification");
             return;
         }
+
         JoH.dumpBundle(notification.extras, TAG);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val cid = notification.getChannelId();
+            UserError.Log.d(TAG, "Channel ID: " + cid);
+        }
+
+        boolean handled = false;
+
         if (notification.contentView != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val cid = notification.getChannelId();
-                UserError.Log.d(TAG, "Channel ID: " + cid);
-            }
-            processRemote(notification.contentView);
-        } else {
-            int mgdl;
-            String t;
-            if (notification.extras != null
-                    && (isValidString(t = notification.extras.getString(Notification.EXTRA_TITLE)))
-                    && (mgdl = tryExtractString(t)) > 0) {
-                handleNewValue(mgdl);
-            } else {
-                UserError.Log.e(TAG, "Content is empty");
+            handled = processRemote(notification.contentView);
+        }
+
+        // iCan can place the glucose value only in the expanded notification.
+        if (!handled
+                && notification.bigContentView != null
+                && notification.bigContentView != notification.contentView) {
+
+            UserError.Log.d(TAG, "Trying bigContentView");
+            handled = processRemote(notification.bigContentView);
+        }
+
+        // Some modern notifications don't expose normal TextViews,
+        // but still put glucose into Notification extras.
+        if (!handled) {
+            handled = processNotificationExtras(notification);
+        }
+
+        if (!handled) {
+            UserError.Log.e(TAG, "Content is empty or no glucose value was found");
+        }
+    }
+
+    private boolean processNotificationExtras(final Notification notification) {
+        if (notification.extras == null) return false;
+
+        final String[] keys = new String[] {
+                Notification.EXTRA_TITLE,
+                Notification.EXTRA_TEXT,
+                Notification.EXTRA_BIG_TEXT,
+                Notification.EXTRA_SUB_TEXT,
+                Notification.EXTRA_INFO_TEXT
+        };
+
+        for (final String key : keys) {
+            try {
+                final CharSequence value = notification.extras.getCharSequence(key);
+
+                if (value != null) {
+                    final String text = value.toString();
+
+                    UserError.Log.d(
+                            TAG,
+                            "Examining notification extra " + key + ": >" + text + "<"
+                    );
+
+                    final int mgdl = tryExtractNotificationString(text);
+
+                    if (mgdl > 0) {
+                        handleNewValue(mgdl);
+                        return true;
+                    }
+                }
+            } catch (Exception e) {
+                UserError.Log.d(
+                        TAG,
+                        "Exception examining notification extra " + key + ": " + e
+                );
             }
         }
+
+        try {
+            final CharSequence[] lines =
+                    notification.extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES);
+
+            if (lines != null) {
+                for (final CharSequence line : lines) {
+                    if (line == null) continue;
+
+                    final int mgdl =
+                            tryExtractNotificationString(line.toString());
+
+                    if (mgdl > 0) {
+                        handleNewValue(mgdl);
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            UserError.Log.d(
+                    TAG,
+                    "Exception examining notification text lines: " + e
+            );
+        }
+
+        return false;
+    }
+
+    private int tryExtractNotificationString(final String text) {
+        if (!isValidString(text)) return -1;
+
+        int mgdl = tryExtractString(text);
+
+        if (mgdl > 0) {
+            return mgdl;
+        }
+
+        try {
+            final Matcher mmol = Pattern.compile(
+                    "(?i)([0-9]{1,2}[\\.,][0-9]+)\\s*mmol\\s*/\\s*l"
+            ).matcher(text);
+
+            if (mmol.find()) {
+                final double value =
+                        JoH.tolerantParseDouble(mmol.group(1), -1);
+
+                if (value > 0) {
+                    return (int) Math.round(Unitized.mgdlConvert(value));
+                }
+            }
+
+            final Matcher mg = Pattern.compile(
+                    "(?i)([0-9]{2,3})\\s*mg\\s*/\\s*dl"
+            ).matcher(text);
+
+            if (mg.find()) {
+                return Integer.parseInt(mg.group(1));
+            }
+
+        } catch (Exception e) {
+            UserError.Log.d(
+                    TAG,
+                    "Got exception in tryExtractNotificationString: " + e
+            );
+        }
+
+        return -1;
     }
 
     private boolean isValidString(String str) {
@@ -399,6 +646,20 @@ public class UiBasedCollector extends NotificationListenerService {
 
         UserError.Log.d(TAG, "Found specific value: " + mgdl);
 
+        if (ICAN_RU_PACKAGE.equals(lastPackage)) {
+            UserError.Log.d(
+                    TAG,
+                    "iCan "
+                            + iCanDeliveryMode
+                            + ": "
+                            + String.format(
+                            Locale.US,
+                            "%.1f mmol/L",
+                            Unitized.mmolConvert(mgdl)
+                    )
+            );
+        }
+
         if ((mgdl >= 40 && mgdl <= 405)) {
             val grace = DexCollectionType.getCurrentSamplePeriod() * 4;
             val recentbt = msSince(lastReadingTimestamp) < grace;
@@ -417,6 +678,9 @@ public class UiBasedCollector extends NotificationListenerService {
                         bgr.find_slope();
                         bgr.noRawWillBeAvailable();
                         bgr.injectDisplayGlucose(BestGlucose.getDisplayGlucose());
+
+                        sendLiveCgmToGoogleForm(timestamp, mgdl);
+
                         return true;
                     }
                 }
@@ -428,7 +692,117 @@ public class UiBasedCollector extends NotificationListenerService {
         }
         return false;
     }
+    private void sendLiveCgmToGoogleForm(final long timestamp, final int mgdl) {
 
+        final String formId = BuildConfig.ICAN_GOOGLE_FORM_ID;
+
+        if (formId == null || formId.trim().isEmpty()) {
+            UserError.Log.e(TAG, "CGM live upload skipped: Google Form ID is empty");
+            return;
+        }
+
+        new Thread(() -> {
+
+            HttpURLConnection conn = null;
+
+            try {
+                final String measuredAt =
+                        new SimpleDateFormat(
+                                "yyyy-MM-dd'T'HH:mm:ssXXX",
+                                Locale.US
+                        ).format(new Date(timestamp));
+
+                final String glucose =
+                        String.format(
+                                Locale.US,
+                                "%.1f",
+                                Unitized.mmolConvert(mgdl)
+                        );
+
+                final String payload =
+                        "entry.1982099995="
+                                + URLEncoder.encode(
+                                measuredAt,
+                                StandardCharsets.UTF_8.name()
+                        )
+                                + "&entry.11066590="
+                                + URLEncoder.encode(
+                                glucose,
+                                StandardCharsets.UTF_8.name()
+                        )
+                                + "&entry.1843424689="
+                                + URLEncoder.encode(
+                                "xDrip-iCan",
+                                StandardCharsets.UTF_8.name()
+                        );
+
+                final URL url = new URL(
+                        "https://docs.google.com/forms/d/e/"
+                                + formId
+                                + "/formResponse"
+                );
+
+                conn = (HttpURLConnection) url.openConnection();
+
+                conn.setRequestMethod("POST");
+                conn.setConnectTimeout(10000);
+                conn.setReadTimeout(10000);
+                conn.setDoOutput(true);
+
+                conn.setRequestProperty(
+                        "Content-Type",
+                        "application/x-www-form-urlencoded; charset=UTF-8"
+                );
+
+                final byte[] body =
+                        payload.getBytes(StandardCharsets.UTF_8);
+
+                conn.setFixedLengthStreamingMode(body.length);
+
+                try (OutputStream out = conn.getOutputStream()) {
+                    out.write(body);
+                }
+
+                final int responseCode = conn.getResponseCode();
+
+                if (responseCode >= 200 && responseCode < 400) {
+
+                    UserError.Log.d(
+                            TAG,
+                            "CGM live upload OK: "
+                                    + responseCode
+                                    + " "
+                                    + measuredAt
+                                    + " "
+                                    + glucose
+                    );
+
+                } else {
+
+                    UserError.Log.e(
+                            TAG,
+                            "CGM live upload HTTP error: "
+                                    + responseCode
+                    );
+                }
+
+            } catch (Exception e) {
+
+                UserError.Log.e(
+                        TAG,
+                        "CGM live upload failed: "
+                                + e
+                );
+
+            } finally {
+
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            }
+
+        }, "iCan-CGM-FormUpload").start();
+    }
     static boolean isValidMmol(final String text) {
         return text.matches("[0-9]+[.,][0-9]+");
     }
