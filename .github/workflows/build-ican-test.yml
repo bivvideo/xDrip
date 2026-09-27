@@ -22,6 +22,19 @@ jobs:
       - name: Patch iCan notification parser
         run: python3 tools/ican_notification_patch.py
 
+      - name: Give test APK a separate package name
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('app/build.gradle')
+          s = p.read_text()
+          old = '//      applicationIdSuffix ".debug"'
+          new = '      applicationIdSuffix ".icantest"'
+          if old not in s:
+              raise SystemExit('Expected applicationIdSuffix marker not found')
+          p.write_text(s.replace(old, new, 1))
+          PY
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
