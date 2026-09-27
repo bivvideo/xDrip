@@ -1,0 +1,36 @@
+name: Build iCan companion test APK
+
+on:
+  push:
+    branches:
+      - fix-ican-companion-notification
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Patch iCan notification parser
+        run: python3 tools/ican_notification_patch.py
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build installable debug APK
+        run: ./gradlew assembleProdDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: xDrip-iCan-test-apk
+          path: app/build/outputs/apk/prod/debug/*.apk
+          if-no-files-found: error
