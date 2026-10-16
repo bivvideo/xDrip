@@ -1,0 +1,11 @@
+def isWindows = System.getProperty('os.name').toLowerCase().contains('windows')
+def pythonCommand = isWindows ? 'python' : 'python3'
+
+tasks.register('patchGenericCgmUpload', Exec) {
+    workingDir rootProject.projectDir
+    commandLine pythonCommand, 'tools/ican_notification_patch.py'
+}
+
+tasks.matching { it.name == 'preBuild' }.configureEach {
+    dependsOn tasks.named('patchGenericCgmUpload')
+}
