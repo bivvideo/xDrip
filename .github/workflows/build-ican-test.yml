@@ -1,4 +1,4 @@
-name: Build iCan companion test APK
+name: Build CGM companion test APK
 
 on:
   push:
@@ -19,8 +19,18 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Patch iCan notification parser
+      - name: Patch generic CGM live upload
         run: python3 tools/ican_notification_patch.py
+
+      - name: Configure CGM Google Form
+        env:
+          ICAN_GOOGLE_FORM_ID: ${{ secrets.ICAN_GOOGLE_FORM_ID }}
+        run: |
+          if [ -z "$ICAN_GOOGLE_FORM_ID" ]; then
+            echo "::error::Repository secret ICAN_GOOGLE_FORM_ID is not configured"
+            exit 1
+          fi
+          printf 'ICAN_GOOGLE_FORM_ID=%s\n' "$ICAN_GOOGLE_FORM_ID" > local.properties
 
       - name: Give test APK a separate package name
         run: |
@@ -53,6 +63,6 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: xDrip-iCan-test-apk
+          name: xDrip-CGM-test-apk
           path: app/build/outputs/apk/prod/debug/*.apk
           if-no-files-found: error
