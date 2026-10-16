@@ -1,9 +1,88 @@
-def isWindows = System.getProperty('os.name').toLowerCase().contains('windows')
-def pythonCommand = isWindows ? 'python' : 'python3'
+tasks.register('patchGenericCgmUpload') {
+    doLast {
+        def source = rootProject.file('app/src/main/java/com/eveningoutpost/dexdrip/services/UiBasedCollector.java')
+        def text = source.getText('UTF-8')
 
-tasks.register('patchGenericCgmUpload', Exec) {
-    workingDir rootProject.projectDir
-    commandLine pythonCommand, 'tools/ican_notification_patch.py'
+        def oldCall = '''                        if (ICAN_RU_PACKAGE.equals(lastPackage)) {
+                            sendLiveCgmToGoogleForm(
+                                    timestamp,
+                                    mgdl,
+                                    iCanDeliveryMode
+                            );
+                        }
+'''
+
+        def newCall = '''                        sendLiveCgmToGoogleForm(
+                                timestamp,
+                                mgdl,
+                                buildLiveCgmSourceApp()
+                        );
+'''
+
+        if (text.contains(oldCall)) {
+            text = text.replace(oldCall, newCall)
+        } else if (!text.contains('buildLiveCgmSourceApp()')) {
+            throw new GradleException('Expected iCan-only upload call not found')
+        }
+
+        def oldMethod = '''    private void sendLiveCgmToGoogleForm(
+            final long timestamp,
+            final int mgdl,
+            final String deliveryMode
+    ) {
+
+        final String formId = BuildConfig.ICAN_GOOGLE_FORM_ID;
+
+        final String sourceApp =
+                "xDrip-iCan-" + deliveryMode;
+
+        if (formId == null || formId.trim().isEmpty()) {
+            UserError.Log.e(TAG, "CGM live upload skipped: Google Form ID is empty");
+            return;
+        }
+        if (formId == null || formId.trim().isEmpty()) {
+            UserError.Log.e(TAG, "CGM live upload skipped: Google Form ID is empty");
+            return;
+        }
+'''
+
+        def newMethod = '''    private String buildLiveCgmSourceApp() {
+        if (lastPackage == null || lastPackage.trim().isEmpty()) {
+            return "xDrip-UiBasedCollector";
+        }
+
+        if (ICAN_RU_PACKAGE.equals(lastPackage)) {
+            return "xDrip-" + lastPackage + "-" + iCanDeliveryMode;
+        }
+
+        return "xDrip-" + lastPackage;
+    }
+
+    private void sendLiveCgmToGoogleForm(
+            final long timestamp,
+            final int mgdl,
+            final String sourceApp
+    ) {
+
+        final String formId = BuildConfig.ICAN_GOOGLE_FORM_ID;
+
+        if (formId == null || formId.trim().isEmpty()) {
+            UserError.Log.e(TAG, "CGM live upload skipped: Google Form ID is empty");
+            return;
+        }
+'''
+
+        if (text.contains(oldMethod)) {
+            text = text.replace(oldMethod, newMethod)
+        } else if (!text.contains('private String buildLiveCgmSourceApp()')) {
+            throw new GradleException('Expected iCan-specific upload method not found')
+        }
+
+        text = text.replace('        }, "iCan-CGM-FormUpload").start();', '        }, "CGM-FormUpload").start();')
+
+        source.write(text, 'UTF-8')
+        println 'Applied generic CGM live upload patch'
+    }
 }
 
 tasks.matching { it.name == 'preBuild' }.configureEach {
