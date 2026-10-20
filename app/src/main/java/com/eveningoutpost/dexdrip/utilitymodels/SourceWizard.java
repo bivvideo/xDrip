@@ -50,7 +50,7 @@ public class SourceWizard {
     // Navigation is organized by user intent, not by internal collector names.
     // Display-only changes: each leaf still uses an existing DexCollectionType.
     private Tree<Item> root = new Tree<>(new Item(
-            gs(R.string.choose_data_source), gs(R.string.which_system_do_you_use)));
+            gs(R.string.source_wizard_title), gs(R.string.source_wizard_subtitle)));
 
     {
         // Sensors and systems: users find their device before the connection method.
@@ -86,15 +86,21 @@ public class SourceWizard {
         eversense.addChild(new Item(gs(R.string.source_wizard_eversense_broadcast),
                 DexCollectionType.NSEmulator, R.drawable.mm600_series));
 
-        // These devices deserve visible entries, not a hidden "Other" category.
-        root.addChild(new Item("Medtrum A6 / S7", DexCollectionType.Medtrum,
+        // Less prominent sensor systems remain in the wizard, one tap deeper.
+        // Nothing is removed or remapped: only the visual grouping changes.
+        Tree<Item> otherSensors = root.addChild(new Item(
+                gs(R.string.source_wizard_other_sensors),
+                gs(R.string.source_wizard_other_sensors),
+                R.drawable.source_wizard_source_placeholder)
+                .withSummary(gs(R.string.source_wizard_other_sensors_examples)));
+        otherSensors.addChild(new Item("Medtrum A6 / S7", DexCollectionType.Medtrum,
                 R.drawable.a6_icon));
-        root.addChild(new Item("SmartGuide", DexCollectionType.GluPro,
+        otherSensors.addChild(new Item("SmartGuide", DexCollectionType.GluPro,
                 R.drawable.smartguide_jamorham));
         // CareSens Air is a legacy NSEmulator alias, not a new collector.
-        root.addChild(new Item("CareSens Air", DexCollectionType.NSEmulator,
+        otherSensors.addChild(new Item("CareSens Air", DexCollectionType.NSEmulator,
                 R.drawable.caresens_air_icon_image));
-        root.addChild(new Item("GlucoRx/Aidex App", DexCollectionType.AidexReceiver,
+        otherSensors.addChild(new Item("GlucoRx/Aidex App", DexCollectionType.AidexReceiver,
                 R.drawable.source_wizard_source_placeholder));
 
         // App-based paths; branded Dexcom/Eversense shortcuts live above.
@@ -341,6 +347,18 @@ public class SourceWizard {
 
         public boolean isFirstSection() {
             return section && node != null && node == root.getChildren().get(0);
+        }
+
+        public int getSectionTopPadding() {
+            // Leave breathing space between categories without thick rules.
+            return Math.round(convertDpToPixel(isFirstSection() ? 12 : 30));
+        }
+
+        public boolean isBeforeSection() {
+            if (section || listModel == null) return false;
+            final int index = listModel.items.indexOf(this);
+            return index >= 0 && index + 1 < listModel.items.size()
+                    && listModel.items.get(index + 1).section;
         }
 
         public boolean isGroup() {
