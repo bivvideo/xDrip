@@ -17,7 +17,7 @@ import com.eveningoutpost.dexdrip.utils.DexCollectionHelper;
 import com.eveningoutpost.dexdrip.utils.DexCollectionType;
 import com.eveningoutpost.dexdrip.xdrip;
 
-import java.util.List;
+import java.util.HashSet;
 
 import me.tatarka.bindingcollectionadapter2.ItemBinding;
 
@@ -37,6 +37,9 @@ public class SourceWizard {
     private static volatile SourceWizard sw;
     private AlertDialog dialog;
     private Activity activity;
+    // Expansion belongs to this wizard instance, so it survives the confirmation dialog.
+    private final HashSet<Tree<Item>> expandedBranches = new HashSet<>();
+    private ViewModel listModel;
     // Create the dialog decision tree
     private Tree<Item> root = new Tree<>(new Item(gs(R.string.choose_data_source), gs(R.string.which_system_do_you_use)));
 
@@ -81,22 +84,6 @@ public class SourceWizard {
         if (!sw.showing()) sw.getTreeDialog(null);
     }
 
-    private static Tree<Item> findByName(Tree<Item> node, final String name) {
-
-        if (compareName(node, name)) return node;
-
-        final List<Tree<Item>> children = node.getChildren();
-        for (Tree<Item> child : children) {
-            final Tree<Item> result = findByName(child, name);
-            if (result != null) return result;
-        }
-        return null;
-    }
-
-    private static boolean compareName(Tree<Item> node, String name) {
-        return node.data.name.equals(name);
-    }
-
     private static String gs(@StringRes final int id) {
         return xdrip.getAppContext().getString(id);
     }
@@ -113,44 +100,35 @@ public class SourceWizard {
         }
     }
 
-    // display the dialog for the selected branch of the tree
+    // Groups expand in-place; only selecting a leaf opens the existing confirmation.
     public void getTreeDialog(Tree<Item> branch) {
-        if (branch == null) branch = root;
-
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        // family node
-        if (!branch.data.isCollectionType()) {
 
+        if (branch == null || !branch.data.isCollectionType()) {
             final DialogTreeSelectorBinding binding = DialogTreeSelectorBinding.inflate(activity.getLayoutInflater());
-            binding.setViewModel(new ViewModel(branch));
-
-            builder.setTitle(branch.data.name);
-            builder.setMessage(branch.data.description);
-
+            listModel = new ViewModel();
+            binding.setViewModel(listModel);
+            builder.setTitle(root.data.name);
+            builder.setMessage(root.data.description);
             builder.setView(binding.getRoot());
-
-            // leaf node
+            // Do not silently dismiss the setup dialog by touching the background.
+            builder.setCancelable(false);
+            builder.setNegativeButton(R.string.source_wizard_skip, (ignored, which) -> {
+                dismissDialog(); // Same behavior as previously cancelling by tapping outside.
+                sw = null;
+            });
         } else {
-            final Tree<Item> fbranch = branch;
             final Item item = branch.data;
             builder.setTitle(R.string.are_you_sure);
             builder.setMessage(activity.getString(R.string.set_data_source_to, item.name));
-            builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    DexCollectionType.setDexCollectionType(item.getCollectionType());
-                    dismissDialog();
-                    DexCollectionHelper.assistance(activity, item.getCollectionType());
-                    sw = null; // work here is done
-                }
+            builder.setPositiveButton(R.string.yes, (ignored, which) -> {
+                // Keep the original per-source setup path unchanged.
+                DexCollectionType.setDexCollectionType(item.getCollectionType());
+                dismissDialog();
+                DexCollectionHelper.assistance(activity, item.getCollectionType());
+                sw = null;
             });
-            builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    getTreeDialog(fbranch.getParent());
-                }
-            });
-
+            builder.setNegativeButton(R.string.no, (ignored, which) -> getTreeDialog(null));
         }
 
         dismissDialog();
@@ -168,12 +146,14 @@ public class SourceWizard {
         }
     }
 
-    // View model item
+    // Existing source labels and DexCollectionType mappings are intentionally unchanged.
     public class Item {
         public String name;
         public int resource;
         String description;
         DexCollectionType type;
+        private Tree<Item> node;
+        private int depth;
 
         Item(String name, String description) {
             this(name, description, 0);
@@ -197,55 +177,58 @@ public class SourceWizard {
         }
 
         public void onClick(View v) {
-            getTreeDialog(findByName(root, this.name));
+            if (node == null) return;
+            if (isCollectionType()) {
+                getTreeDialog(node);
+            } else {
+                if (!expandedBranches.add(node)) expandedBranches.remove(node);
+                if (listModel != null) listModel.rebuild();
+            }
         }
 
-        public boolean isShortName() {
-            return this.name.length() < 10;
+        public int getRowInset() {
+            return Math.round(convertDpToPixel(depth * 16));
         }
 
-        public float dpToPx(float size) {
-            return convertDpToPixel(size);
+        public boolean isGroup() {
+            return !isCollectionType();
+        }
+
+        public String getIndicator() {
+            return isGroup() ? (expandedBranches.contains(node) ? "⌄" : "›") : "";
         }
 
         boolean isCollectionType() {
-            return this.description.startsWith("^");
+            return type != null;
         }
 
         public DexCollectionType getCollectionType() {
-            if (isCollectionType()) {
-                return type;
-            } else {
-                return null;
-            }
+            return type;
         }
     }
 
-    // View model container
     public class ViewModel {
         public final ObservableList<Item> items = new ObservableArrayList<>();
         public final ItemBinding<Item> itemBinding = ItemBinding.of(BR.item, R.layout.dialog_tree_item);
-        private String parent_name = null;
 
-        ViewModel(List<Item> items) {
-            this.items.addAll(items);
+        ViewModel() {
+            rebuild();
         }
 
-        ViewModel(Tree<Item> branch) {
-            if (branch.getParent() != null) {
-                parent_name = branch.getParent().data.name;
+        void rebuild() {
+            items.clear();
+            for (Tree<Item> child : root.getChildren()) appendVisible(child, 0);
+        }
+
+        private void appendVisible(Tree<Item> node, int depth) {
+            Item item = node.data;
+            item.node = node; // Stable identity; do not look up by possibly duplicated label.
+            item.depth = depth;
+            items.add(item);
+            if (item.isGroup() && expandedBranches.contains(node)) {
+                for (Tree<Item> child : node.getChildren()) appendVisible(child, depth + 1);
             }
-            this.items.addAll(branch.getChildElements());
         }
-
-        public boolean showBack() {
-            return parent_name != null;
-        }
-
-        public void goBack(View v) {
-            getTreeDialog(findByName(root, parent_name));
-        }
-
     }
 
 }
