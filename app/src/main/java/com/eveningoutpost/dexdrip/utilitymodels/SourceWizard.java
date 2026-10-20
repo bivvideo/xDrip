@@ -3,7 +3,9 @@ package com.eveningoutpost.dexdrip.utilitymodels;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
@@ -40,7 +42,7 @@ public class SourceWizard {
     @SuppressLint("StaticFieldLeak")
     private static final String TAG = "SourceWizard";
     private static volatile SourceWizard sw;
-    private AlertDialog dialog;
+    private Dialog dialog;
     private Activity activity;
     // Expansion belongs to this wizard instance, so it survives the confirmation dialog.
     private final HashSet<Tree<Item>> expandedBranches = new HashSet<>();
@@ -105,63 +107,61 @@ public class SourceWizard {
         }
     }
 
-    // Use the same Android Holo family as xDrip's Preferences screen.
-    // The legacy source selection and post-selection assistance stay unchanged.
+    // A standalone Holo dialog lets the xDrip gradient cover the entire visible
+    // chooser, rather than hiding it below opaque AlertDialog title/button panels.
+    // Leaf confirmation and its DexCollectionHelper path remain unchanged.
     public void getTreeDialog(Tree<Item> branch) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(activity, AlertDialog.THEME_HOLO_DARK);
-        DialogTreeSelectorBinding binding = null;
-
+        dismissDialog();
         if (branch == null || !branch.data.isCollectionType()) {
-            binding = DialogTreeSelectorBinding.inflate(LayoutInflater.from(builder.getContext()));
+            final Dialog picker = new Dialog(activity, android.R.style.Theme_Holo_Dialog);
+            picker.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            final DialogTreeSelectorBinding binding = DialogTreeSelectorBinding.inflate(
+                    LayoutInflater.from(picker.getContext()));
             listModel = new ViewModel();
             binding.setViewModel(listModel);
-            // An expanded group must not fade out all other rows.
             binding.sourceWizardList.setItemAnimator(null);
             final int screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
-            // Keep title and Skip fixed, while the list uses most available screen height.
             binding.sourceWizardList.getLayoutParams().height = Math.round(screenHeight * 0.60f);
-            builder.setTitle(root.data.name);
-            builder.setMessage(root.data.description);
-            builder.setView(binding.getRoot());
-            // Do not silently dismiss the setup dialog by touching the background.
-            builder.setCancelable(false);
-            builder.setNegativeButton(R.string.source_wizard_skip, (ignored, which) -> {
-                dismissDialog(); // Same behavior as previously cancelling by tapping outside.
-                sw = null;
-            });
+
+            final Drawable background = picker.getContext().getDrawable(R.drawable.holo_background);
+            if (background instanceof GradientDrawable) {
+                ((GradientDrawable) background.mutate()).setCornerRadius(convertDpToPixel(6));
+            }
+            binding.getRoot().setBackground(background);
+            picker.setContentView(binding.getRoot());
+            picker.setCancelable(false);
+            dialog = picker;
+            try {
+                picker.show();
+                final Window window = picker.getWindow();
+                if (window != null) {
+                    // The background belongs to the content, so no opaque Holo panel hides it.
+                    window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    final int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
+                    window.setLayout(screenWidth - Math.round(convertDpToPixel(12)),
+                            WindowManager.LayoutParams.WRAP_CONTENT);
+                }
+            } catch (Exception e) {
+                UserError.Log.e(TAG, "Exception showing source wizard: " + e);
+            }
         } else {
             final Item item = branch.data;
+            final AlertDialog.Builder builder = new AlertDialog.Builder(activity, AlertDialog.THEME_HOLO_DARK);
             builder.setTitle(R.string.are_you_sure);
             builder.setMessage(activity.getString(R.string.set_data_source_to, item.name));
             builder.setPositiveButton(R.string.yes, (ignored, which) -> {
-                // Keep the original per-source setup path unchanged.
                 DexCollectionType.setDexCollectionType(item.getCollectionType());
                 dismissDialog();
                 DexCollectionHelper.assistance(activity, item.getCollectionType());
                 sw = null;
             });
             builder.setNegativeButton(R.string.no, (ignored, which) -> getTreeDialog(null));
-        }
-
-        dismissDialog();
-        dialog = builder.create();
-        try {
-            dialog.show();
-            if (binding != null) {
-                final Window window = dialog.getWindow();
-                if (window != null) {
-                    // Reuse xDrip's own Holo gradient instead of defining another palette.
-                    final Drawable background = builder.getContext().getDrawable(R.drawable.holo_background);
-                    if (background instanceof GradientDrawable) {
-                        ((GradientDrawable) background.mutate()).setCornerRadius(convertDpToPixel(6));
-                    }
-                    window.setBackgroundDrawable(background);
-                    final int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
-                    window.setLayout(screenWidth - Math.round(convertDpToPixel(12)), WindowManager.LayoutParams.WRAP_CONTENT);
-                }
+            dialog = builder.create();
+            try {
+                dialog.show();
+            } catch (Exception e) {
+                UserError.Log.e(TAG, "Exception showing source confirmation: " + e);
             }
-        } catch (Exception e) {
-            UserError.Log.e(TAG, "Exception when trying to show source wizard: " + e);
         }
     }
 
@@ -238,8 +238,8 @@ public class SourceWizard {
             return !isCollectionType();
         }
 
-        public String getIndicator() {
-            return isGroup() ? (expandedBranches.contains(node) ? "⌄" : "›") : "";
+        public boolean isExpanded() {
+            return isGroup() && expandedBranches.contains(node);
         }
 
         boolean isCollectionType() {
@@ -257,6 +257,11 @@ public class SourceWizard {
 
         ViewModel() {
             rebuild();
+        }
+
+        public void skip(View ignored) {
+            dismissDialog();
+            sw = null; // No new preference: same effect as the old outside tap.
         }
 
         private void rebuild() {
