@@ -37,11 +37,11 @@
             android:textSize="17sp"
             android:textColor="?android:attr/textColorPrimary" />
 
+        <!-- Reserve an unobstructed gutter for the system scroll indicator. -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/sourceWizardList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            <!-- Reserve an unobstructed gutter for the system scroll indicator. -->
             android:scrollbars="vertical"
             android:scrollbarStyle="insideOverlay"
             android:clipToPadding="true"
