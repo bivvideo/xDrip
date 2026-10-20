@@ -15,10 +15,23 @@
         android:orientation="vertical"
         android:paddingStart="@{item.rowInset}">
 
+        <!-- Non-clickable section headers inside Other sources. -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="12dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="8dp"
+            android:text="@{item.displayTitle}"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="?android:attr/textColorSecondary"
+            android:visibility="@{item.section ? View.VISIBLE : View.GONE}" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="62dp"
+            android:visibility="@{item.section ? View.GONE : View.VISIBLE}"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingStart="12dp"
@@ -76,7 +89,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="?android:attr/listDivider"
-            android:visibility="@{item.lastVisible ? View.GONE : View.VISIBLE}" />
+            android:visibility="@{(item.section || item.lastVisible) ? View.GONE : View.VISIBLE}" />
 
     </LinearLayout>
 </layout>
