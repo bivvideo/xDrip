@@ -8,34 +8,40 @@
             type="com.eveningoutpost.dexdrip.utilitymodels.SourceWizard.ViewModel" />
     </data>
 
-    <!-- Full custom dialog content ensures xDrip's Holo gradient is visible
-         behind the heading, source list and Skip control. -->
+    <!-- Keep the approved Holo gradient under the complete dialog. Only the
+         fixed header receives a light translucent tint for visual separation. -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="20dp"
-        android:paddingBottom="8dp">
+        android:orientation="vertical">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:text="@string/choose_data_source"
-            android:textSize="24sp"
-            android:textColor="?android:attr/textColorPrimary" />
+            android:orientation="vertical"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:background="#12FFFFFF">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="24dp"
-            android:text="@string/which_system_do_you_use"
-            android:textSize="17sp"
-            android:textColor="?android:attr/textColorSecondary" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:text="@string/source_wizard_title"
+                android:textSize="22sp"
+                android:textColor="?android:attr/textColorPrimary" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/source_wizard_subtitle"
+                android:textSize="16sp"
+                android:textColor="?android:attr/textColorSecondary" />
+        </LinearLayout>
 
         <!-- Render the scroll thumb at the view's outer edge, in the right
              padding strip rather than over the item dividers. -->
@@ -57,19 +63,27 @@
             android:layout_height="1dp"
             android:background="?android:attr/listDivider" />
 
-        <TextView
+        <!-- The fixed Skip footer is slightly lighter without a separate card. -->
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="56dp"
-            android:gravity="end|center_vertical"
-            android:paddingStart="20dp"
-            android:paddingEnd="22dp"
-            android:text="@string/source_wizard_skip"
-            android:textAllCaps="true"
-            android:textSize="16sp"
-            android:textColor="?android:attr/textColorPrimary"
-            android:background="?android:attr/selectableItemBackground"
-            android:onClick="@{viewModel::skip}" />
+            android:paddingBottom="8dp"
+            android:background="#14FFFFFF">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:gravity="end|center_vertical"
+                android:paddingStart="20dp"
+                android:paddingEnd="22dp"
+                android:text="@string/source_wizard_skip"
+                android:textAllCaps="true"
+                android:textSize="16sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:background="?android:attr/selectableItemBackground"
+                android:onClick="@{viewModel::skip}" />
+        </FrameLayout>
 
     </LinearLayout>
 </layout>
