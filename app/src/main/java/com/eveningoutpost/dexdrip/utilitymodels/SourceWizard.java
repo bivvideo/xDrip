@@ -361,6 +361,60 @@ public class SourceWizard {
                     && listModel.items.get(index + 1).section;
         }
 
+        // Rows are still a single flat RecyclerView, but the drawable of each
+        // row joins an expanded group into one visually continuous rounded plate.
+        // This is only presentation; it does not add nested RecyclerViews or modify
+        // any collection types, settings, or the leaf confirmation flow.
+        private boolean isLastNestedItem() {
+            if (section || depth == 0 || listModel == null) return false;
+            final int index = listModel.items.indexOf(this);
+            return index >= 0 && (index + 1 >= listModel.items.size()
+                    || listModel.items.get(index + 1).depth < depth);
+        }
+
+        private boolean isFirstNestedItem() {
+            if (section || depth == 0 || listModel == null) return false;
+            final int index = listModel.items.indexOf(this);
+            return index > 0 && listModel.items.get(index - 1).depth < depth;
+        }
+
+        public Drawable getPlateBackground() {
+            if (section) return null;
+            final int resource;
+            if (depth > 0) {
+                resource = isLastNestedItem()
+                        ? R.drawable.source_wizard_plate_bottom
+                        : R.drawable.source_wizard_plate_middle;
+            } else if (isExpanded()) {
+                resource = R.drawable.source_wizard_plate_top;
+            } else {
+                resource = R.drawable.source_wizard_plate_single;
+            }
+            return activity.getDrawable(resource);
+        }
+
+        public Drawable getNestedBackground() {
+            return depth > 0 ? activity.getDrawable(R.drawable.source_wizard_plate_inner) : null;
+        }
+
+        public int getPlateTopMargin() {
+            return Math.round(convertDpToPixel(depth == 0 ? 8 : 0));
+        }
+
+        public int getNestedMargin() {
+            return Math.round(convertDpToPixel(depth > 0 ? 10 : 0));
+        }
+
+        public int getNestedTopMargin() {
+            return Math.round(convertDpToPixel(depth > 0
+                    ? (isFirstNestedItem() ? 7 : 3) : 0));
+        }
+
+        public int getNestedBottomMargin() {
+            return Math.round(convertDpToPixel(depth > 0
+                    ? (isLastNestedItem() ? 9 : 3) : 0));
+        }
+
         public boolean isGroup() {
             return !section && !isCollectionType();
         }
