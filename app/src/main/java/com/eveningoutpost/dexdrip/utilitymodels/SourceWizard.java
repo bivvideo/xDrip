@@ -56,7 +56,7 @@ public class SourceWizard {
         // Sensors and systems: users find their device before the connection method.
         root.addChild(new Item(gs(R.string.source_wizard_sensors_section), true));
 
-        Tree<Item> dex = root.addChild(new Item("Dex",
+        Tree<Item> dex = root.addChild(new Item("Dexcom",
                 gs(R.string.source_wizard_direct_details), R.drawable.dex_icon));
         // Preserve the original direct-connection DexcomG6 -> DexcomG5 setup path.
         dex.addChild(new Item(gs(R.string.source_wizard_direct),
