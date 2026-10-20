@@ -15,6 +15,8 @@ import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableList;
 import androidx.annotation.StringRes;
 import android.view.View;
+import android.view.ViewGroup;
+import androidx.databinding.BindingAdapter;
 
 import com.eveningoutpost.dexdrip.BR;
 import com.eveningoutpost.dexdrip.models.UserError;
@@ -161,6 +163,47 @@ public class SourceWizard {
         // Individual app labels are navigation aliases for the same UiBased mode.
         parent.addChild(new Item(label, DexCollectionType.UiBased,
                 R.drawable.source_wizard_source_placeholder));
+    }
+
+    // Data Binding has no built-in setter for layout_margin* attributes.
+    // Apply the group-specific margins from one supported custom adapter,
+    // instead of binding Android LayoutParams directly in XML.
+    @BindingAdapter("sourceWizardPlate")
+    public static void bindSourceWizardPlate(View view, Item item) {
+        if (item == null) return;
+        final ViewGroup.LayoutParams raw = view.getLayoutParams();
+        if (raw instanceof ViewGroup.MarginLayoutParams) {
+            final ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) raw;
+            final int top = item.getPlateTopMargin();
+            if (params.topMargin != top) {
+                params.topMargin = top;
+                view.setLayoutParams(params);
+            }
+        }
+        view.setBackground(item.getPlateBackground());
+    }
+
+    @BindingAdapter("sourceWizardInner")
+    public static void bindSourceWizardInner(View view, Item item) {
+        if (item == null) return;
+        final ViewGroup.LayoutParams raw = view.getLayoutParams();
+        if (raw instanceof ViewGroup.MarginLayoutParams) {
+            final ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) raw;
+            final int inset = item.getNestedMargin();
+            final int top = item.getNestedTopMargin();
+            final int bottom = item.getNestedBottomMargin();
+            if (params.getMarginStart() != inset
+                    || params.getMarginEnd() != inset
+                    || params.topMargin != top
+                    || params.bottomMargin != bottom) {
+                params.setMarginStart(inset);
+                params.setMarginEnd(inset);
+                params.topMargin = top;
+                params.bottomMargin = bottom;
+                view.setLayoutParams(params);
+            }
+        }
+        view.setBackground(item.getNestedBackground());
     }
 
     public SourceWizard(Activity activity) {
