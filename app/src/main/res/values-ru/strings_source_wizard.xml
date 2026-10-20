@@ -21,9 +21,13 @@
     <string name="source_wizard_followers_section">Синхронизация и облачные источники</string>
     <string name="source_wizard_other_systems_section">Другие системы и приложения</string>
     <string name="source_wizard_sensors_section">Сенсоры и системы</string>
-    <string name="source_wizard_apps_section">Через приложения</string>
+    <string name="source_wizard_apps_section">Подключение через приложение</string>
     <string name="source_wizard_bridges_section">Адаптеры и мосты</string>
     <string name="source_wizard_sync_section">Синхронизация и облачные источники</string>
     <string name="source_wizard_followers_group">Followers</string>
     <string name="source_wizard_companion_examples">iCan, Ottai, CamAPS FX и другие</string>
+    <string name="source_wizard_title">Мастер настройки источника</string>
+    <string name="source_wizard_subtitle">Выберите датчик или приложение</string>
+    <string name="source_wizard_other_sensors">Другие сенсоры</string>
+    <string name="source_wizard_other_sensors_examples">Medtrum, SmartGuide, CareSens Air, Aidex</string>
 </resources>
