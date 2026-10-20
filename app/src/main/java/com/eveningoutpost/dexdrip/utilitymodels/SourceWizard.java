@@ -393,8 +393,9 @@ public class SourceWizard {
         }
 
         public int getSectionTopPadding() {
-            // Leave breathing space between categories without thick rules.
-            return Math.round(convertDpToPixel(isFirstSection() ? 12 : 30));
+            // The first heading needs the same breathing space below the fixed
+            // header as subsequent headings have above their sections.
+            return Math.round(convertDpToPixel(30));
         }
 
         public boolean isBeforeSection() {
@@ -441,7 +442,13 @@ public class SourceWizard {
         }
 
         public int getPlateTopMargin() {
-            return Math.round(convertDpToPixel(depth == 0 ? 8 : 0));
+            if (depth > 0) return 0;
+            // Reduce the label-to-card gap by one quarter (16dp -> 12dp),
+            // without compressing the gaps between ordinary cards.
+            final int index = listModel != null ? listModel.items.indexOf(this) : -1;
+            final boolean followsSection = index > 0
+                    && listModel.items.get(index - 1).isSection();
+            return Math.round(convertDpToPixel(followsSection ? 4 : 8));
         }
 
         public int getNestedMargin() {
