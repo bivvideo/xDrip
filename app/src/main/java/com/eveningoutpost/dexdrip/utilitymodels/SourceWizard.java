@@ -63,7 +63,8 @@ public class SourceWizard {
         // Preserve the original direct-connection DexcomG6 -> DexcomG5 setup path.
         dex.addChild(new Item(gs(R.string.source_wizard_dexcom_models),
                 gs(R.string.source_wizard_dexcom_direct_summary),
-                DexCollectionType.DexcomG6, R.drawable.dex_icon));
+                DexCollectionType.DexcomG6, R.drawable.dex_icon)
+                .withConfirmationName("Dexcom"));
         dex.addChild(new Item(gs(R.string.source_wizard_dexcom_app),
                 gs(R.string.source_wizard_dexcom_app_summary),
                 DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder));
@@ -90,8 +91,27 @@ public class SourceWizard {
         eversense.addChild(new Item(gs(R.string.source_wizard_eversense_broadcast),
                 DexCollectionType.NSEmulator, R.drawable.mm600_series));
 
+        // One recognizable manufacturer group covers two established app routes.
+        // Legacy GlucoRx AiDEX uses its dedicated broadcast receiver; newer
+        // AiDEX X / LinX apps use the existing notification-based UiBased mode.
+        Tree<Item> microtech = root.addChild(new Item(
+                gs(R.string.source_wizard_microtech_group),
+                gs(R.string.source_wizard_microtech_examples),
+                R.drawable.source_wizard_source_placeholder)
+                .withSummary(gs(R.string.source_wizard_microtech_examples)));
+        microtech.addChild(new Item(gs(R.string.source_wizard_microtech_glucorx),
+                gs(R.string.source_wizard_microtech_glucorx_summary),
+                DexCollectionType.AidexReceiver, R.drawable.source_wizard_source_placeholder));
+        microtech.addChild(new Item(gs(R.string.source_wizard_microtech_linx),
+                gs(R.string.source_wizard_microtech_linx_summary),
+                DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder));
+        microtech.addChild(new Item(gs(R.string.source_wizard_microtech_other),
+                gs(R.string.source_wizard_microtech_other_summary),
+                DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder)
+                .withConfirmationName(gs(R.string.source_wizard_companion_group)));
+
         // Less prominent sensor systems remain in the wizard, one tap deeper.
-        // Nothing is removed or remapped: only the visual grouping changes.
+        // The AidexReceiver option now lives only under MicroTech.
         Tree<Item> otherSensors = root.addChild(new Item(
                 gs(R.string.source_wizard_other_sensors),
                 gs(R.string.source_wizard_other_sensors),
@@ -101,8 +121,6 @@ public class SourceWizard {
                 R.drawable.a6_icon));
         otherSensors.addChild(new Item("SmartGuide", DexCollectionType.GluPro,
                 R.drawable.smartguide_jamorham));
-        otherSensors.addChild(new Item("GlucoRx/Aidex App", DexCollectionType.AidexReceiver,
-                R.drawable.source_wizard_source_placeholder));
 
         // App-based paths; branded Dexcom/Eversense shortcuts live above.
         root.addChild(new Item(gs(R.string.source_wizard_apps_section), true));

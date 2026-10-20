@@ -32,6 +32,14 @@
     <string name="source_wizard_companion_examples">iCan, Ottai, CamAPS FX и другие</string>
     <string name="source_wizard_title">Мастер настройки источника</string>
     <string name="source_wizard_subtitle">Выберите датчик или приложение</string>
+    <string name="source_wizard_microtech_group">MicroTech</string>
+    <string name="source_wizard_microtech_examples">AiDEX, GlucoRx, LinX и другие</string>
+    <string name="source_wizard_microtech_glucorx">GlucoRx AiDEX</string>
+    <string name="source_wizard_microtech_glucorx_summary">Через приложение AiDEX</string>
+    <string name="source_wizard_microtech_linx">AiDEX X / LinX</string>
+    <string name="source_wizard_microtech_linx_summary">Через приложение LinX</string>
+    <string name="source_wizard_microtech_other">Другое совместимое приложение MicroTech</string>
+    <string name="source_wizard_microtech_other_summary">Получение данных из уведомлений</string>
     <string name="source_wizard_other_sensors">Другие сенсоры</string>
-    <string name="source_wizard_other_sensors_examples">Medtrum, SmartGuide, Aidex</string>
+    <string name="source_wizard_other_sensors_examples">Medtrum, SmartGuide</string>
 </resources>
