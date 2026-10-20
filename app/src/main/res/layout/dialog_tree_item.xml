@@ -2,51 +2,70 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
+        <import type="android.view.View" />
         <variable
             name="item"
             type="com.eveningoutpost.dexdrip.utilitymodels.SourceWizard.Item" />
     </data>
 
-    <!-- Compact preference-style rows instead of 150dp preview images. -->
+    <!-- Holo title/summary typography and dividers, with only nested rows darkened. -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@{item.rowBackground}"
+        android:paddingStart="@{item.rowInset}">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="58dp"
+            android:minHeight="62dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
-            android:paddingTop="6dp"
-            android:paddingBottom="6dp"
-            android:background="?android:attr/selectableItemBackground"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:foreground="?android:attr/selectableItemBackground"
             android:onClick="@{item::onClick}">
 
             <ImageView
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginEnd="12dp"
+                android:layout_marginEnd="14dp"
                 android:scaleType="fitCenter"
                 app:src="@{item.resource}" />
 
-            <TextView
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@{item.indentedName}"
-                android:textSize="16sp"
-                android:textColor="?android:attr/textColorPrimary" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{item.displayTitle}"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="?android:attr/textColorPrimary" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@{item.displaySummary}"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:visibility="@{item.summaryVisible ? View.VISIBLE : View.GONE}" />
+
+            </LinearLayout>
 
             <TextView
-                android:layout_width="24dp"
+                android:layout_width="28dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@{item.indicator}"
-                android:textSize="24sp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="?android:attr/textColorSecondary" />
 
         </LinearLayout>
@@ -54,8 +73,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
-            android:background="#22888888" />
+            android:background="?android:attr/listDivider" />
+
     </LinearLayout>
 </layout>
