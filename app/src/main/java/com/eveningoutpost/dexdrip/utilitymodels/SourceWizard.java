@@ -405,6 +405,10 @@ public class SourceWizard {
             return Math.round(convertDpToPixel(depth > 0 ? 10 : 0));
         }
 
+        public int getPlateRowStartPadding() {
+            return Math.round(convertDpToPixel(depth > 0 ? 22 : 12));
+        }
+
         public int getNestedTopMargin() {
             return Math.round(convertDpToPixel(depth > 0
                     ? (isFirstNestedItem() ? 7 : 3) : 0));
