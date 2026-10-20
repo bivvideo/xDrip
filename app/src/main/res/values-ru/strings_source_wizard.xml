@@ -20,4 +20,10 @@
     <string name="source_wizard_wixel_section">Wixel / xBridge</string>
     <string name="source_wizard_followers_section">Синхронизация и облачные источники</string>
     <string name="source_wizard_other_systems_section">Другие системы и приложения</string>
+    <string name="source_wizard_sensors_section">Сенсоры и системы</string>
+    <string name="source_wizard_apps_section">Через приложения</string>
+    <string name="source_wizard_bridges_section">Адаптеры и мосты</string>
+    <string name="source_wizard_sync_section">Синхронизация и облачные источники</string>
+    <string name="source_wizard_followers_group">Followers</string>
+    <string name="source_wizard_companion_examples">iCan, Ottai, CamAPS FX и другие</string>
 </resources>
