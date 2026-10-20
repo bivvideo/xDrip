@@ -422,9 +422,20 @@ public class SourceWizard {
             return Math.round(convertDpToPixel(depth > 0 ? 22 : 12));
         }
 
-        // Each visible child draws a short divider above its content.
+        // One full-weight separator after the expanded parent, followed by
+        // hairlines between its children. No changes to selection behavior.
         public boolean isNested() {
             return depth > 0;
+        }
+
+        public boolean isFirstNested() {
+            if (!isNested() || listModel == null) return false;
+            final int index = listModel.items.indexOf(this);
+            return index > 0 && listModel.items.get(index - 1).depth < depth;
+        }
+
+        public boolean isInnerNested() {
+            return isNested() && !isFirstNested();
         }
 
         public boolean isGroup() {

@@ -11,7 +11,9 @@
     <color name="title">#62a262</color>
     <color name="yellow100">#fff9c4</color>
     <color name="darker_white">#d3d3d3</color>
-    <!-- Source Wizard plate opacity: edit #12 (7.06% white) here to tune all plates. -->
+    <!-- Source Wizard: independently tune inactive (7.06%) and expanded (12.16%) plates. -->
     <color name="source_wizard_plate_tint">#12FFFFFF</color>
+    <color name="source_wizard_plate_expanded_tint">#1FFFFFFF</color>
     <color name="source_wizard_row_divider">#33FFFFFF</color>
+    <color name="source_wizard_nested_divider">#24FFFFFF</color>
 </resources>

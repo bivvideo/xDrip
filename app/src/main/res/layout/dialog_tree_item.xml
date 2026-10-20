@@ -41,15 +41,25 @@
             android:visibility="@{item.section ? View.GONE : View.VISIBLE}"
             android:orientation="vertical">
 
-            <!-- One separator under the parent, then one between each child.
-                 Lines start at the same x position as the parent icon. -->
+            <!-- The first separator starts at the parent label (12 + 40 + 14dp).
+                 It separates the expanded parent from its children. -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginStart="12dp"
+                android:layout_marginStart="66dp"
                 android:layout_marginEnd="12dp"
                 android:background="@color/source_wizard_row_divider"
-                android:visibility="@{item.nested ? View.VISIBLE : View.GONE}" />
+                android:visibility="@{item.firstNested ? View.VISIBLE : View.GONE}" />
+
+            <!-- Subsequent separators start at the indented child label
+                 (22 + 40 + 14dp) and read as subtle 0.5dp hairlines. -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginStart="76dp"
+                android:layout_marginEnd="12dp"
+                android:background="@color/source_wizard_nested_divider"
+                android:visibility="@{item.innerNested ? View.VISIBLE : View.GONE}" />
 
             <!-- No separately shaded or rounded child rows. -->
             <LinearLayout
