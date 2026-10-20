@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="source_wizard_skip">Skip</string>
+    <string name="source_wizard_direct">Direct connection</string>
+    <string name="source_wizard_direct_details">xDrip reads the sensor directly</string>
+    <string name="source_wizard_dexcom_app">Dexcom app</string>
+    <string name="source_wizard_eversense_app">Eversense app</string>
+    <string name="source_wizard_notifications_details">Read glucose from app notifications</string>
+    <string name="source_wizard_eversense_broadcast">Inter-app broadcast</string>
+    <string name="source_wizard_eversense_broadcast_details">Alternative Eversense integration</string>
+    <string name="source_wizard_companion_group">Companion App</string>
+    <string name="source_wizard_companion_details">Compatible apps that show glucose notifications</string>
+    <string name="source_wizard_other_group">Other sources</string>
+    <string name="source_wizard_other_details">Broadcast, receivers and follower services</string>
+    <string name="source_wizard_libre_wifi">Libre Wi-Fi</string>
+    <string name="source_wizard_libre_bluetooth_wifi">Libre Bluetooth + Wi-Fi</string>
+    <string name="source_wizard_other_notifications">Other compatible app</string>
+    <string name="source_wizard_other_notifications_details">Read glucose from its notifications</string>
+    <string name="source_wizard_caresens_summary">CareSens Air and compatible integrations</string>
+    <string name="source_wizard_wixel_section">Wixel / xBridge</string>
+    <string name="source_wizard_followers_section">Sync and follower services</string>
+    <string name="source_wizard_other_systems_section">Other devices and apps</string>
 </resources>
