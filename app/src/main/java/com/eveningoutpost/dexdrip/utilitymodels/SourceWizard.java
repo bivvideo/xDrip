@@ -508,7 +508,8 @@ public class SourceWizard {
             }
             // Also refresh the visibility of the bottom divider whenever the
             // last visible row changes as a result of expanding/collapsing.
-            items.set(position, node.data);
+            // The clicked row can shift when an earlier group is collapsed.
+            items.set(indexOf(node), node.data);
             refreshVisibleRow(oldLast);
             if (!items.isEmpty()) refreshVisibleRow(items.get(items.size() - 1));
         }
