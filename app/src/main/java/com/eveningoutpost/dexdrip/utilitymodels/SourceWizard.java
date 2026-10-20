@@ -484,8 +484,24 @@ public class SourceWizard {
                     items.remove(position + 1);
                 }
             } else {
+                // Keep only one group open. Remove the previous group's children
+                // in place instead of rebuilding the entire scrolling list.
+                for (Tree<Item> open : new HashSet<>(expandedBranches)) {
+                    expandedBranches.remove(open);
+                    final int openPosition = indexOf(open);
+                    if (openPosition < 0) continue;
+                    final int openDepth = open.data.depth;
+                    while (openPosition + 1 < items.size()
+                            && items.get(openPosition + 1).depth > openDepth) {
+                        items.remove(openPosition + 1);
+                    }
+                    // Restore the closed group's ordinary plate and chevron.
+                    items.set(openPosition, open.data);
+                }
+
                 expandedBranches.add(node);
-                int at = position + 1;
+                // Closing an earlier group may have shifted the tapped position.
+                int at = indexOf(node) + 1;
                 for (Tree<Item> child : node.getChildren()) {
                     at = insertVisible(child, node.data.depth + 1, at);
                 }
