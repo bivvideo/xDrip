@@ -54,6 +54,7 @@
             android:clipToPadding="true"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
+            android:paddingBottom="24dp"
             app:itemBinding="@{viewModel.itemBinding}"
             app:items="@{viewModel.items}"
             app:layoutManager="@{LayoutManagers.linear()}" />
