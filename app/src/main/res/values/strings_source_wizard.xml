@@ -21,9 +21,13 @@
     <string name="source_wizard_followers_section">Sync and follower services</string>
     <string name="source_wizard_other_systems_section">Other devices and apps</string>
     <string name="source_wizard_sensors_section">Sensors and systems</string>
-    <string name="source_wizard_apps_section">Via applications</string>
+    <string name="source_wizard_apps_section">Connection via an app</string>
     <string name="source_wizard_bridges_section">Adapters and bridges</string>
     <string name="source_wizard_sync_section">Sync and cloud sources</string>
     <string name="source_wizard_followers_group">Followers</string>
     <string name="source_wizard_companion_examples">iCan, Ottai, CamAPS FX and more</string>
+    <string name="source_wizard_title">Source setup wizard</string>
+    <string name="source_wizard_subtitle">Choose your sensor or app</string>
+    <string name="source_wizard_other_sensors">Other sensors</string>
+    <string name="source_wizard_other_sensors_examples">Medtrum, SmartGuide, CareSens Air, Aidex</string>
 </resources>
