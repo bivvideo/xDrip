@@ -8,8 +8,8 @@
             type="com.eveningoutpost.dexdrip.utilitymodels.SourceWizard.Item" />
     </data>
 
-    <!-- Category labels stay directly on the Holo gradient. Each source uses
-         a translucent plate; expanded parents and children join edge-to-edge. -->
+    <!-- Holo gradient remains visible. Expanded rows share one translucent
+         plate and use inset dividers instead of inner rounded cards. -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -41,7 +41,17 @@
             android:visibility="@{item.section ? View.GONE : View.VISIBLE}"
             android:orientation="vertical">
 
-            <!-- Nested rows are lighter insets inside the same group plate. -->
+            <!-- One separator under the parent, then one between each child.
+                 Lines start at the same x position as the parent icon. -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:background="@color/source_wizard_row_divider"
+                android:visibility="@{item.nested ? View.VISIBLE : View.GONE}" />
+
+            <!-- No separately shaded or rounded child rows. -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -50,7 +60,6 @@
                 android:layout_marginEnd="0dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginBottom="0dp"
-                app:sourceWizardInner="@{item}"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="@{item.plateRowStartPadding}"

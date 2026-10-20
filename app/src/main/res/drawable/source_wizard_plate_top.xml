@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Slightly lightens the existing Holo gradient; no new theme or library. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <solid android:color="#0AFFFFFF" />
+    <solid android:color="@color/source_wizard_plate_tint" />
     <corners android:topLeftRadius="9dp" android:topRightRadius="9dp" android:bottomLeftRadius="0dp" android:bottomRightRadius="0dp" />
 </shape>

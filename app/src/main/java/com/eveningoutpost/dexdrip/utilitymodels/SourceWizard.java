@@ -183,29 +183,6 @@ public class SourceWizard {
         view.setBackground(item.getPlateBackground());
     }
 
-    @BindingAdapter("sourceWizardInner")
-    public static void bindSourceWizardInner(View view, Item item) {
-        if (item == null) return;
-        final ViewGroup.LayoutParams raw = view.getLayoutParams();
-        if (raw instanceof ViewGroup.MarginLayoutParams) {
-            final ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) raw;
-            final int inset = item.getNestedMargin();
-            final int top = item.getNestedTopMargin();
-            final int bottom = item.getNestedBottomMargin();
-            if (params.getMarginStart() != inset
-                    || params.getMarginEnd() != inset
-                    || params.topMargin != top
-                    || params.bottomMargin != bottom) {
-                params.setMarginStart(inset);
-                params.setMarginEnd(inset);
-                params.topMargin = top;
-                params.bottomMargin = bottom;
-                view.setLayoutParams(params);
-            }
-        }
-        view.setBackground(item.getNestedBackground());
-    }
-
     public SourceWizard(Activity activity) {
         this.activity = activity;
     }
@@ -416,12 +393,6 @@ public class SourceWizard {
                     || listModel.items.get(index + 1).depth < depth);
         }
 
-        private boolean isFirstNestedItem() {
-            if (section || depth == 0 || listModel == null) return false;
-            final int index = listModel.items.indexOf(this);
-            return index > 0 && listModel.items.get(index - 1).depth < depth;
-        }
-
         public Drawable getPlateBackground() {
             if (section) return null;
             final int resource;
@@ -437,10 +408,6 @@ public class SourceWizard {
             return activity.getDrawable(resource);
         }
 
-        public Drawable getNestedBackground() {
-            return depth > 0 ? activity.getDrawable(R.drawable.source_wizard_plate_inner) : null;
-        }
-
         public int getPlateTopMargin() {
             if (depth > 0) return 0;
             // Reduce the label-to-card gap by one quarter (16dp -> 12dp),
@@ -451,22 +418,13 @@ public class SourceWizard {
             return Math.round(convertDpToPixel(followsSection ? 4 : 8));
         }
 
-        public int getNestedMargin() {
-            return Math.round(convertDpToPixel(depth > 0 ? 10 : 0));
-        }
-
         public int getPlateRowStartPadding() {
             return Math.round(convertDpToPixel(depth > 0 ? 22 : 12));
         }
 
-        public int getNestedTopMargin() {
-            return Math.round(convertDpToPixel(depth > 0
-                    ? (isFirstNestedItem() ? 7 : 3) : 0));
-        }
-
-        public int getNestedBottomMargin() {
-            return Math.round(convertDpToPixel(depth > 0
-                    ? (isLastNestedItem() ? 9 : 3) : 0));
+        // Each visible child draws a short divider above its content.
+        public boolean isNested() {
+            return depth > 0;
         }
 
         public boolean isGroup() {
