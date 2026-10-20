@@ -211,13 +211,13 @@ public class SourceWizard {
         }
 
         public int getRowInset() {
-            return Math.round(convertDpToPixel(depth > 0 ? 10 : 0));
+            // The indent applies to the entire row, including its divider.
+            return Math.round(convertDpToPixel(depth > 0 ? 28 : 0));
         }
 
-        public Drawable getRowBackground() {
-            return activity.getDrawable(depth > 0
-                    ? R.drawable.source_wizard_nested_background
-                    : android.R.color.transparent);
+        public boolean isLastVisible() {
+            return listModel != null && !listModel.items.isEmpty()
+                    && listModel.items.get(listModel.items.size() - 1) == this;
         }
 
         public String getDisplayTitle() {
@@ -273,6 +273,7 @@ public class SourceWizard {
         void toggle(Tree<Item> node) {
             final int position = indexOf(node);
             if (position < 0) return;
+            final Item oldLast = items.isEmpty() ? null : items.get(items.size() - 1);
             if (expandedBranches.remove(node)) {
                 final int depth = node.data.depth;
                 while (position + 1 < items.size() && items.get(position + 1).depth > depth) {
@@ -285,8 +286,21 @@ public class SourceWizard {
                     at = insertVisible(child, node.data.depth + 1, at);
                 }
             }
-            // Refresh only the chevron of the expanded/collapsed parent row.
+            // Also refresh the visibility of the bottom divider whenever the
+            // last visible row changes as a result of expanding/collapsing.
             items.set(position, node.data);
+            refreshVisibleRow(oldLast);
+            if (!items.isEmpty()) refreshVisibleRow(items.get(items.size() - 1));
+        }
+
+        private void refreshVisibleRow(Item item) {
+            if (item == null) return;
+            for (int i = 0; i < items.size(); i++) {
+                if (items.get(i) == item) {
+                    items.set(i, item);
+                    return;
+                }
+            }
         }
 
         private int indexOf(Tree<Item> node) {
