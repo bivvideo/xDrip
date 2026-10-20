@@ -121,11 +121,22 @@ public class SourceWizard {
         addCompanion(companion, "Suswel");
         addCompanion(companion, "Glucotech");
         addCompanion(companion, "Diabeloop");
-        addCompanion(companion, gs(R.string.source_wizard_other_notifications));
-        // CareSens Air shares this broadcast route; no duplicate sensor entry.
-        root.addChild(new Item("Inter-app broadcast",
+        // Generic choices confirm the technical source name rather than the
+        // placeholder label "Other compatible app".
+        companion.addChild(new Item(gs(R.string.source_wizard_other_notifications),
+                DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder)
+                .withConfirmationName(gs(R.string.source_wizard_companion_group)));
+
+        // Show the sensor name first. Both paths reuse the SAME existing
+        // inter-app broadcast collector; no new source or preferences.
+        Tree<Item> broadcast = root.addChild(new Item("Inter-app broadcast",
                 gs(R.string.source_wizard_broadcast_examples),
-                DexCollectionType.NSEmulator, R.drawable.mm600_series));
+                R.drawable.mm600_series));
+        broadcast.addChild(new Item("CareSens Air",
+                DexCollectionType.NSEmulator, R.drawable.caresens_air_icon_image));
+        broadcast.addChild(new Item(gs(R.string.source_wizard_other_notifications),
+                DexCollectionType.NSEmulator, R.drawable.source_wizard_source_placeholder)
+                .withConfirmationName("Inter-app broadcast"));
 
         // Hardware bridges: expose all five original Wixel technical modes.
         root.addChild(new Item(gs(R.string.source_wizard_bridges_section), true));
@@ -259,7 +270,7 @@ public class SourceWizard {
             final Item item = branch.data;
             final AlertDialog.Builder builder = new AlertDialog.Builder(activity, AlertDialog.THEME_HOLO_DARK);
             builder.setTitle(R.string.are_you_sure);
-            builder.setMessage(activity.getString(R.string.set_data_source_to, item.name));
+            builder.setMessage(activity.getString(R.string.set_data_source_to, item.getConfirmationName()));
             builder.setPositiveButton(R.string.yes, (ignored, which) -> {
                 DexCollectionType.setDexCollectionType(item.getCollectionType());
                 dismissDialog();
@@ -291,6 +302,7 @@ public class SourceWizard {
         private Tree<Item> node;
         private int depth;
         private String summary;
+        private String confirmationName;
         private boolean section;
 
         Item(String name, boolean section) {
@@ -327,6 +339,15 @@ public class SourceWizard {
         Item withSummary(String subtitle) {
             this.summary = subtitle;
             return this;
+        }
+
+        Item withConfirmationName(String sourceName) {
+            this.confirmationName = sourceName;
+            return this;
+        }
+
+        public String getConfirmationName() {
+            return confirmationName != null ? confirmationName : name;
         }
 
         public void onClick(View v) {

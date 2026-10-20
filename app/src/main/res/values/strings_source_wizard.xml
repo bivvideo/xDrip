@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="source_wizard_skip">Skip</string>
-    <string name="source_wizard_dexcom_models">G6 / G7</string>
+    <string name="source_wizard_dexcom_models">G6 or G7</string>
     <string name="source_wizard_dexcom_direct_summary">Direct connection to xDrip+</string>
     <string name="source_wizard_dexcom_app_summary">Read from app notifications</string>
     <string name="source_wizard_broadcast_examples">CareSens Air and other compatible apps</string>
