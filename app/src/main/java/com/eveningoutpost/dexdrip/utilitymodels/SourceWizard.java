@@ -125,7 +125,7 @@ public class SourceWizard {
                 R.drawable.source_wizard_source_placeholder));
         other.addChild(new Item("Wifi Wixel + BT Wixel", DexCollectionType.WifiBlueToothWixel,
                 R.drawable.source_wizard_source_placeholder));
-        other.addChild(new Item("Wifi Wixel + xBridge Wixel", DexCollectionType.WifiDexbridgeWixel,
+        other.addChild(new Item("Wifi Wixel + xBridge Wixel", DexCollectionType.WifiDexBridgeWixel,
                 R.drawable.source_wizard_source_placeholder));
 
         other.addChild(new Item(gs(R.string.source_wizard_followers_section), true));
@@ -135,7 +135,7 @@ public class SourceWizard {
                 R.drawable.nsfollow_icon));
         other.addChild(new Item("Dex Share Follower", DexCollectionType.SHFollow,
                 R.drawable.nsfollow_icon));
-        other.addChild(new Item("Web Follower", DexCollectionType.WebFollower,
+        other.addChild(new Item("Web Follower", DexCollectionType.WebFollow,
                 R.drawable.source_wizard_source_placeholder));
         other.addChild(new Item("CareLink Follower", DexCollectionType.CLFollow,
                 R.drawable.source_wizard_source_placeholder));
