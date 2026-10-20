@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="source_wizard_skip">Пропустить</string>
+    <string name="source_wizard_direct">Прямое подключение</string>
+    <string name="source_wizard_direct_details">xDrip получает данные напрямую от сенсора</string>
+    <string name="source_wizard_dexcom_app">Приложение Dexcom</string>
+    <string name="source_wizard_eversense_app">Приложение Eversense</string>
+    <string name="source_wizard_notifications_details">Получение глюкозы из уведомлений приложения</string>
+    <string name="source_wizard_eversense_broadcast">Inter-app broadcast</string>
+    <string name="source_wizard_eversense_broadcast_details">Альтернативная интеграция Eversense</string>
+    <string name="source_wizard_companion_group">Companion App</string>
+    <string name="source_wizard_companion_details">Приложения, показывающие глюкозу в уведомлениях</string>
+    <string name="source_wizard_other_group">Другие источники</string>
+    <string name="source_wizard_other_details">Передача данных, другие приёмники и синхронизация</string>
+    <string name="source_wizard_libre_wifi">Libre Wi-Fi</string>
+    <string name="source_wizard_libre_bluetooth_wifi">Libre Bluetooth + Wi-Fi</string>
+    <string name="source_wizard_other_notifications">Другое совместимое приложение</string>
+    <string name="source_wizard_other_notifications_details">Получение глюкозы из его уведомлений</string>
+    <string name="source_wizard_caresens_summary">CareSens Air и совместимые интеграции</string>
+    <string name="source_wizard_wixel_section">Wixel / xBridge</string>
+    <string name="source_wizard_followers_section">Синхронизация и облачные источники</string>
+    <string name="source_wizard_other_systems_section">Другие системы и приложения</string>
 </resources>
