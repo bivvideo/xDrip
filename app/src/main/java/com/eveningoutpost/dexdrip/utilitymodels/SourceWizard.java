@@ -194,6 +194,11 @@ public class SourceWizard {
             return !isCollectionType();
         }
 
+        public String getIndentedName() {
+            // Keep hierarchy visible without changing the original source labels.
+            return depth > 0 ? "    " + name : name;
+        }
+
         public String getIndicator() {
             return isGroup() ? (expandedBranches.contains(node) ? "⌄" : "›") : "";
         }
