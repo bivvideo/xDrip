@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="source_wizard_skip">Пропустить</string>
+    <string name="source_wizard_dexcom_models">G6 / G7</string>
+    <string name="source_wizard_dexcom_direct_summary">Напрямую в xDrip+</string>
+    <string name="source_wizard_dexcom_app_summary">Получение из уведомлений</string>
+    <string name="source_wizard_broadcast_examples">CareSens Air и другие совместимые приложения</string>
     <string name="source_wizard_direct">Прямое подключение</string>
     <string name="source_wizard_direct_details">xDrip получает данные напрямую от сенсора</string>
     <string name="source_wizard_dexcom_app">Приложение Dexcom</string>
@@ -29,5 +33,5 @@
     <string name="source_wizard_title">Мастер настройки источника</string>
     <string name="source_wizard_subtitle">Выберите датчик или приложение</string>
     <string name="source_wizard_other_sensors">Другие сенсоры</string>
-    <string name="source_wizard_other_sensors_examples">Medtrum, SmartGuide, CareSens Air, Aidex</string>
+    <string name="source_wizard_other_sensors_examples">Medtrum, SmartGuide, Aidex</string>
 </resources>

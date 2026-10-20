@@ -61,12 +61,14 @@ public class SourceWizard {
         Tree<Item> dex = root.addChild(new Item("Dexcom",
                 gs(R.string.source_wizard_direct_details), R.drawable.dex_icon));
         // Preserve the original direct-connection DexcomG6 -> DexcomG5 setup path.
-        dex.addChild(new Item(gs(R.string.source_wizard_direct),
+        dex.addChild(new Item(gs(R.string.source_wizard_dexcom_models),
+                gs(R.string.source_wizard_dexcom_direct_summary),
                 DexCollectionType.DexcomG6, R.drawable.dex_icon));
         dex.addChild(new Item(gs(R.string.source_wizard_dexcom_app),
+                gs(R.string.source_wizard_dexcom_app_summary),
                 DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder));
 
-        Tree<Item> libre = root.addChild(new Item(gs(R.string.libre),
+        Tree<Item> libre = root.addChild(new Item("FreeStyle Libre",
                 gs(R.string.what_type_of_libre_bridge_device_do_you_use),
                 R.drawable.libre_icon_image));
         libre.addChild(new Item(gs(R.string.bluetooth_bridge_device_blucon_limitter_bluereader_tomato_etc),
@@ -99,9 +101,6 @@ public class SourceWizard {
                 R.drawable.a6_icon));
         otherSensors.addChild(new Item("SmartGuide", DexCollectionType.GluPro,
                 R.drawable.smartguide_jamorham));
-        // CareSens Air is a legacy NSEmulator alias, not a new collector.
-        otherSensors.addChild(new Item("CareSens Air", DexCollectionType.NSEmulator,
-                R.drawable.caresens_air_icon_image));
         otherSensors.addChild(new Item("GlucoRx/Aidex App", DexCollectionType.AidexReceiver,
                 R.drawable.source_wizard_source_placeholder));
 
@@ -123,8 +122,10 @@ public class SourceWizard {
         addCompanion(companion, "Glucotech");
         addCompanion(companion, "Diabeloop");
         addCompanion(companion, gs(R.string.source_wizard_other_notifications));
-        root.addChild(new Item("Inter-app broadcast", DexCollectionType.NSEmulator,
-                R.drawable.mm600_series));
+        // CareSens Air shares this broadcast route; no duplicate sensor entry.
+        root.addChild(new Item("Inter-app broadcast",
+                gs(R.string.source_wizard_broadcast_examples),
+                DexCollectionType.NSEmulator, R.drawable.mm600_series));
 
         // Hardware bridges: expose all five original Wixel technical modes.
         root.addChild(new Item(gs(R.string.source_wizard_bridges_section), true));
@@ -175,8 +176,10 @@ public class SourceWizard {
         if (raw instanceof ViewGroup.MarginLayoutParams) {
             final ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) raw;
             final int top = item.getPlateTopMargin();
-            if (params.topMargin != top) {
+            final int bottom = item.getPlateBottomMargin();
+            if (params.topMargin != top || params.bottomMargin != bottom) {
                 params.topMargin = top;
+                params.bottomMargin = bottom;
                 view.setLayoutParams(params);
             }
         }
@@ -229,7 +232,7 @@ public class SourceWizard {
             binding.setViewModel(listModel);
             binding.sourceWizardList.setItemAnimator(null);
             final int screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
-            binding.sourceWizardList.getLayoutParams().height = Math.round(screenHeight * 0.60f);
+            binding.sourceWizardList.getLayoutParams().height = Math.round(screenHeight * 0.62f);
 
             final Drawable background = picker.getContext().getDrawable(R.drawable.holo_background);
             if (background instanceof GradientDrawable) {
@@ -279,7 +282,7 @@ public class SourceWizard {
         }
     }
 
-    // Existing source labels and DexCollectionType mappings are intentionally unchanged.
+    // Source labels are UI-only; DexCollectionType mappings remain unchanged.
     public class Item {
         public String name;
         public int resource;
@@ -416,6 +419,11 @@ public class SourceWizard {
             final boolean followsSection = index > 0
                     && listModel.items.get(index - 1).isSection();
             return Math.round(convertDpToPixel(followsSection ? 4 : 8));
+        }
+
+        // Keep the 24dp scrollable gap attached to the last visible card.
+        public int getPlateBottomMargin() {
+            return isLastVisible() ? Math.round(convertDpToPixel(24)) : 0;
         }
 
         public int getPlateRowStartPadding() {
