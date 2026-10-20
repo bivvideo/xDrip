@@ -65,6 +65,8 @@
                 android:layout_height="40dp"
                 android:layout_marginEnd="14dp"
                 android:scaleType="fitCenter"
+                android:background="@drawable/source_wizard_icon_soft_frame"
+                android:clipToOutline="true"
                 app:src="@{item.resource}" />
 
             <LinearLayout
