@@ -4,6 +4,11 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.view.LayoutInflater;
+import android.view.Window;
+import android.view.WindowManager;
 import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableList;
 import androidx.annotation.StringRes;
@@ -100,14 +105,21 @@ public class SourceWizard {
         }
     }
 
-    // Groups expand in-place; only selecting a leaf opens the existing confirmation.
+    // Use the same Android Holo family as xDrip's Preferences screen.
+    // The legacy source selection and post-selection assistance stay unchanged.
     public void getTreeDialog(Tree<Item> branch) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity, AlertDialog.THEME_HOLO_DARK);
+        DialogTreeSelectorBinding binding = null;
 
         if (branch == null || !branch.data.isCollectionType()) {
-            final DialogTreeSelectorBinding binding = DialogTreeSelectorBinding.inflate(activity.getLayoutInflater());
+            binding = DialogTreeSelectorBinding.inflate(LayoutInflater.from(builder.getContext()));
             listModel = new ViewModel();
             binding.setViewModel(listModel);
+            // An expanded group must not fade out all other rows.
+            binding.sourceWizardList.setItemAnimator(null);
+            final int screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
+            // Keep title and Skip fixed, while the list uses most available screen height.
+            binding.sourceWizardList.getLayoutParams().height = Math.round(screenHeight * 0.60f);
             builder.setTitle(root.data.name);
             builder.setMessage(root.data.description);
             builder.setView(binding.getRoot());
@@ -135,6 +147,19 @@ public class SourceWizard {
         dialog = builder.create();
         try {
             dialog.show();
+            if (binding != null) {
+                final Window window = dialog.getWindow();
+                if (window != null) {
+                    // Reuse xDrip's own Holo gradient instead of defining another palette.
+                    final Drawable background = builder.getContext().getDrawable(R.drawable.holo_background);
+                    if (background instanceof GradientDrawable) {
+                        ((GradientDrawable) background.mutate()).setCornerRadius(convertDpToPixel(6));
+                    }
+                    window.setBackgroundDrawable(background);
+                    final int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
+                    window.setLayout(screenWidth - Math.round(convertDpToPixel(12)), WindowManager.LayoutParams.WRAP_CONTENT);
+                }
+            }
         } catch (Exception e) {
             UserError.Log.e(TAG, "Exception when trying to show source wizard: " + e);
         }
@@ -180,23 +205,37 @@ public class SourceWizard {
             if (node == null) return;
             if (isCollectionType()) {
                 getTreeDialog(node);
-            } else {
-                if (!expandedBranches.add(node)) expandedBranches.remove(node);
-                if (listModel != null) listModel.rebuild();
+            } else if (listModel != null) {
+                listModel.toggle(node);
             }
         }
 
         public int getRowInset() {
-            return Math.round(convertDpToPixel(depth * 16));
+            return Math.round(convertDpToPixel(depth > 0 ? 10 : 0));
+        }
+
+        public Drawable getRowBackground() {
+            return activity.getDrawable(depth > 0
+                    ? R.drawable.source_wizard_nested_background
+                    : android.R.color.transparent);
+        }
+
+        public String getDisplayTitle() {
+            final int colon = depth > 0 ? name.indexOf(':') : -1;
+            return colon > 0 ? name.substring(0, colon).trim() : name;
+        }
+
+        public String getDisplaySummary() {
+            final int colon = depth > 0 ? name.indexOf(':') : -1;
+            return colon > 0 ? name.substring(colon + 1).trim() : "";
+        }
+
+        public boolean isSummaryVisible() {
+            return !getDisplaySummary().isEmpty();
         }
 
         public boolean isGroup() {
             return !isCollectionType();
-        }
-
-        public String getIndentedName() {
-            // Keep hierarchy visible without changing the original source labels.
-            return depth > 0 ? "    " + name : name;
         }
 
         public String getIndicator() {
@@ -220,19 +259,49 @@ public class SourceWizard {
             rebuild();
         }
 
-        void rebuild() {
+        private void rebuild() {
             items.clear();
-            for (Tree<Item> child : root.getChildren()) appendVisible(child, 0);
+            for (Tree<Item> child : root.getChildren()) insertVisible(child, 0, items.size());
         }
 
-        private void appendVisible(Tree<Item> node, int depth) {
-            Item item = node.data;
-            item.node = node; // Stable identity; do not look up by possibly duplicated label.
-            item.depth = depth;
-            items.add(item);
-            if (item.isGroup() && expandedBranches.contains(node)) {
-                for (Tree<Item> child : node.getChildren()) appendVisible(child, depth + 1);
+        // Insert or remove only the children of the tapped group (no full-list redraw).
+        void toggle(Tree<Item> node) {
+            final int position = indexOf(node);
+            if (position < 0) return;
+            if (expandedBranches.remove(node)) {
+                final int depth = node.data.depth;
+                while (position + 1 < items.size() && items.get(position + 1).depth > depth) {
+                    items.remove(position + 1);
+                }
+            } else {
+                expandedBranches.add(node);
+                int at = position + 1;
+                for (Tree<Item> child : node.getChildren()) {
+                    at = insertVisible(child, node.data.depth + 1, at);
+                }
             }
+            // Refresh only the chevron of the expanded/collapsed parent row.
+            items.set(position, node.data);
+        }
+
+        private int indexOf(Tree<Item> node) {
+            for (int i = 0; i < items.size(); i++) {
+                if (items.get(i).node == node) return i;
+            }
+            return -1;
+        }
+
+        private int insertVisible(Tree<Item> node, int depth, int index) {
+            final Item item = node.data;
+            item.node = node;
+            item.depth = depth;
+            items.add(index++, item);
+            if (item.isGroup() && expandedBranches.contains(node)) {
+                for (Tree<Item> child : node.getChildren()) {
+                    index = insertVisible(child, depth + 1, index);
+                }
+            }
+            return index;
         }
     }
 
