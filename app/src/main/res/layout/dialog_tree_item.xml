@@ -45,9 +45,8 @@
                  It separates the expanded parent from its children. -->
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginStart="66dp"
-                android:layout_marginEnd="12dp"
+                android:layout_height="0.7dp"
+
                 android:background="@color/source_wizard_row_divider"
                 android:visibility="@{item.firstNested ? View.VISIBLE : View.GONE}" />
 
@@ -55,7 +54,7 @@
                  (22 + 40 + 14dp) and read as subtle 0.5dp hairlines. -->
             <View
                 android:layout_width="match_parent"
-                android:layout_height="0.5dp"
+                android:layout_height="0.7dp"
                 android:layout_marginStart="76dp"
                 android:layout_marginEnd="12dp"
                 android:background="@color/source_wizard_nested_divider"
