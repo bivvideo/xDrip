@@ -47,25 +47,23 @@ public class SourceWizard {
     // Expansion belongs to this wizard instance, so it survives the confirmation dialog.
     private final HashSet<Tree<Item>> expandedBranches = new HashSet<>();
     private ViewModel listModel;
-    // Initial UI catalog. Only existing DexCollectionType values are used.
-    // The setup/permissions flows are deliberately unchanged in this iteration.
-    // The original Dex shortcut stays DexcomG6, a pseudo-type that prepares G6
-    // settings and then uses the existing DexcomG5 collection route.
+    // Navigation is organized by user intent, not by internal collector names.
+    // Display-only changes: each leaf still uses an existing DexCollectionType.
     private Tree<Item> root = new Tree<>(new Item(
             gs(R.string.choose_data_source), gs(R.string.which_system_do_you_use)));
 
     {
-        // 1. Dex: one recognizable product, two existing acquisition paths.
+        // Sensors and systems: users find their device before the connection method.
+        root.addChild(new Item(gs(R.string.source_wizard_sensors_section), true));
+
         Tree<Item> dex = root.addChild(new Item("Dex",
                 gs(R.string.source_wizard_direct_details), R.drawable.dex_icon));
+        // Preserve the original direct-connection DexcomG6 -> DexcomG5 setup path.
         dex.addChild(new Item(gs(R.string.source_wizard_direct),
-                gs(R.string.source_wizard_direct_details),
                 DexCollectionType.DexcomG6, R.drawable.dex_icon));
         dex.addChild(new Item(gs(R.string.source_wizard_dexcom_app),
-                gs(R.string.source_wizard_notifications_details),
                 DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder));
 
-        // 2. Libre: five technical modes already listed in Hardware Data Source.
         Tree<Item> libre = root.addChild(new Item(gs(R.string.libre),
                 gs(R.string.what_type_of_libre_bridge_device_do_you_use),
                 R.drawable.libre_icon_image));
@@ -80,24 +78,32 @@ public class SourceWizard {
         libre.addChild(new Item(gs(R.string.libre_patched),
                 DexCollectionType.LibreReceiver, R.drawable.libre_icon_image));
 
-        // 3. Eversense: app notifications and a separate legacy broadcast path.
-        // Neither route is claimed to work with every regional app/version.
         Tree<Item> eversense = root.addChild(new Item("Eversense",
                 gs(R.string.source_wizard_notifications_details),
                 R.drawable.wikimedia_eversense_icon_pbroks13));
         eversense.addChild(new Item(gs(R.string.source_wizard_eversense_app),
-                gs(R.string.source_wizard_notifications_details),
                 DexCollectionType.UiBased, R.drawable.wikimedia_eversense_icon_pbroks13));
         eversense.addChild(new Item(gs(R.string.source_wizard_eversense_broadcast),
-                gs(R.string.source_wizard_eversense_broadcast_details),
                 DexCollectionType.NSEmulator, R.drawable.mm600_series));
 
-        // 4. Companion App: remaining recognized notification-producing apps.
-        // Dexcom and Eversense names live in their own top-level groups.
+        // These devices deserve visible entries, not a hidden "Other" category.
+        root.addChild(new Item("Medtrum A6 / S7", DexCollectionType.Medtrum,
+                R.drawable.a6_icon));
+        root.addChild(new Item("SmartGuide", DexCollectionType.GluPro,
+                R.drawable.smartguide_jamorham));
+        // CareSens Air is a legacy NSEmulator alias, not a new collector.
+        root.addChild(new Item("CareSens Air", DexCollectionType.NSEmulator,
+                R.drawable.caresens_air_icon_image));
+        root.addChild(new Item("GlucoRx/Aidex App", DexCollectionType.AidexReceiver,
+                R.drawable.source_wizard_source_placeholder));
+
+        // App-based paths; branded Dexcom/Eversense shortcuts live above.
+        root.addChild(new Item(gs(R.string.source_wizard_apps_section), true));
         Tree<Item> companion = root.addChild(new Item(
                 gs(R.string.source_wizard_companion_group),
                 gs(R.string.source_wizard_companion_details),
-                R.drawable.source_wizard_source_placeholder));
+                R.drawable.source_wizard_source_placeholder)
+                .withSummary(gs(R.string.source_wizard_companion_examples)));
         addCompanion(companion, "iCan Health");
         addCompanion(companion, "Ottai");
         addCompanion(companion, "CamAPS FX");
@@ -109,55 +115,47 @@ public class SourceWizard {
         addCompanion(companion, "Glucotech");
         addCompanion(companion, "Diabeloop");
         addCompanion(companion, gs(R.string.source_wizard_other_notifications));
+        root.addChild(new Item("Inter-app broadcast", DexCollectionType.NSEmulator,
+                R.drawable.mm600_series));
 
-        // 5. Other sources: simple non-clickable section headings, not extra menus.
-        Tree<Item> other = root.addChild(new Item(
-                gs(R.string.source_wizard_other_group),
-                gs(R.string.source_wizard_other_details),
-                R.drawable.wikimedia_question_mark));
-
-        other.addChild(new Item(gs(R.string.source_wizard_wixel_section), true));
-        other.addChild(new Item("Bluetooth Wixel", DexCollectionType.BluetoothWixel,
+        // Hardware bridges: expose all five original Wixel technical modes.
+        root.addChild(new Item(gs(R.string.source_wizard_bridges_section), true));
+        Tree<Item> bridges = root.addChild(new Item(gs(R.string.source_wizard_wixel_section),
+                gs(R.string.source_wizard_wixel_section),
                 R.drawable.source_wizard_source_placeholder));
-        other.addChild(new Item("xBridge Wixel", DexCollectionType.DexbridgeWixel,
+        bridges.addChild(new Item("Bluetooth Wixel", DexCollectionType.BluetoothWixel,
                 R.drawable.source_wizard_source_placeholder));
-        other.addChild(new Item("Wifi Wixel", DexCollectionType.WifiWixel,
+        bridges.addChild(new Item("xBridge Wixel", DexCollectionType.DexbridgeWixel,
                 R.drawable.source_wizard_source_placeholder));
-        other.addChild(new Item("Wifi Wixel + BT Wixel", DexCollectionType.WifiBlueToothWixel,
+        bridges.addChild(new Item("Wifi Wixel", DexCollectionType.WifiWixel,
                 R.drawable.source_wizard_source_placeholder));
-        other.addChild(new Item("Wifi Wixel + xBridge Wixel", DexCollectionType.WifiDexBridgeWixel,
+        bridges.addChild(new Item("Wifi Wixel + BT Wixel", DexCollectionType.WifiBlueToothWixel,
+                R.drawable.source_wizard_source_placeholder));
+        bridges.addChild(new Item("Wifi Wixel + xBridge Wixel", DexCollectionType.WifiDexBridgeWixel,
                 R.drawable.source_wizard_source_placeholder));
 
-        other.addChild(new Item(gs(R.string.source_wizard_followers_section), true));
-        other.addChild(new Item("xDrip+ Sync Follower", DexCollectionType.Follower,
+        // Follower and synchronization services, distinct from direct sensors.
+        root.addChild(new Item(gs(R.string.source_wizard_sync_section), true));
+        Tree<Item> followers = root.addChild(new Item(gs(R.string.source_wizard_followers_group),
+                gs(R.string.source_wizard_followers_section),
                 R.drawable.x_sync_follow_icon));
-        other.addChild(new Item("Nightscout Follower", DexCollectionType.NSFollow,
+        followers.addChild(new Item("xDrip+ Sync Follower", DexCollectionType.Follower,
+                R.drawable.x_sync_follow_icon));
+        followers.addChild(new Item("Nightscout Follower", DexCollectionType.NSFollow,
                 R.drawable.nsfollow_icon));
-        other.addChild(new Item("Dex Share Follower", DexCollectionType.SHFollow,
+        followers.addChild(new Item("Dex Share Follower", DexCollectionType.SHFollow,
                 R.drawable.nsfollow_icon));
-        other.addChild(new Item("Web Follower", DexCollectionType.WebFollow,
+        followers.addChild(new Item("Web Follower", DexCollectionType.WebFollow,
                 R.drawable.source_wizard_source_placeholder));
-        other.addChild(new Item("CareLink Follower", DexCollectionType.CLFollow,
-                R.drawable.source_wizard_source_placeholder));
-
-        other.addChild(new Item(gs(R.string.source_wizard_other_systems_section), true));
-        // CareSens Air was an NSEmulator alias in the old wizard, not a new mode.
-        other.addChild(new Item("Inter-app broadcast",
-                gs(R.string.source_wizard_caresens_summary),
-                DexCollectionType.NSEmulator, R.drawable.mm600_series));
-        other.addChild(new Item("Medtrum A6 / S7", DexCollectionType.Medtrum,
-                R.drawable.a6_icon));
-        other.addChild(new Item("SmartGuide", DexCollectionType.GluPro,
-                R.drawable.smartguide_jamorham));
-        other.addChild(new Item("GlucoRx/Aidex App", DexCollectionType.AidexReceiver,
+        followers.addChild(new Item("CareLink Follower", DexCollectionType.CLFollow,
                 R.drawable.source_wizard_source_placeholder));
     }
 
     private void addCompanion(Tree<Item> parent, String label) {
-        parent.addChild(new Item(label, gs(R.string.source_wizard_notifications_details),
-                DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder));
+        // Individual app labels are navigation aliases for the same UiBased mode.
+        parent.addChild(new Item(label, DexCollectionType.UiBased,
+                R.drawable.source_wizard_source_placeholder));
     }
-
 
     public SourceWizard(Activity activity) {
         this.activity = activity;
@@ -297,6 +295,11 @@ public class SourceWizard {
             this.summary = summary;
         }
 
+        Item withSummary(String subtitle) {
+            this.summary = subtitle;
+            return this;
+        }
+
         public void onClick(View v) {
             if (node == null || section) return;
             if (isCollectionType()) {
@@ -334,6 +337,10 @@ public class SourceWizard {
 
         public boolean isSection() {
             return section;
+        }
+
+        public boolean isFirstSection() {
+            return section && node != null && node == root.getChildren().get(0);
         }
 
         public boolean isGroup() {
