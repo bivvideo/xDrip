@@ -63,7 +63,7 @@ public class SourceWizard {
         // Preserve the original direct-connection DexcomG6 -> DexcomG5 setup path.
         dex.addChild(new Item(gs(R.string.source_wizard_dexcom_models),
                 gs(R.string.source_wizard_dexcom_direct_summary),
-                DexCollectionType.DexcomG6, R.drawable.dex_icon)
+                DexCollectionType.DexcomG6, R.drawable.source_wizard_dexcom_g6_trial)
                 .withDeviceIcon().withConfirmationName("Dexcom"));
         dex.addChild(new Item(gs(R.string.source_wizard_dexcom_app),
                 gs(R.string.source_wizard_dexcom_app_summary),
