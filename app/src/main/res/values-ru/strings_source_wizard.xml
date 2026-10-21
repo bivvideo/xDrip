@@ -17,8 +17,8 @@
     <string name="source_wizard_companion_details">Приложения, показывающие глюкозу в уведомлениях</string>
     <string name="source_wizard_other_group">Другие источники</string>
     <string name="source_wizard_other_details">Передача данных, другие приёмники и синхронизация</string>
-    <string name="source_wizard_libre_one_bridge">Libre 1\nЧерез Bluetooth-мост</string>
-    <string name="source_wizard_libre_one_bridge_summary">BluCon, Bubble, LimiTTer, blueReader · [Libre Bluetooth]</string>
+    <string name="source_wizard_libre_one_bridge">Libre 1\nЧерез Bluetooth-мост: BluCon, Bubble, LimiTTer, blueReader</string>
+    <string name="source_wizard_libre_one_bridge_summary">[Libre Bluetooth]</string>
     <string name="source_wizard_libre_one_alarm">Libre 1\nЧерез Sony SmartWatch 3 (NFC) и LibreAlarm</string>
     <string name="source_wizard_libre_one_alarm_summary">[LibreAlarm]</string>
     <string name="source_wizard_libre_two_direct">Libre 2\nНапрямую по Bluetooth</string>

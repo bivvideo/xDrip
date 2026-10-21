@@ -17,8 +17,8 @@
     <string name="source_wizard_companion_details">Compatible apps that show glucose notifications</string>
     <string name="source_wizard_other_group">Other sources</string>
     <string name="source_wizard_other_details">Broadcast, receivers and follower services</string>
-    <string name="source_wizard_libre_one_bridge">Libre 1\nVia Bluetooth bridge</string>
-    <string name="source_wizard_libre_one_bridge_summary">BluCon, Bubble, LimiTTer, blueReader · [Libre Bluetooth]</string>
+    <string name="source_wizard_libre_one_bridge">Libre 1\nVia Bluetooth bridge: BluCon, Bubble, LimiTTer, blueReader</string>
+    <string name="source_wizard_libre_one_bridge_summary">[Libre Bluetooth]</string>
     <string name="source_wizard_libre_one_alarm">Libre 1\nVia Sony SmartWatch 3 (NFC) and LibreAlarm</string>
     <string name="source_wizard_libre_one_alarm_summary">[LibreAlarm]</string>
     <string name="source_wizard_libre_two_direct">Libre 2\nDirect Bluetooth</string>
