@@ -64,7 +64,7 @@ public class SourceWizard {
         dex.addChild(new Item(gs(R.string.source_wizard_dexcom_models),
                 gs(R.string.source_wizard_dexcom_direct_summary),
                 DexCollectionType.DexcomG6, R.drawable.dex_icon)
-                .withConfirmationName("Dexcom"));
+                .withDeviceIcon().withConfirmationName("Dexcom"));
         dex.addChild(new Item(gs(R.string.source_wizard_dexcom_app),
                 gs(R.string.source_wizard_dexcom_app_summary),
                 DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder));
@@ -79,19 +79,23 @@ public class SourceWizard {
                 DexCollectionType.LimiTTer, R.drawable.bluereader_icon));
         libre.addChild(new Item(gs(R.string.source_wizard_libre_one_alarm),
                 gs(R.string.source_wizard_libre_one_alarm_summary),
-                DexCollectionType.LibreAlarm, R.drawable.ic_watch_grey600_48dp));
+                DexCollectionType.LibreAlarm, R.drawable.ic_watch_grey600_48dp)
+                .withDeviceIcon());
         libre.addChild(new Item(gs(R.string.source_wizard_libre_two_direct),
                 gs(R.string.source_wizard_libre_two_direct_summary),
-                DexCollectionType.LimiTTer, R.drawable.libre_icon_image));
+                DexCollectionType.LimiTTer, R.drawable.libre_icon_image)
+                .withDeviceIcon());
         libre.addChild(new Item(gs(R.string.source_wizard_libre_juggluco),
                 gs(R.string.source_wizard_libre_juggluco_summary),
-                DexCollectionType.NSEmulator, R.drawable.libre_icon_image));
+                DexCollectionType.NSEmulator, R.drawable.libre_icon_image)
+                .withDeviceIcon());
 
         // Optional methods: Libre 1 and 2 share the same network/combined
         // collector types. Keep a single visible choice for each method.
         Tree<Item> libreMore = libre.addChild(new Item(
                 gs(R.string.source_wizard_libre_more),
-                (String) null, R.drawable.source_wizard_source_placeholder));
+                (String) null, R.drawable.source_wizard_source_placeholder)
+                .withAuxiliaryTitle());
         libreMore.addChild(new Item(gs(R.string.source_wizard_libre_network),
                 gs(R.string.source_wizard_libre_network_summary),
                 DexCollectionType.LibreWifi, R.drawable.source_wizard_source_placeholder));
@@ -100,7 +104,8 @@ public class SourceWizard {
                 DexCollectionType.LimiTTerWifi, R.drawable.source_wizard_source_placeholder));
         libreMore.addChild(new Item(gs(R.string.source_wizard_libre_juggluco_legacy),
                 gs(R.string.source_wizard_libre_juggluco_legacy_summary),
-                DexCollectionType.LibreReceiver, R.drawable.libre_icon_image));
+                DexCollectionType.LibreReceiver, R.drawable.libre_icon_image)
+                .withDeviceIcon());
 
         // One recognizable manufacturer group covers two established app routes.
         // Legacy GlucoRx AiDEX uses its dedicated broadcast receiver; newer
@@ -119,6 +124,7 @@ public class SourceWizard {
         microtech.addChild(new Item(gs(R.string.source_wizard_microtech_other),
                 gs(R.string.source_wizard_microtech_other_summary),
                 DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder)
+                .withAuxiliaryTitle()
                 .withConfirmationName(gs(R.string.source_wizard_companion_group)));
 
         // Less prominent sensor systems remain in the wizard, one tap deeper.
@@ -130,10 +136,12 @@ public class SourceWizard {
                 .withSummary(gs(R.string.source_wizard_other_sensors_examples)));
         otherSensors.addChild(new Item(gs(R.string.source_wizard_medtrum_a6),
                 gs(R.string.source_wizard_medtrum_a6_summary),
-                DexCollectionType.Medtrum, R.drawable.a6_icon));
+                DexCollectionType.Medtrum, R.drawable.a6_icon)
+                .withDeviceIcon());
         otherSensors.addChild(new Item(gs(R.string.source_wizard_smartguide),
                 gs(R.string.source_wizard_smartguide_summary),
-                DexCollectionType.GluPro, R.drawable.smartguide_jamorham));
+                DexCollectionType.GluPro, R.drawable.smartguide_jamorham)
+                .withDeviceIcon());
 
         // App-based paths: Eversense follows the existing general app groups.
         root.addChild(new Item(gs(R.string.source_wizard_apps_section), true));
@@ -156,6 +164,7 @@ public class SourceWizard {
         // placeholder label "Other compatible app".
         companion.addChild(new Item(gs(R.string.source_wizard_other_notifications),
                 DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder)
+                .withAuxiliaryTitle()
                 .withConfirmationName(gs(R.string.source_wizard_companion_group)));
 
         // Show the sensor name first. Both paths reuse the SAME existing
@@ -164,9 +173,11 @@ public class SourceWizard {
                 gs(R.string.source_wizard_broadcast_examples),
                 R.drawable.mm600_series));
         broadcast.addChild(new Item("CareSens Air",
-                DexCollectionType.NSEmulator, R.drawable.caresens_air_icon_image));
+                DexCollectionType.NSEmulator, R.drawable.caresens_air_icon_image)
+                .withDeviceIcon());
         broadcast.addChild(new Item(gs(R.string.source_wizard_other_notifications),
                 DexCollectionType.NSEmulator, R.drawable.source_wizard_source_placeholder)
+                .withAuxiliaryTitle()
                 .withConfirmationName("Inter-app broadcast"));
 
         // Eversense uses two existing app-based collection routes. The
@@ -175,7 +186,8 @@ public class SourceWizard {
                 (String) null, R.drawable.wikimedia_eversense_icon_pbroks13));
         eversense.addChild(new Item(gs(R.string.source_wizard_eversense_app),
                 gs(R.string.source_wizard_eversense_app_summary),
-                DexCollectionType.UiBased, R.drawable.wikimedia_eversense_icon_pbroks13));
+                DexCollectionType.UiBased, R.drawable.wikimedia_eversense_icon_pbroks13)
+                .withDeviceIcon());
         eversense.addChild(new Item(gs(R.string.source_wizard_eversense_esel),
                 gs(R.string.source_wizard_eversense_esel_summary),
                 DexCollectionType.NSEmulator, R.drawable.mm600_series));
@@ -217,6 +229,19 @@ public class SourceWizard {
         // Individual app labels are navigation aliases for the same UiBased mode.
         parent.addChild(new Item(label, DexCollectionType.UiBased,
                 R.drawable.source_wizard_source_placeholder));
+    }
+
+    // Rows without icons need dividers to start at their text, not an empty icon slot.
+    @BindingAdapter("sourceWizardDividerInset")
+    public static void bindSourceWizardDividerInset(View view, int startInset) {
+        final ViewGroup.LayoutParams raw = view.getLayoutParams();
+        if (raw instanceof ViewGroup.MarginLayoutParams) {
+            final ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) raw;
+            if (params.getMarginStart() != startInset) {
+                params.setMarginStart(startInset);
+                view.setLayoutParams(params);
+            }
+        }
     }
 
     // Data Binding has no built-in setter for layout_margin* attributes.
@@ -346,6 +371,8 @@ public class SourceWizard {
         private String summary;
         private String confirmationName;
         private boolean section;
+        private boolean deviceIcon;
+        private boolean auxiliaryTitle;
 
         Item(String name, boolean section) {
             this(name, (String) null, 0);
@@ -381,6 +408,31 @@ public class SourceWizard {
         Item withSummary(String subtitle) {
             this.summary = subtitle;
             return this;
+        }
+
+        Item withDeviceIcon() {
+            deviceIcon = true;
+            return this;
+        }
+
+        Item withAuxiliaryTitle() {
+            auxiliaryTitle = true;
+            return this;
+        }
+
+        public boolean isIconVisible() {
+            // Only current recognizable physical-device images survive.
+            // Group icons, generic placeholders, followers and unrelated
+            // pump photos are hidden until the bespoke icons are designed.
+            return !section && !isGroup() && deviceIcon && resource != 0;
+        }
+
+        public boolean isAuxiliaryTitle() {
+            return auxiliaryTitle;
+        }
+
+        public int getNestedDividerInset() {
+            return Math.round(convertDpToPixel(isIconVisible() ? 76 : 22));
         }
 
         Item withConfirmationName(String sourceName) {

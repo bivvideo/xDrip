@@ -22,7 +22,7 @@
     <string name="source_wizard_libre_one_alarm">Libre 1\nVia Sony SmartWatch 3 (NFC) and LibreAlarm</string>
     <string name="source_wizard_libre_one_alarm_summary">[LibreAlarm]</string>
     <string name="source_wizard_libre_two_direct">Libre 2\nDirect Bluetooth</string>
-    <string name="source_wizard_libre_two_direct_summary">NFC activation, OOP2 · [Libre Bluetooth]</string>
+    <string name="source_wizard_libre_two_direct_summary">[Libre Bluetooth]</string>
     <string name="source_wizard_libre_juggluco">Libre 2, 2+, 3 and 3+\n→ Juggluco</string>
     <string name="source_wizard_libre_juggluco_summary">[Inter-app broadcast]</string>
     <string name="source_wizard_libre_network">Libre 1 and 2\nVia network receiver</string>
@@ -53,9 +53,9 @@
     <string name="source_wizard_microtech_glucorx">GlucoRx AiDEX\n→ AiDEX App</string>
     <string name="source_wizard_microtech_glucorx_summary">[GlucoRx/Aidex App]</string>
     <string name="source_wizard_microtech_linx">AiDEX X / LinX\n→ LinX App</string>
-    <string name="source_wizard_microtech_linx_summary">[Companion App]</string>
-    <string name="source_wizard_microtech_other">Other compatible MicroTech app\nFrom notifications</string>
-    <string name="source_wizard_microtech_other_summary">[Companion App]</string>
+    <string name="source_wizard_microtech_linx_summary">From notifications · [Companion App]</string>
+    <string name="source_wizard_microtech_other">Other compatible app</string>
+    <string name="source_wizard_microtech_other_summary">From notifications · [Companion App]</string>
     <string name="source_wizard_medtrum_a6">Medtrum A6\nDirect Bluetooth</string>
     <string name="source_wizard_medtrum_a6_summary">[Medtrum A6]</string>
     <string name="source_wizard_smartguide">Accu-Chek SmartGuide\nDirect Bluetooth</string>

@@ -72,13 +72,13 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="64dp"
+                android:minHeight="52dp"
                 android:gravity="end|center_vertical"
                 android:paddingStart="20dp"
                 android:paddingEnd="22dp"
                 android:text="@string/source_wizard_skip"
                 android:textAllCaps="true"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:textColor="?android:attr/textColorPrimary"
                 android:background="?android:attr/selectableItemBackground"
                 android:onClick="@{viewModel::skip}" />

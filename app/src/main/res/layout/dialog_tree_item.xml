@@ -56,6 +56,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0.7dp"
                 android:layout_marginStart="76dp"
+                app:sourceWizardDividerInset="@{item.nestedDividerInset}"
                 android:layout_marginEnd="12dp"
                 android:background="@color/source_wizard_nested_divider"
                 android:visibility="@{item.innerNested ? View.VISIBLE : View.GONE}" />
@@ -85,7 +86,8 @@
                 android:scaleType="fitCenter"
                 android:background="@drawable/source_wizard_icon_soft_frame"
                 android:clipToOutline="true"
-                app:src="@{item.resource}" />
+                app:src="@{item.resource}"
+                android:visibility="@{item.iconVisible ? View.VISIBLE : View.GONE}" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -100,14 +102,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@{item.displayTitle}"
-                    android:visibility="@{item.group ? View.VISIBLE : View.GONE}" />
+                    android:visibility="@{item.group &amp;&amp; !item.auxiliaryTitle ? View.VISIBLE : View.GONE}" />
 
                 <TextView
                     style="@style/SourceWizardSensorTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@{item.displayTitle}"
-                    android:visibility="@{item.group ? View.GONE : View.VISIBLE}" />
+                    android:visibility="@{!item.group &amp;&amp; !item.auxiliaryTitle ? View.VISIBLE : View.GONE}" />
+
+                <!-- Auxiliary actions stay clickable but use the same quiet Route typography. -->
+                <TextView
+                    style="@style/SourceWizardRoute"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{item.displayTitle}"
+                    android:visibility="@{item.auxiliaryTitle ? View.VISIBLE : View.GONE}" />
 
                 <TextView
                     style="@style/SourceWizardRoute"
