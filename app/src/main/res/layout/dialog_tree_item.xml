@@ -79,6 +79,9 @@
                 android:foreground="?android:attr/selectableItemBackground"
                 android:onClick="@{item::onClick}">
 
+            <!-- Every ordinary leaf reserves the same 40dp icon column.
+                 Existing device pictures take priority; otherwise use the
+                 original half-filled xDrip launcher droplet, greyed out. -->
             <ImageView
                 android:layout_width="40dp"
                 android:layout_height="40dp"
@@ -87,7 +90,18 @@
                 android:background="@drawable/source_wizard_icon_soft_frame"
                 android:clipToOutline="true"
                 app:src="@{item.resource}"
-                android:visibility="@{item.iconVisible ? View.VISIBLE : View.GONE}" />
+                android:visibility="@{item.deviceIconVisible ? View.VISIBLE : View.GONE}" />
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="14dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_launcher"
+                android:tint="?android:attr/textColorSecondary"
+                android:alpha="0.42"
+                android:importantForAccessibility="no"
+                android:visibility="@{item.placeholderIconVisible ? View.VISIBLE : View.GONE}" />
 
             <LinearLayout
                 android:layout_width="0dp"

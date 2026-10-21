@@ -421,10 +421,17 @@ public class SourceWizard {
         }
 
         public boolean isIconVisible() {
-            // Only current recognizable physical-device images survive.
-            // Group icons, generic placeholders, followers and unrelated
-            // pump photos are hidden until the bespoke icons are designed.
-            return !section && !isGroup() && deviceIcon && resource != 0;
+            // All ordinary leaves share the same icon column. Parents and
+            // auxiliary navigation rows remain icon-free on purpose.
+            return !section && !isGroup() && !auxiliaryTitle;
+        }
+
+        public boolean isDeviceIconVisible() {
+            return isIconVisible() && deviceIcon && resource != 0;
+        }
+
+        public boolean isPlaceholderIconVisible() {
+            return isIconVisible() && !isDeviceIconVisible();
         }
 
         public boolean isAuxiliaryTitle() {
