@@ -69,18 +69,46 @@ public class SourceWizard {
                 gs(R.string.source_wizard_dexcom_app_summary),
                 DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder));
 
+        // Device-first Libre choices. Several human-readable routes intentionally
+        // share collectors; the actual acquisition implementations are untouched.
         Tree<Item> libre = root.addChild(new Item("FreeStyle Libre",
-                gs(R.string.what_type_of_libre_bridge_device_do_you_use),
-                R.drawable.libre_icon_image));
-        libre.addChild(new Item(gs(R.string.bluetooth_bridge_device_blucon_limitter_bluereader_tomato_etc),
+                gs(R.string.source_wizard_libre_group_summary),
+                R.drawable.libre_icon_image)
+                .withSummary(gs(R.string.source_wizard_libre_group_summary)));
+        libre.addChild(new Item(gs(R.string.source_wizard_libre_one_bridge),
+                gs(R.string.source_wizard_libre_one_bridge_summary),
                 DexCollectionType.LimiTTer, R.drawable.bluereader_icon));
-        libre.addChild(new Item(gs(R.string.source_wizard_libre_bluetooth_wifi),
-                DexCollectionType.LimiTTerWifi, R.drawable.source_wizard_source_placeholder));
-        libre.addChild(new Item(gs(R.string.source_wizard_libre_wifi),
+        libre.addChild(new Item(gs(R.string.source_wizard_libre_one_network),
+                gs(R.string.source_wizard_libre_one_network_summary),
                 DexCollectionType.LibreWifi, R.drawable.source_wizard_source_placeholder));
-        libre.addChild(new Item(gs(R.string.librealarm_app_using_sony_smartwatch),
+        libre.addChild(new Item(gs(R.string.source_wizard_libre_one_alarm),
+                gs(R.string.source_wizard_libre_one_alarm_summary),
                 DexCollectionType.LibreAlarm, R.drawable.ic_watch_grey600_48dp));
-        libre.addChild(new Item(gs(R.string.libre_patched),
+        libre.addChild(new Item(gs(R.string.source_wizard_libre_two_direct),
+                gs(R.string.source_wizard_libre_two_direct_summary),
+                DexCollectionType.LimiTTer, R.drawable.libre_icon_image));
+        libre.addChild(new Item(gs(R.string.source_wizard_libre_juggluco),
+                gs(R.string.source_wizard_libre_juggluco_summary),
+                DexCollectionType.NSEmulator, R.drawable.libre_icon_image));
+
+        // Optional methods stay accessible in a nested spoiler; do not bury
+        // the primary model-based choices under protocol names.
+        Tree<Item> libreMore = libre.addChild(new Item(
+                gs(R.string.source_wizard_libre_more),
+                gs(R.string.source_wizard_libre_more_summary),
+                R.drawable.source_wizard_source_placeholder)
+                .withSummary(gs(R.string.source_wizard_libre_more_summary)));
+        libreMore.addChild(new Item(gs(R.string.source_wizard_libre_one_combined),
+                gs(R.string.source_wizard_libre_combined_summary),
+                DexCollectionType.LimiTTerWifi, R.drawable.source_wizard_source_placeholder));
+        libreMore.addChild(new Item(gs(R.string.source_wizard_libre_two_network),
+                gs(R.string.source_wizard_libre_two_network_summary),
+                DexCollectionType.LibreWifi, R.drawable.source_wizard_source_placeholder));
+        libreMore.addChild(new Item(gs(R.string.source_wizard_libre_two_combined),
+                gs(R.string.source_wizard_libre_combined_summary),
+                DexCollectionType.LimiTTerWifi, R.drawable.source_wizard_source_placeholder));
+        libreMore.addChild(new Item(gs(R.string.source_wizard_libre_juggluco_legacy),
+                gs(R.string.source_wizard_libre_juggluco_legacy_summary),
                 DexCollectionType.LibreReceiver, R.drawable.libre_icon_image));
 
         Tree<Item> eversense = root.addChild(new Item("Eversense",
@@ -526,14 +554,19 @@ public class SourceWizard {
             if (position < 0) return;
             final Item oldLast = items.isEmpty() ? null : items.get(items.size() - 1);
             if (expandedBranches.remove(node)) {
+                // Forget nested spoilers too, so reopening a parent starts clean.
+                for (Tree<Item> open : new HashSet<>(expandedBranches)) {
+                    if (isAncestor(node, open)) expandedBranches.remove(open);
+                }
                 final int depth = node.data.depth;
                 while (position + 1 < items.size() && items.get(position + 1).depth > depth) {
                     items.remove(position + 1);
                 }
             } else {
-                // Keep only one group open. Remove the previous group's children
-                // in place instead of rebuilding the entire scrolling list.
+                // Only one active branch at each level, but keep ancestors open.
+                // Otherwise tapping Libre > Additional would close Libre itself.
                 for (Tree<Item> open : new HashSet<>(expandedBranches)) {
+                    if (isAncestor(open, node)) continue;
                     expandedBranches.remove(open);
                     final int openPosition = indexOf(open);
                     if (openPosition < 0) continue;
@@ -559,6 +592,13 @@ public class SourceWizard {
             items.set(indexOf(node), node.data);
             refreshVisibleRow(oldLast);
             if (!items.isEmpty()) refreshVisibleRow(items.get(items.size() - 1));
+        }
+
+        private boolean isAncestor(Tree<Item> ancestor, Tree<Item> descendant) {
+            for (Tree<Item> parent = descendant.getParent(); parent != null; parent = parent.getParent()) {
+                if (parent == ancestor) return true;
+            }
+            return false;
         }
 
         private void refreshVisibleRow(Item item) {
