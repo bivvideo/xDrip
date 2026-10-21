@@ -413,10 +413,27 @@ public class SourceWizard {
                     && listModel.items.get(listModel.items.size() - 1) == this;
         }
 
+        // Separate device names and connection routes without changing the
+        // existing localized labels or the collector selection.
+        private String getFirstTitleLine() {
+            final int lineBreak = name.indexOf('\n');
+            return lineBreak >= 0 ? name.substring(0, lineBreak).trim() : name;
+        }
+
         public String getDisplayTitle() {
-            if (summary != null) return name;
-            final int colon = depth > 0 ? name.indexOf(':') : -1;
-            return colon > 0 ? name.substring(0, colon).trim() : name;
+            final String title = getFirstTitleLine();
+            if (summary != null) return title;
+            final int colon = depth > 0 ? title.indexOf(':') : -1;
+            return colon > 0 ? title.substring(0, colon).trim() : title;
+        }
+
+        public String getDisplayRoute() {
+            final int lineBreak = name.indexOf('\n');
+            return lineBreak >= 0 ? name.substring(lineBreak + 1).trim() : "";
+        }
+
+        public boolean isRouteVisible() {
+            return !getDisplayRoute().isEmpty();
         }
 
         public String getDisplaySummary() {

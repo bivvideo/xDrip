@@ -93,20 +93,35 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
+                <!-- Each text role is styled globally. GONE roles do not
+                     reserve height or margins inside the row. -->
                 <TextView
+                    style="@style/SourceWizardGroupTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@{item.displayTitle}"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="?android:attr/textColorPrimary" />
+                    android:visibility="@{item.group ? View.VISIBLE : View.GONE}" />
 
                 <TextView
+                    style="@style/SourceWizardSensorTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{item.displayTitle}"
+                    android:visibility="@{item.group ? View.GONE : View.VISIBLE}" />
+
+                <TextView
+                    style="@style/SourceWizardRoute"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{item.displayRoute}"
+                    android:visibility="@{item.routeVisible ? View.VISIBLE : View.GONE}" />
+
+                <TextView
+                    style="@style/SourceWizardTechnicalHint"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:text="@{item.displaySummary}"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="?android:attr/textColorSecondary"
                     android:visibility="@{item.summaryVisible ? View.VISIBLE : View.GONE}" />
 
             </LinearLayout>
