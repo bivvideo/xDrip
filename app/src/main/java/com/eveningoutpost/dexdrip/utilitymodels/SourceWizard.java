@@ -72,9 +72,7 @@ public class SourceWizard {
         // Device-first Libre choices. Several human-readable routes intentionally
         // share collectors; the actual acquisition implementations are untouched.
         Tree<Item> libre = root.addChild(new Item("FreeStyle Libre",
-                gs(R.string.source_wizard_libre_group_summary),
-                R.drawable.libre_icon_image)
-                .withSummary(gs(R.string.source_wizard_libre_group_summary)));
+                (String) null, R.drawable.libre_icon_image));
         // Primary methods start with the model, rather than collector names.
         libre.addChild(new Item(gs(R.string.source_wizard_libre_one_bridge),
                 gs(R.string.source_wizard_libre_one_bridge_summary),
@@ -103,14 +101,6 @@ public class SourceWizard {
         libreMore.addChild(new Item(gs(R.string.source_wizard_libre_juggluco_legacy),
                 gs(R.string.source_wizard_libre_juggluco_legacy_summary),
                 DexCollectionType.LibreReceiver, R.drawable.libre_icon_image));
-
-        Tree<Item> eversense = root.addChild(new Item("Eversense",
-                gs(R.string.source_wizard_notifications_details),
-                R.drawable.wikimedia_eversense_icon_pbroks13));
-        eversense.addChild(new Item(gs(R.string.source_wizard_eversense_app),
-                DexCollectionType.UiBased, R.drawable.wikimedia_eversense_icon_pbroks13));
-        eversense.addChild(new Item(gs(R.string.source_wizard_eversense_broadcast),
-                DexCollectionType.NSEmulator, R.drawable.mm600_series));
 
         // One recognizable manufacturer group covers two established app routes.
         // Legacy GlucoRx AiDEX uses its dedicated broadcast receiver; newer
@@ -143,7 +133,7 @@ public class SourceWizard {
         otherSensors.addChild(new Item("SmartGuide", DexCollectionType.GluPro,
                 R.drawable.smartguide_jamorham));
 
-        // App-based paths; branded Dexcom/Eversense shortcuts live above.
+        // App-based paths: Eversense follows the existing general app groups.
         root.addChild(new Item(gs(R.string.source_wizard_apps_section), true));
         Tree<Item> companion = root.addChild(new Item(
                 gs(R.string.source_wizard_companion_group),
@@ -176,6 +166,17 @@ public class SourceWizard {
         broadcast.addChild(new Item(gs(R.string.source_wizard_other_notifications),
                 DexCollectionType.NSEmulator, R.drawable.source_wizard_source_placeholder)
                 .withConfirmationName("Inter-app broadcast"));
+
+        // Eversense uses two existing app-based collection routes. The
+        // app chain is visible; the collection implementations stay unchanged.
+        Tree<Item> eversense = root.addChild(new Item("Eversense",
+                (String) null, R.drawable.wikimedia_eversense_icon_pbroks13));
+        eversense.addChild(new Item(gs(R.string.source_wizard_eversense_app),
+                gs(R.string.source_wizard_eversense_app_summary),
+                DexCollectionType.UiBased, R.drawable.wikimedia_eversense_icon_pbroks13));
+        eversense.addChild(new Item(gs(R.string.source_wizard_eversense_esel),
+                gs(R.string.source_wizard_eversense_esel_summary),
+                DexCollectionType.NSEmulator, R.drawable.mm600_series));
 
         // Hardware bridges: expose all five original Wixel technical modes.
         root.addChild(new Item(gs(R.string.source_wizard_bridges_section), true));
