@@ -1,24 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Source Wizard typography roles: tune each role here, not per item.
-         All four use the SAME appearances and theme colors as before. -->
+    <!-- Source Wizard typography roles (variant B).
+         Tune any role here; Holo theme colors remain dynamic.
+         Use sp for text and dp only for spacing. -->
     <style name="SourceWizardGroupTitle">
         <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">18sp</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
+    <!-- sans-serif-medium corresponds to the native Medium (500) face. -->
     <style name="SourceWizardSensorTitle">
         <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">19sp</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
     <style name="SourceWizardRoute">
         <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
 
     <style name="SourceWizardTechnicalHint">
         <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
 </resources>
