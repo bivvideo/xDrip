@@ -59,7 +59,7 @@ public class SourceWizard {
         root.addChild(new Item(gs(R.string.source_wizard_sensors_section), true));
 
         Tree<Item> dex = root.addChild(new Item("Dexcom",
-                gs(R.string.source_wizard_direct_details), R.drawable.dex_icon));
+                (String) null, R.drawable.dex_icon));
         // Preserve the original direct-connection DexcomG6 -> DexcomG5 setup path.
         dex.addChild(new Item(gs(R.string.source_wizard_dexcom_models),
                 gs(R.string.source_wizard_dexcom_direct_summary),
@@ -128,10 +128,12 @@ public class SourceWizard {
                 gs(R.string.source_wizard_other_sensors),
                 R.drawable.source_wizard_source_placeholder)
                 .withSummary(gs(R.string.source_wizard_other_sensors_examples)));
-        otherSensors.addChild(new Item("Medtrum A6 / S7", DexCollectionType.Medtrum,
-                R.drawable.a6_icon));
-        otherSensors.addChild(new Item("SmartGuide", DexCollectionType.GluPro,
-                R.drawable.smartguide_jamorham));
+        otherSensors.addChild(new Item(gs(R.string.source_wizard_medtrum_a6),
+                gs(R.string.source_wizard_medtrum_a6_summary),
+                DexCollectionType.Medtrum, R.drawable.a6_icon));
+        otherSensors.addChild(new Item(gs(R.string.source_wizard_smartguide),
+                gs(R.string.source_wizard_smartguide_summary),
+                DexCollectionType.GluPro, R.drawable.smartguide_jamorham));
 
         // App-based paths: Eversense follows the existing general app groups.
         root.addChild(new Item(gs(R.string.source_wizard_apps_section), true));
@@ -387,7 +389,9 @@ public class SourceWizard {
         }
 
         public String getConfirmationName() {
-            return confirmationName != null ? confirmationName : name;
+            // Two visual title lines should remain one line in the
+            // existing source confirmation dialog.
+            return confirmationName != null ? confirmationName : name.replace('\n', ' ');
         }
 
         public void onClick(View v) {
