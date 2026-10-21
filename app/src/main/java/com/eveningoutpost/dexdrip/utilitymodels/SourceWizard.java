@@ -75,12 +75,10 @@ public class SourceWizard {
                 gs(R.string.source_wizard_libre_group_summary),
                 R.drawable.libre_icon_image)
                 .withSummary(gs(R.string.source_wizard_libre_group_summary)));
+        // Primary methods start with the model, rather than collector names.
         libre.addChild(new Item(gs(R.string.source_wizard_libre_one_bridge),
                 gs(R.string.source_wizard_libre_one_bridge_summary),
                 DexCollectionType.LimiTTer, R.drawable.bluereader_icon));
-        libre.addChild(new Item(gs(R.string.source_wizard_libre_one_network),
-                gs(R.string.source_wizard_libre_one_network_summary),
-                DexCollectionType.LibreWifi, R.drawable.source_wizard_source_placeholder));
         libre.addChild(new Item(gs(R.string.source_wizard_libre_one_alarm),
                 gs(R.string.source_wizard_libre_one_alarm_summary),
                 DexCollectionType.LibreAlarm, R.drawable.ic_watch_grey600_48dp));
@@ -91,20 +89,15 @@ public class SourceWizard {
                 gs(R.string.source_wizard_libre_juggluco_summary),
                 DexCollectionType.NSEmulator, R.drawable.libre_icon_image));
 
-        // Optional methods stay accessible in a nested spoiler; do not bury
-        // the primary model-based choices under protocol names.
+        // Optional methods: Libre 1 and 2 share the same network/combined
+        // collector types. Keep a single visible choice for each method.
         Tree<Item> libreMore = libre.addChild(new Item(
                 gs(R.string.source_wizard_libre_more),
-                gs(R.string.source_wizard_libre_more_summary),
-                R.drawable.source_wizard_source_placeholder)
-                .withSummary(gs(R.string.source_wizard_libre_more_summary)));
-        libreMore.addChild(new Item(gs(R.string.source_wizard_libre_one_combined),
-                gs(R.string.source_wizard_libre_combined_summary),
-                DexCollectionType.LimiTTerWifi, R.drawable.source_wizard_source_placeholder));
-        libreMore.addChild(new Item(gs(R.string.source_wizard_libre_two_network),
-                gs(R.string.source_wizard_libre_two_network_summary),
+                (String) null, R.drawable.source_wizard_source_placeholder));
+        libreMore.addChild(new Item(gs(R.string.source_wizard_libre_network),
+                gs(R.string.source_wizard_libre_network_summary),
                 DexCollectionType.LibreWifi, R.drawable.source_wizard_source_placeholder));
-        libreMore.addChild(new Item(gs(R.string.source_wizard_libre_two_combined),
+        libreMore.addChild(new Item(gs(R.string.source_wizard_libre_combined),
                 gs(R.string.source_wizard_libre_combined_summary),
                 DexCollectionType.LimiTTerWifi, R.drawable.source_wizard_source_placeholder));
         libreMore.addChild(new Item(gs(R.string.source_wizard_libre_juggluco_legacy),
