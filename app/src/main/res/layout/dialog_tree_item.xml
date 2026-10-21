@@ -50,8 +50,8 @@
                 android:background="@color/source_wizard_row_divider"
                 android:visibility="@{item.firstNested ? View.VISIBLE : View.GONE}" />
 
-            <!-- Subsequent separators start at the indented child label
-                 (22 + 40 + 14dp) and read as subtle 0.5dp hairlines. -->
+            <!-- Subsequent dividers follow the text at (22 + 48 + 14dp)
+                 for icon rows; auxiliary headers use the smaller inset. -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.7dp"
@@ -79,29 +79,36 @@
                 android:foreground="?android:attr/selectableItemBackground"
                 android:onClick="@{item::onClick}">
 
-            <!-- Every ordinary leaf reserves the same 40dp icon column.
-                 Existing device pictures take priority; otherwise use the
-                 original half-filled xDrip launcher droplet, greyed out. -->
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+            <!-- One 48dp icon slot for every regular leaf. A blank title or
+                 a nested auxiliary heading never reserves this space. -->
+            <FrameLayout
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginEnd="14dp"
-                android:scaleType="fitCenter"
-                android:background="@drawable/source_wizard_icon_soft_frame"
-                android:clipToOutline="true"
-                app:src="@{item.resource}"
-                android:visibility="@{item.deviceIconVisible ? View.VISIBLE : View.GONE}" />
+                android:visibility="@{item.iconVisible ? View.VISIBLE : View.GONE}">
 
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="14dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_launcher"
-                android:tint="?android:attr/textColorSecondary"
-                android:alpha="0.42"
-                android:importantForAccessibility="no"
-                android:visibility="@{item.placeholderIconVisible ? View.VISIBLE : View.GONE}" />
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center"
+                    android:scaleType="fitCenter"
+                    android:scaleX="@{item.deviceIconScale}"
+                    android:scaleY="@{item.deviceIconScale}"
+                    app:src="@{item.resource}"
+                    android:importantForAccessibility="no"
+                    android:visibility="@{item.deviceIconVisible ? View.VISIBLE : View.GONE}" />
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_launcher"
+                    android:tint="?android:attr/textColorSecondary"
+                    android:alpha="0.14"
+                    android:importantForAccessibility="no"
+                    android:visibility="@{item.placeholderIconVisible ? View.VISIBLE : View.GONE}" />
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="0dp"

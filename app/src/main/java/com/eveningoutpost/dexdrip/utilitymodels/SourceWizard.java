@@ -63,7 +63,7 @@ public class SourceWizard {
         // Preserve the original direct-connection DexcomG6 -> DexcomG5 setup path.
         dex.addChild(new Item(gs(R.string.source_wizard_dexcom_models),
                 gs(R.string.source_wizard_dexcom_direct_summary),
-                DexCollectionType.DexcomG6, R.drawable.source_wizard_dexcom_g6_trial)
+                DexCollectionType.DexcomG6, R.drawable.dexcom_g6_g7_icon)
                 .withDeviceIcon().withConfirmationName("Dexcom"));
         dex.addChild(new Item(gs(R.string.source_wizard_dexcom_app),
                 gs(R.string.source_wizard_dexcom_app_summary),
@@ -76,18 +76,19 @@ public class SourceWizard {
         // Primary methods start with the model, rather than collector names.
         libre.addChild(new Item(gs(R.string.source_wizard_libre_one_bridge),
                 gs(R.string.source_wizard_libre_one_bridge_summary),
-                DexCollectionType.LimiTTer, R.drawable.bluereader_icon));
+                DexCollectionType.LimiTTer, R.drawable.libre_123_icon)
+                .withDeviceIcon());
         libre.addChild(new Item(gs(R.string.source_wizard_libre_one_alarm),
                 gs(R.string.source_wizard_libre_one_alarm_summary),
                 DexCollectionType.LibreAlarm, R.drawable.ic_watch_grey600_48dp)
                 .withDeviceIcon());
         libre.addChild(new Item(gs(R.string.source_wizard_libre_two_direct),
                 gs(R.string.source_wizard_libre_two_direct_summary),
-                DexCollectionType.LimiTTer, R.drawable.libre_icon_image)
+                DexCollectionType.LimiTTer, R.drawable.libre_2_icon)
                 .withDeviceIcon());
         libre.addChild(new Item(gs(R.string.source_wizard_libre_juggluco),
                 gs(R.string.source_wizard_libre_juggluco_summary),
-                DexCollectionType.NSEmulator, R.drawable.libre_icon_image)
+                DexCollectionType.NSEmulator, R.drawable.libre_123_icon)
                 .withDeviceIcon());
 
         // Optional methods: Libre 1 and 2 share the same network/combined
@@ -98,13 +99,15 @@ public class SourceWizard {
                 .withAuxiliaryTitle());
         libreMore.addChild(new Item(gs(R.string.source_wizard_libre_network),
                 gs(R.string.source_wizard_libre_network_summary),
-                DexCollectionType.LibreWifi, R.drawable.source_wizard_source_placeholder));
+                DexCollectionType.LibreWifi, R.drawable.libre_123_icon)
+                .withDeviceIcon());
         libreMore.addChild(new Item(gs(R.string.source_wizard_libre_combined),
                 gs(R.string.source_wizard_libre_combined_summary),
-                DexCollectionType.LimiTTerWifi, R.drawable.source_wizard_source_placeholder));
+                DexCollectionType.LimiTTerWifi, R.drawable.libre_123_icon)
+                .withDeviceIcon());
         libreMore.addChild(new Item(gs(R.string.source_wizard_libre_juggluco_legacy),
                 gs(R.string.source_wizard_libre_juggluco_legacy_summary),
-                DexCollectionType.LibreReceiver, R.drawable.libre_icon_image)
+                DexCollectionType.LibreReceiver, R.drawable.libre_123_icon)
                 .withDeviceIcon());
 
         // One recognizable manufacturer group covers two established app routes.
@@ -117,10 +120,12 @@ public class SourceWizard {
                 .withSummary(gs(R.string.source_wizard_microtech_examples)));
         microtech.addChild(new Item(gs(R.string.source_wizard_microtech_glucorx),
                 gs(R.string.source_wizard_microtech_glucorx_summary),
-                DexCollectionType.AidexReceiver, R.drawable.source_wizard_source_placeholder));
+                DexCollectionType.AidexReceiver, R.drawable.glucorx_icon)
+                .withDeviceIcon());
         microtech.addChild(new Item(gs(R.string.source_wizard_microtech_linx),
                 gs(R.string.source_wizard_microtech_linx_summary),
-                DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder));
+                DexCollectionType.UiBased, R.drawable.aidex_x_icon)
+                .withDeviceIcon());
         microtech.addChild(new Item(gs(R.string.source_wizard_microtech_other),
                 gs(R.string.source_wizard_microtech_other_summary),
                 DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder)
@@ -136,11 +141,11 @@ public class SourceWizard {
                 .withSummary(gs(R.string.source_wizard_other_sensors_examples)));
         otherSensors.addChild(new Item(gs(R.string.source_wizard_medtrum_a6),
                 gs(R.string.source_wizard_medtrum_a6_summary),
-                DexCollectionType.Medtrum, R.drawable.a6_icon)
+                DexCollectionType.Medtrum, R.drawable.medtrum_a6_icon)
                 .withDeviceIcon());
         otherSensors.addChild(new Item(gs(R.string.source_wizard_smartguide),
                 gs(R.string.source_wizard_smartguide_summary),
-                DexCollectionType.GluPro, R.drawable.smartguide_jamorham)
+                DexCollectionType.GluPro, R.drawable.accucheksmartguide_icon)
                 .withDeviceIcon());
 
         // App-based paths: Eversense follows the existing general app groups.
@@ -150,8 +155,8 @@ public class SourceWizard {
                 gs(R.string.source_wizard_companion_details),
                 R.drawable.source_wizard_source_placeholder)
                 .withSummary(gs(R.string.source_wizard_companion_examples)));
-        addCompanion(companion, "iCan Health");
-        addCompanion(companion, "Ottai");
+        addCompanion(companion, "iCan Health", R.drawable.ican3_icon);
+        addCompanion(companion, "Ottai", R.drawable.ottai_icon);
         addCompanion(companion, "CamAPS FX");
         addCompanion(companion, "Medtronic (Guardian / MiniMed / Simplera)");
         addCompanion(companion, "Sinocare CGM");
@@ -173,7 +178,7 @@ public class SourceWizard {
                 gs(R.string.source_wizard_broadcast_examples),
                 R.drawable.mm600_series));
         broadcast.addChild(new Item("CareSens Air",
-                DexCollectionType.NSEmulator, R.drawable.caresens_air_icon_image)
+                DexCollectionType.NSEmulator, R.drawable.caresens_icon)
                 .withDeviceIcon());
         broadcast.addChild(new Item(gs(R.string.source_wizard_other_notifications),
                 DexCollectionType.NSEmulator, R.drawable.source_wizard_source_placeholder)
@@ -226,9 +231,17 @@ public class SourceWizard {
     }
 
     private void addCompanion(Tree<Item> parent, String label) {
-        // Individual app labels are navigation aliases for the same UiBased mode.
-        parent.addChild(new Item(label, DexCollectionType.UiBased,
-                R.drawable.source_wizard_source_placeholder));
+        addCompanion(parent, label, R.drawable.source_wizard_source_placeholder, false);
+    }
+
+    private void addCompanion(Tree<Item> parent, String label, int drawable) {
+        addCompanion(parent, label, drawable, true);
+    }
+
+    private void addCompanion(Tree<Item> parent, String label, int drawable, boolean withDeviceIcon) {
+        // Individual app labels are aliases for the same existing UiBased collector.
+        final Item item = new Item(label, DexCollectionType.UiBased, drawable);
+        parent.addChild(withDeviceIcon ? item.withDeviceIcon() : item);
     }
 
     // Rows without icons need dividers to start at their text, not an empty icon slot.
@@ -438,8 +451,16 @@ public class SourceWizard {
             return auxiliaryTitle;
         }
 
+        public float getDeviceIconScale() {
+            // Keep round sensors optically smaller than low-profile wide bodies.
+            if (resource == R.drawable.libre_2_icon ||
+                    resource == R.drawable.accucheksmartguide_icon) return 0.84f;
+            if (resource == R.drawable.aidex_x_icon) return 0.88f;
+            return 1f;
+        }
+
         public int getNestedDividerInset() {
-            return Math.round(convertDpToPixel(isIconVisible() ? 76 : 22));
+            return Math.round(convertDpToPixel(isIconVisible() ? 84 : 22));
         }
 
         Item withConfirmationName(String sourceName) {
