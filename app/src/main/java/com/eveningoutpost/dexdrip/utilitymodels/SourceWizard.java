@@ -76,7 +76,7 @@ public class SourceWizard {
         // Primary methods start with the model, rather than collector names.
         libre.addChild(new Item(gs(R.string.source_wizard_libre_one_bridge),
                 gs(R.string.source_wizard_libre_one_bridge_summary),
-                DexCollectionType.LimiTTer, R.drawable.libre_123_icon)
+                DexCollectionType.LimiTTer, R.drawable.libre_2_icon)
                 .withDeviceIcon());
         libre.addChild(new Item(gs(R.string.source_wizard_libre_one_alarm),
                 gs(R.string.source_wizard_libre_one_alarm_summary),
@@ -99,11 +99,11 @@ public class SourceWizard {
                 .withAuxiliaryTitle());
         libreMore.addChild(new Item(gs(R.string.source_wizard_libre_network),
                 gs(R.string.source_wizard_libre_network_summary),
-                DexCollectionType.LibreWifi, R.drawable.libre_123_icon)
+                DexCollectionType.LibreWifi, R.drawable.libre_2_icon)
                 .withDeviceIcon());
         libreMore.addChild(new Item(gs(R.string.source_wizard_libre_combined),
                 gs(R.string.source_wizard_libre_combined_summary),
-                DexCollectionType.LimiTTerWifi, R.drawable.libre_123_icon)
+                DexCollectionType.LimiTTerWifi, R.drawable.libre_2_icon)
                 .withDeviceIcon());
         libreMore.addChild(new Item(gs(R.string.source_wizard_libre_juggluco_legacy),
                 gs(R.string.source_wizard_libre_juggluco_legacy_summary),
