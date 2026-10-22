@@ -62,7 +62,8 @@
     <string name="source_wizard_smartguide_summary">[SmartGuide]</string>
     <string name="source_wizard_other_sensors">Other sensors</string>
     <string name="source_wizard_other_sensors_examples">iCAN, Ottai, CareSens Air, Medtrum and more</string>
-    <string name="source_wizard_companion_explanation">[Companion App] lets xDrip+ receive glucose readings from notifications in your sensor app.\n\nDo not see your sensor in the list? If its app shows glucose in notifications, try this method.</string>
-    <string name="source_wizard_broadcast_explanation">[Inter-app broadcast] lets xDrip+ receive glucose readings sent by another app in a compatible format.\n\nIf your sensor app supports this kind of transfer, try this method.</string>
+    <string name="source_wizard_companion_explanation">[Companion App] lets xDrip+ receive glucose readings from notifications in your sensor app.\n\nIf the app shows glucose in notifications, this method may work for you.</string>
+    <string name="source_wizard_broadcast_explanation">[Inter-app broadcast] lets xDrip+ receive glucose readings from another app in a compatible format.\n\nIf your sensor app supports this kind of transfer, this method may work for you.</string>
     <string name="source_wizard_try_connection">Try connecting</string>
+    <string name="source_wizard_not_found">Can’t find your sensor in the list?</string>
 </resources>

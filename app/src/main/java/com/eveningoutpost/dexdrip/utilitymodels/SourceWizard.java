@@ -188,8 +188,8 @@ public class SourceWizard {
                 gs(R.string.source_wizard_companion_details),
                 R.drawable.source_wizard_source_placeholder)
                 .withSummary(gs(R.string.source_wizard_companion_examples)));
-        companion.addChild(new Item(gs(R.string.source_wizard_companion_explanation),
-                (String) null, 0).withInformationText());
+        companion.addChild(new Item(gs(R.string.source_wizard_not_found),
+                gs(R.string.source_wizard_companion_explanation), 0).withInformationText());
         companion.addChild(new Item(gs(R.string.source_wizard_try_connection),
                 DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder)
                 .withCallToAction()
@@ -202,8 +202,8 @@ public class SourceWizard {
                 gs(R.string.source_wizard_broadcast_examples),
                 R.drawable.mm600_series)
                 .withSummary(gs(R.string.source_wizard_broadcast_examples)));
-        broadcast.addChild(new Item(gs(R.string.source_wizard_broadcast_explanation),
-                (String) null, 0).withInformationText());
+        broadcast.addChild(new Item(gs(R.string.source_wizard_not_found),
+                gs(R.string.source_wizard_broadcast_explanation), 0).withInformationText());
         broadcast.addChild(new Item(gs(R.string.source_wizard_try_connection),
                 DexCollectionType.NSEmulator, R.drawable.source_wizard_source_placeholder)
                 .withCallToAction()
@@ -475,6 +475,10 @@ public class SourceWizard {
             return informationText;
         }
 
+        public String getInformationBody() {
+            return description != null ? description : "";
+        }
+
         public boolean isCallToAction() {
             return callToAction;
         }
@@ -579,7 +583,7 @@ public class SourceWizard {
         }
 
         public boolean isRouteVisible() {
-            return !getDisplayRoute().isEmpty();
+            return !informationText && !getDisplayRoute().isEmpty();
         }
 
         public String getDisplaySummary() {
@@ -589,7 +593,7 @@ public class SourceWizard {
         }
 
         public boolean isSummaryVisible() {
-            return !getDisplaySummary().isEmpty();
+            return !informationText && !getDisplaySummary().isEmpty();
         }
 
         public boolean isSection() {

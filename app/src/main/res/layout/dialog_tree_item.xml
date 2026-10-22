@@ -140,11 +140,22 @@
                     android:text="@{item.displayTitle}"
                     android:visibility="@{!item.group &amp;&amp; !item.auxiliaryTitle &amp;&amp; !item.informationText &amp;&amp; !item.callToAction ? View.VISIBLE : View.GONE}" />
 
-                <!-- Plain-language explanation, not a selectable data source. -->
+                <!-- The fallback question is intentionally the first, prominent line. -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@{item.name}"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:visibility="@{item.informationText ? View.VISIBLE : View.GONE}" />
+
+                <!-- One white explanation; multiline body is not a gray route. -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="@{item.informationBody}"
                     android:textSize="14sp"
                     android:lineSpacingExtra="3dp"
                     android:textColor="?android:attr/textColorPrimary"

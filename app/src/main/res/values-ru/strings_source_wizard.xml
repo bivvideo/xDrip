@@ -62,7 +62,8 @@
     <string name="source_wizard_smartguide_summary">[SmartGuide]</string>
     <string name="source_wizard_other_sensors">Другие сенсоры</string>
     <string name="source_wizard_other_sensors_examples">iCAN, Ottai, CareSens Air, Medtrum и другие</string>
-    <string name="source_wizard_companion_explanation">[Companion App] позволяет xDrip+ получать показания глюкозы из уведомлений приложения вашего сенсора.\n\nНе нашли свой сенсор в списке? Если его приложение показывает глюкозу в уведомлениях, попробуйте этот способ.</string>
-    <string name="source_wizard_broadcast_explanation">[Inter-app broadcast] позволяет xDrip+ получать показания глюкозы, которые другое приложение передаёт в совместимом формате.\n\nЕсли приложение вашего сенсора поддерживает такую передачу, попробуйте этот способ.</string>
+    <string name="source_wizard_companion_explanation">[Companion App] позволяет xDrip+ получать показания глюкозы из уведомлений приложения вашего сенсора.\n\nЕсли приложение показывает глюкозу в уведомлениях, этот способ может подойти.</string>
+    <string name="source_wizard_broadcast_explanation">[Inter-app broadcast] позволяет xDrip+ получать показания глюкозы от другого приложения в совместимом формате.\n\nЕсли приложение вашего сенсора поддерживает такую передачу, этот способ может подойти.</string>
     <string name="source_wizard_try_connection">Попробовать подключение</string>
+    <string name="source_wizard_not_found">Не нашли свой сенсор в списке?</string>
 </resources>
