@@ -138,7 +138,27 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@{item.displayTitle}"
-                    android:visibility="@{!item.group &amp;&amp; !item.auxiliaryTitle ? View.VISIBLE : View.GONE}" />
+                    android:visibility="@{!item.group &amp;&amp; !item.auxiliaryTitle &amp;&amp; !item.informationText &amp;&amp; !item.callToAction ? View.VISIBLE : View.GONE}" />
+
+                <!-- Plain-language explanation, not a selectable data source. -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{item.name}"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="3dp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:visibility="@{item.informationText ? View.VISIBLE : View.GONE}" />
+
+                <!-- One explicit call to action after the explanation and divider. -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{item.displayTitle}"
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:visibility="@{item.callToAction ? View.VISIBLE : View.GONE}" />
 
                 <!-- Auxiliary actions stay clickable but use the same quiet Route typography. -->
                 <TextView
@@ -174,7 +194,7 @@
                 android:src="@drawable/source_wizard_chevron"
                 android:tint="?android:attr/textColorSecondary"
                 android:rotation="@{item.expanded ? 90f : 0f}"
-                android:visibility="@{item.group ? View.VISIBLE : View.GONE}"
+                android:visibility="@{item.navigationChevronVisible ? View.VISIBLE : View.GONE}"
                 android:importantForAccessibility="no" />
 
             </LinearLayout>

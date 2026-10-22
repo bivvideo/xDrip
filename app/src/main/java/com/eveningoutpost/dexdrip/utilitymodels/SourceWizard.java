@@ -17,6 +17,7 @@ import androidx.annotation.StringRes;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.databinding.BindingAdapter;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.eveningoutpost.dexdrip.BR;
 import com.eveningoutpost.dexdrip.models.UserError;
@@ -49,6 +50,7 @@ public class SourceWizard {
     // Expansion belongs to this wizard instance, so it survives the confirmation dialog.
     private final HashSet<Tree<Item>> expandedBranches = new HashSet<>();
     private ViewModel listModel;
+    private RecyclerView wizardList;
     // Navigation is organized by user intent, not by internal collector names.
     // Display-only changes: each leaf still uses an existing DexCollectionType.
     private Tree<Item> root = new Tree<>(new Item(
@@ -111,25 +113,6 @@ public class SourceWizard {
                 DexCollectionType.LibreReceiver, R.drawable.libre_123_icon)
                 .withDeviceIcon());
 
-        // Less prominent sensor systems remain in the wizard, one tap deeper.
-        // The AidexReceiver option now lives only under MicroTech.
-        Tree<Item> otherSensors = root.addChild(new Item(
-                gs(R.string.source_wizard_other_sensors),
-                gs(R.string.source_wizard_other_sensors),
-                R.drawable.source_wizard_source_placeholder)
-                .withSummary(gs(R.string.source_wizard_other_sensors_examples)));
-        otherSensors.addChild(new Item(gs(R.string.source_wizard_medtrum_a6),
-                gs(R.string.source_wizard_medtrum_a6_summary),
-                DexCollectionType.Medtrum, R.drawable.medtrum_a6_icon)
-                .withDeviceIcon());
-        otherSensors.addChild(new Item(gs(R.string.source_wizard_smartguide),
-                gs(R.string.source_wizard_smartguide_summary),
-                DexCollectionType.GluPro, R.drawable.accucheksmartguide_icon)
-                .withDeviceIcon());
-
-        // App-based paths: Eversense follows the existing general app groups.
-        root.addChild(new Item(gs(R.string.source_wizard_apps_section), true));
-
         // App-mediated MicroTech connections: broadcast from AiDEX App or notifications from LinX App.
         // Legacy GlucoRx AiDEX uses its dedicated broadcast receiver; newer
         // AiDEX X / LinX apps use the existing notification-based UiBased mode.
@@ -146,50 +129,15 @@ public class SourceWizard {
                 gs(R.string.source_wizard_microtech_linx_summary),
                 DexCollectionType.UiBased, R.drawable.aidex_x_icon)
                 .withDeviceIcon());
-        microtech.addChild(new Item(gs(R.string.source_wizard_microtech_other),
-                gs(R.string.source_wizard_microtech_other_summary),
-                DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder)
+        // Generic MicroTech route opens the shared Companion App explanation,
+        // not an immediate data-source confirmation.
+        Item microtechOther = new Item(gs(R.string.source_wizard_microtech_other),
+                (String) null, 0)
                 .withAuxiliaryTitle()
-                .withConfirmationName(gs(R.string.source_wizard_companion_group)));
+                .withSummary(gs(R.string.source_wizard_microtech_other_summary));
+        microtech.addChild(microtechOther);
 
-                Tree<Item> companion = root.addChild(new Item(
-                gs(R.string.source_wizard_companion_group),
-                gs(R.string.source_wizard_companion_details),
-                R.drawable.source_wizard_source_placeholder)
-                .withSummary(gs(R.string.source_wizard_companion_examples)));
-        addCompanion(companion, "iCan Health", R.drawable.ican3_icon);
-        addCompanion(companion, "Ottai", R.drawable.ottai_icon);
-        addCompanion(companion, "CamAPS FX");
-        addCompanion(companion, "Medtronic (Guardian / MiniMed / Simplera)");
-        addCompanion(companion, "Sinocare CGM");
-        addCompanion(companion, "SiSensing Eco");
-        addCompanion(companion, "Kakao PASTA");
-        addCompanion(companion, "Suswel");
-        addCompanion(companion, "Glucotech");
-        addCompanion(companion, "Diabeloop");
-        // Generic choices confirm the technical source name rather than the
-        // placeholder label "Other compatible app".
-        companion.addChild(new Item(gs(R.string.source_wizard_other_notifications),
-                DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder)
-                .withAuxiliaryTitle()
-                .withConfirmationName(gs(R.string.source_wizard_companion_group)));
-
-        // Show the sensor name first. Both paths reuse the SAME existing
-        // inter-app broadcast collector; no new source or preferences.
-        Tree<Item> broadcast = root.addChild(new Item("Inter-app broadcast",
-                gs(R.string.source_wizard_broadcast_examples),
-                R.drawable.mm600_series)
-                .withSummary(gs(R.string.source_wizard_broadcast_examples)));
-        broadcast.addChild(new Item("CareSens Air",
-                DexCollectionType.NSEmulator, R.drawable.caresens_icon)
-                .withDeviceIcon());
-        broadcast.addChild(new Item(gs(R.string.source_wizard_other_notifications),
-                DexCollectionType.NSEmulator, R.drawable.source_wizard_source_placeholder)
-                .withAuxiliaryTitle()
-                .withConfirmationName("Inter-app broadcast"));
-
-        // Eversense uses two existing app-based collection routes. The
-        // app chain is visible; the collection implementations stay unchanged.
+        // Eversense presents its two existing app-based routes under one sensor family.
         Tree<Item> eversense = root.addChild(new Item("Eversense",
                 (String) null, R.drawable.wikimedia_eversense_icon_pbroks13));
         eversense.addChild(new Item(gs(R.string.source_wizard_eversense_app),
@@ -200,6 +148,67 @@ public class SourceWizard {
                 gs(R.string.source_wizard_eversense_esel_summary),
                 DexCollectionType.NSEmulator, R.drawable.eversence_360)
                 .withDeviceIcon());
+
+        // One known route per entry: direct, app-based, and inter-app paths live together.
+        // Exact model names for some app aliases will be refined separately.
+        Tree<Item> otherSensors = root.addChild(new Item(
+                gs(R.string.source_wizard_other_sensors),
+                gs(R.string.source_wizard_other_sensors),
+                R.drawable.source_wizard_source_placeholder)
+                .withSummary(gs(R.string.source_wizard_other_sensors_examples)));
+        otherSensors.addChild(new Item(gs(R.string.source_wizard_medtrum_a6),
+                gs(R.string.source_wizard_medtrum_a6_summary),
+                DexCollectionType.Medtrum, R.drawable.medtrum_a6_icon)
+                .withDeviceIcon());
+        otherSensors.addChild(new Item(gs(R.string.source_wizard_smartguide),
+                gs(R.string.source_wizard_smartguide_summary),
+                DexCollectionType.GluPro, R.drawable.accucheksmartguide_icon)
+                .withDeviceIcon());
+
+        // Existing app aliases stay visible under the device-first catalog
+        // until their exact sensor model names can be verified.
+        addCompanion(otherSensors, "iCan Health", R.drawable.ican3_icon);
+        addCompanion(otherSensors, "Ottai", R.drawable.ottai_icon);
+        addCompanion(otherSensors, "CamAPS FX");
+        addCompanion(otherSensors, "Medtronic (Guardian / MiniMed / Simplera)");
+        addCompanion(otherSensors, "Sinocare CGM");
+        addCompanion(otherSensors, "SiSensing Eco");
+        addCompanion(otherSensors, "Kakao PASTA");
+        addCompanion(otherSensors, "Suswel");
+        addCompanion(otherSensors, "Glucotech");
+        addCompanion(otherSensors, "Diabeloop");
+        otherSensors.addChild(new Item("CareSens Air",
+                DexCollectionType.NSEmulator, R.drawable.caresens_icon)
+                .withDeviceIcon());
+
+        // These are universal fallback methods, not a second sensor catalog.
+        root.addChild(new Item(gs(R.string.source_wizard_apps_section), true));
+        Tree<Item> companion = root.addChild(new Item(
+                gs(R.string.source_wizard_companion_group),
+                gs(R.string.source_wizard_companion_details),
+                R.drawable.source_wizard_source_placeholder)
+                .withSummary(gs(R.string.source_wizard_companion_examples)));
+        companion.addChild(new Item(gs(R.string.source_wizard_companion_explanation),
+                (String) null, 0).withInformationText());
+        companion.addChild(new Item(gs(R.string.source_wizard_try_connection),
+                DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder)
+                .withCallToAction()
+                .withFullWidthDivider()
+                .withConfirmationName(gs(R.string.source_wizard_companion_group)));
+        // Follow the MicroTech generic entry into the same explanation.
+        microtechOther.withNavigationTarget(companion);
+
+        Tree<Item> broadcast = root.addChild(new Item("Inter-app broadcast",
+                gs(R.string.source_wizard_broadcast_examples),
+                R.drawable.mm600_series)
+                .withSummary(gs(R.string.source_wizard_broadcast_examples)));
+        broadcast.addChild(new Item(gs(R.string.source_wizard_broadcast_explanation),
+                (String) null, 0).withInformationText());
+        broadcast.addChild(new Item(gs(R.string.source_wizard_try_connection),
+                DexCollectionType.NSEmulator, R.drawable.source_wizard_source_placeholder)
+                .withCallToAction()
+                .withFullWidthDivider()
+                .withConfirmationName("Inter-app broadcast"));
 
         // Hardware bridges: expose all five original Wixel technical modes.
         root.addChild(new Item(gs(R.string.source_wizard_bridges_section), true));
@@ -326,6 +335,7 @@ public class SourceWizard {
             listModel = new ViewModel();
             binding.setViewModel(listModel);
             binding.sourceWizardList.setItemAnimator(null);
+            wizardList = binding.sourceWizardList;
             final int screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
             binding.sourceWizardList.getLayoutParams().height = Math.round(screenHeight * 0.62f);
 
@@ -391,6 +401,9 @@ public class SourceWizard {
         private boolean deviceIcon;
         private boolean auxiliaryTitle;
         private boolean fullWidthDivider;
+        private boolean informationText;
+        private boolean callToAction;
+        private Tree<Item> navigationTarget;
 
         Item(String name, boolean section) {
             this(name, (String) null, 0);
@@ -443,10 +456,41 @@ public class SourceWizard {
             return this;
         }
 
+        Item withInformationText() {
+            informationText = true;
+            return this;
+        }
+
+        Item withCallToAction() {
+            callToAction = true;
+            return this;
+        }
+
+        Item withNavigationTarget(Tree<Item> target) {
+            navigationTarget = target;
+            return this;
+        }
+
+        public boolean isInformationText() {
+            return informationText;
+        }
+
+        public boolean isCallToAction() {
+            return callToAction;
+        }
+
+        public boolean isNavigationLink() {
+            return navigationTarget != null;
+        }
+
+        public boolean isNavigationChevronVisible() {
+            return isGroup() || callToAction || isNavigationLink();
+        }
+
         public boolean isIconVisible() {
             // All ordinary leaves share the same icon column. Parents and
             // auxiliary navigation rows remain icon-free on purpose.
-            return !section && !isGroup() && !auxiliaryTitle;
+            return !section && !isGroup() && !auxiliaryTitle && !informationText && !callToAction;
         }
 
         public boolean isDeviceIconVisible() {
@@ -495,8 +539,10 @@ public class SourceWizard {
         }
 
         public void onClick(View v) {
-            if (node == null || section) return;
-            if (isCollectionType()) {
+            if (node == null || section || informationText) return;
+            if (navigationTarget != null) {
+                if (listModel != null) listModel.open(navigationTarget);
+            } else if (isCollectionType()) {
                 getTreeDialog(node);
             } else if (listModel != null) {
                 listModel.toggle(node);
@@ -629,7 +675,7 @@ public class SourceWizard {
         }
 
         public boolean isGroup() {
-            return !section && !isCollectionType();
+            return !section && !isCollectionType() && !informationText && navigationTarget == null;
         }
 
         public boolean isExpanded() {
@@ -661,6 +707,20 @@ public class SourceWizard {
         private void rebuild() {
             items.clear();
             for (Tree<Item> child : root.getChildren()) insertVisible(child, 0, items.size());
+        }
+
+        // A generic device-app link opens the single shared help section.
+        void open(Tree<Item> target) {
+            if (indexOf(target) < 0) return;
+            if (!expandedBranches.contains(target)) toggle(target);
+            if (wizardList != null) {
+                wizardList.post(() -> {
+                    if (listModel == this) {
+                        final int position = indexOf(target);
+                        if (position >= 0) wizardList.scrollToPosition(position);
+                    }
+                });
+            }
         }
 
         // Insert or remove only the children of the tapped group (no full-list redraw).

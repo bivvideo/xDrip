@@ -4,7 +4,7 @@
     <string name="source_wizard_dexcom_models">Dexcom G6 and G7\nDirect Bluetooth</string>
     <string name="source_wizard_dexcom_direct_summary">[Dex]</string>
     <string name="source_wizard_dexcom_app_summary">From notifications · [Companion App]</string>
-    <string name="source_wizard_broadcast_examples">CareSens Air and other compatible apps</string>
+    <string name="source_wizard_broadcast_examples">CareSens Air, Libre via Juggluco, Eversense via ESEL and more</string>
     <string name="source_wizard_direct">Direct connection</string>
     <string name="source_wizard_direct_details">xDrip reads the sensor directly</string>
     <string name="source_wizard_dexcom_app">Dexcom\n→ Dexcom App</string>
@@ -45,7 +45,7 @@
     <string name="source_wizard_bridges_section">Adapters and bridges</string>
     <string name="source_wizard_sync_section">Sync and cloud sources</string>
     <string name="source_wizard_followers_group">Followers</string>
-    <string name="source_wizard_companion_examples">iCan, Ottai, CamAPS FX and more</string>
+    <string name="source_wizard_companion_examples">iCAN, Ottai, CamAPS FX and more</string>
     <string name="source_wizard_title">Source setup wizard</string>
     <string name="source_wizard_subtitle">Choose your sensor or app</string>
     <string name="source_wizard_microtech_group">MicroTech</string>
@@ -61,5 +61,8 @@
     <string name="source_wizard_smartguide">Accu-Chek SmartGuide\nDirect Bluetooth</string>
     <string name="source_wizard_smartguide_summary">[SmartGuide]</string>
     <string name="source_wizard_other_sensors">Other sensors</string>
-    <string name="source_wizard_other_sensors_examples">Medtrum, SmartGuide</string>
+    <string name="source_wizard_other_sensors_examples">iCAN, Ottai, CareSens Air, Medtrum and more</string>
+    <string name="source_wizard_companion_explanation">[Companion App] lets xDrip+ receive glucose readings from notifications in your sensor app.\n\nDo not see your sensor in the list? If its app shows glucose in notifications, try this method.</string>
+    <string name="source_wizard_broadcast_explanation">[Inter-app broadcast] lets xDrip+ receive glucose readings sent by another app in a compatible format.\n\nIf your sensor app supports this kind of transfer, try this method.</string>
+    <string name="source_wizard_try_connection">Try connecting</string>
 </resources>
