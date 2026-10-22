@@ -96,7 +96,8 @@ public class SourceWizard {
         Tree<Item> libreMore = libre.addChild(new Item(
                 gs(R.string.source_wizard_libre_more),
                 (String) null, R.drawable.source_wizard_source_placeholder)
-                .withAuxiliaryTitle());
+                .withAuxiliaryTitle()
+                .withFullWidthDivider());
         libreMore.addChild(new Item(gs(R.string.source_wizard_libre_network),
                 gs(R.string.source_wizard_libre_network_summary),
                 DexCollectionType.LibreWifi, R.drawable.libre_2_icon)
@@ -389,6 +390,7 @@ public class SourceWizard {
         private boolean section;
         private boolean deviceIcon;
         private boolean auxiliaryTitle;
+        private boolean fullWidthDivider;
 
         Item(String name, boolean section) {
             this(name, (String) null, 0);
@@ -436,6 +438,11 @@ public class SourceWizard {
             return this;
         }
 
+        Item withFullWidthDivider() {
+            fullWidthDivider = true;
+            return this;
+        }
+
         public boolean isIconVisible() {
             // All ordinary leaves share the same icon column. Parents and
             // auxiliary navigation rows remain icon-free on purpose.
@@ -463,11 +470,16 @@ public class SourceWizard {
             if (resource == R.drawable.libre_2_icon ||
                     resource == R.drawable.accucheksmartguide_icon) return 0.84f;
             if (resource == R.drawable.aidex_x_icon) return 0.88f;
-            if (resource == R.drawable.eversence_360) return 0.90f;
+            if (resource == R.drawable.ican3_icon) return 0.84f;
+            // Leave a visible margin between dark artwork and its 44dp light backing.
+            if (resource == R.drawable.eversence_360) return 0.77f;
             return 1f;
         }
 
         public int getNestedDividerInset() {
+            // The line before Libre's auxiliary "Additional connection methods"
+            // is full width, matching the separator below it when expanded.
+            if (fullWidthDivider) return 0;
             return Math.round(convertDpToPixel(isIconVisible() ? 84 : 22));
         }
 
