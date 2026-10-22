@@ -86,11 +86,11 @@ public class SourceWizard {
                 .withDeviceIcon());
         dex.addChild(new Item(gs(R.string.source_wizard_dexcom_dblg2),
                 gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.dexcom_g6_g7_icon)
+                DexCollectionType.UiBased, R.drawable.dexcom_g7_icon)
                 .withDeviceIcon());
         dex.addChild(new Item(gs(R.string.source_wizard_dexcom_pasta),
                 gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.dexcom_g6_g7_icon)
+                DexCollectionType.UiBased, R.drawable.dexcom_g7_icon)
                 .withDeviceIcon());
         dex.addChild(new Item(gs(R.string.source_wizard_dexcom_app),
                 gs(R.string.source_wizard_dexcom_app_summary),
@@ -112,7 +112,7 @@ public class SourceWizard {
                 (String) null, R.drawable.libre_icon_image));
         libre.addChild(new Item(gs(R.string.source_wizard_libre_one_bridge),
                 gs(R.string.source_wizard_libre_one_bridge_summary),
-                DexCollectionType.LimiTTer, R.drawable.libre_2_icon)
+                DexCollectionType.LimiTTer, R.drawable.libre_1_bridge_icon)
                 .withDeviceIcon());
         libre.addChild(new Item(gs(R.string.source_wizard_libre_one_alarm),
                 gs(R.string.source_wizard_libre_one_alarm_summary),
@@ -128,7 +128,7 @@ public class SourceWizard {
                 .withDeviceIcon());
         libre.addChild(new Item(gs(R.string.source_wizard_libre_juggluco),
                 gs(R.string.source_wizard_libre_juggluco_summary),
-                DexCollectionType.NSEmulator, R.drawable.libre_123_icon)
+                DexCollectionType.NSEmulator, R.drawable.libra_1234_v2_icon)
                 .withDeviceIcon());
         Tree<Item> libreMore = libre.addChild(new Item(
                 gs(R.string.source_wizard_libre_more),
@@ -145,7 +145,7 @@ public class SourceWizard {
                 .withDeviceIcon());
         libreMore.addChild(new Item(gs(R.string.source_wizard_libre_juggluco_legacy),
                 gs(R.string.source_wizard_libre_juggluco_legacy_summary),
-                DexCollectionType.LibreReceiver, R.drawable.libre_123_icon)
+                DexCollectionType.LibreReceiver, R.drawable.libra_1234_v2_icon)
                 .withDeviceIcon());
 
         // iCAN and rebranded GlucoMen iCan share notification collectors.
@@ -171,13 +171,13 @@ public class SourceWizard {
                 .withSummary(gs(R.string.source_wizard_medtronic_examples)));
         medtronic.addChild(new Item(gs(R.string.source_wizard_medtronic_guardian),
                 gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder));
+                DexCollectionType.UiBased, R.drawable.guardian_3_4_icon).withDeviceIcon());
         medtronic.addChild(new Item(gs(R.string.source_wizard_medtronic_minimed),
                 gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder));
+                DexCollectionType.UiBased, R.drawable.medtronic_770_v2_icon).withDeviceIcon());
         medtronic.addChild(new Item(gs(R.string.source_wizard_medtronic_simplera),
                 gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder));
+                DexCollectionType.UiBased, R.drawable.medtronic_simplera_icon).withDeviceIcon());
         Item carelinkLink = new Item(gs(R.string.source_wizard_medtronic_carelink),
                 (String) null, 0).withAuxiliaryTitle();
 
@@ -213,10 +213,10 @@ public class SourceWizard {
                 .withSummary(gs(R.string.source_wizard_sibionics_examples)));
         sibionics.addChild(new Item(gs(R.string.source_wizard_sibionics_gs1),
                 gs(R.string.source_wizard_broadcast_route),
-                DexCollectionType.NSEmulator, R.drawable.source_wizard_source_placeholder));
+                DexCollectionType.NSEmulator, R.drawable.sibionics_gs1_icon).withDeviceIcon());
         sibionics.addChild(new Item(gs(R.string.source_wizard_sibionics_eco),
                 gs(R.string.source_wizard_sibionics_china_only),
-                DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder));
+                DexCollectionType.UiBased, R.drawable.sibionics_gs1_icon).withDeviceIcon());
 
         // Catch-all is intentionally last, with only real ungrouped devices.
         Tree<Item> otherSensors = root.addChild(new Item(
@@ -559,6 +559,11 @@ public class SourceWizard {
 
         public boolean isLightIconPlateVisible() {
             return isDeviceIconVisible() && resource == R.drawable.eversence_360;
+        }
+
+        public boolean isWhiteIconPlateVisible() {
+            // The MiniMed pump has a dark casing that needs its own white plate.
+            return isDeviceIconVisible() && resource == R.drawable.medtronic_770_v2_icon;
         }
 
         public boolean isPlaceholderIconVisible() {
