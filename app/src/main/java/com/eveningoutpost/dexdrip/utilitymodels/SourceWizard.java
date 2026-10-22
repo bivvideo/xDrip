@@ -110,7 +110,26 @@ public class SourceWizard {
                 DexCollectionType.LibreReceiver, R.drawable.libre_123_icon)
                 .withDeviceIcon());
 
-        // One recognizable manufacturer group covers two established app routes.
+        // Less prominent sensor systems remain in the wizard, one tap deeper.
+        // The AidexReceiver option now lives only under MicroTech.
+        Tree<Item> otherSensors = root.addChild(new Item(
+                gs(R.string.source_wizard_other_sensors),
+                gs(R.string.source_wizard_other_sensors),
+                R.drawable.source_wizard_source_placeholder)
+                .withSummary(gs(R.string.source_wizard_other_sensors_examples)));
+        otherSensors.addChild(new Item(gs(R.string.source_wizard_medtrum_a6),
+                gs(R.string.source_wizard_medtrum_a6_summary),
+                DexCollectionType.Medtrum, R.drawable.medtrum_a6_icon)
+                .withDeviceIcon());
+        otherSensors.addChild(new Item(gs(R.string.source_wizard_smartguide),
+                gs(R.string.source_wizard_smartguide_summary),
+                DexCollectionType.GluPro, R.drawable.accucheksmartguide_icon)
+                .withDeviceIcon());
+
+        // App-based paths: Eversense follows the existing general app groups.
+        root.addChild(new Item(gs(R.string.source_wizard_apps_section), true));
+
+        // App-mediated MicroTech connections: broadcast from AiDEX App or notifications from LinX App.
         // Legacy GlucoRx AiDEX uses its dedicated broadcast receiver; newer
         // AiDEX X / LinX apps use the existing notification-based UiBased mode.
         Tree<Item> microtech = root.addChild(new Item(
@@ -132,25 +151,7 @@ public class SourceWizard {
                 .withAuxiliaryTitle()
                 .withConfirmationName(gs(R.string.source_wizard_companion_group)));
 
-        // Less prominent sensor systems remain in the wizard, one tap deeper.
-        // The AidexReceiver option now lives only under MicroTech.
-        Tree<Item> otherSensors = root.addChild(new Item(
-                gs(R.string.source_wizard_other_sensors),
-                gs(R.string.source_wizard_other_sensors),
-                R.drawable.source_wizard_source_placeholder)
-                .withSummary(gs(R.string.source_wizard_other_sensors_examples)));
-        otherSensors.addChild(new Item(gs(R.string.source_wizard_medtrum_a6),
-                gs(R.string.source_wizard_medtrum_a6_summary),
-                DexCollectionType.Medtrum, R.drawable.medtrum_a6_icon)
-                .withDeviceIcon());
-        otherSensors.addChild(new Item(gs(R.string.source_wizard_smartguide),
-                gs(R.string.source_wizard_smartguide_summary),
-                DexCollectionType.GluPro, R.drawable.accucheksmartguide_icon)
-                .withDeviceIcon());
-
-        // App-based paths: Eversense follows the existing general app groups.
-        root.addChild(new Item(gs(R.string.source_wizard_apps_section), true));
-        Tree<Item> companion = root.addChild(new Item(
+                Tree<Item> companion = root.addChild(new Item(
                 gs(R.string.source_wizard_companion_group),
                 gs(R.string.source_wizard_companion_details),
                 R.drawable.source_wizard_source_placeholder)
@@ -176,7 +177,8 @@ public class SourceWizard {
         // inter-app broadcast collector; no new source or preferences.
         Tree<Item> broadcast = root.addChild(new Item("Inter-app broadcast",
                 gs(R.string.source_wizard_broadcast_examples),
-                R.drawable.mm600_series));
+                R.drawable.mm600_series)
+                .withSummary(gs(R.string.source_wizard_broadcast_examples)));
         broadcast.addChild(new Item("CareSens Air",
                 DexCollectionType.NSEmulator, R.drawable.caresens_icon)
                 .withDeviceIcon());
@@ -191,11 +193,12 @@ public class SourceWizard {
                 (String) null, R.drawable.wikimedia_eversense_icon_pbroks13));
         eversense.addChild(new Item(gs(R.string.source_wizard_eversense_app),
                 gs(R.string.source_wizard_eversense_app_summary),
-                DexCollectionType.UiBased, R.drawable.wikimedia_eversense_icon_pbroks13)
+                DexCollectionType.UiBased, R.drawable.eversence_360)
                 .withDeviceIcon());
         eversense.addChild(new Item(gs(R.string.source_wizard_eversense_esel),
                 gs(R.string.source_wizard_eversense_esel_summary),
-                DexCollectionType.NSEmulator, R.drawable.mm600_series));
+                DexCollectionType.NSEmulator, R.drawable.eversence_360)
+                .withDeviceIcon());
 
         // Hardware bridges: expose all five original Wixel technical modes.
         root.addChild(new Item(gs(R.string.source_wizard_bridges_section), true));
@@ -443,6 +446,10 @@ public class SourceWizard {
             return isIconVisible() && deviceIcon && resource != 0;
         }
 
+        public boolean isLightIconPlateVisible() {
+            return isDeviceIconVisible() && resource == R.drawable.eversence_360;
+        }
+
         public boolean isPlaceholderIconVisible() {
             return isIconVisible() && !isDeviceIconVisible();
         }
@@ -456,6 +463,7 @@ public class SourceWizard {
             if (resource == R.drawable.libre_2_icon ||
                     resource == R.drawable.accucheksmartguide_icon) return 0.84f;
             if (resource == R.drawable.aidex_x_icon) return 0.88f;
+            if (resource == R.drawable.eversence_360) return 0.90f;
             return 1f;
         }
 
