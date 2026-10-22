@@ -57,8 +57,21 @@ public class SourceWizard {
             gs(R.string.source_wizard_title), gs(R.string.source_wizard_subtitle)));
 
     {
-        // Sensors and systems: users find their device before the connection method.
+        // Alphabetical device-first catalog. Different app routes can share a
+        // collector: these are named presets, not new acquisition protocols.
         root.addChild(new Item(gs(R.string.source_wizard_sensors_section), true));
+
+        // CareSens Air: official broadcast or glucose notifications from PASTA.
+        Tree<Item> caresens = root.addChild(new Item("CareSens Air",
+                (String) null, R.drawable.caresens_icon));
+        caresens.addChild(new Item(gs(R.string.source_wizard_caresens_air_app),
+                gs(R.string.source_wizard_broadcast_route),
+                DexCollectionType.NSEmulator, R.drawable.caresens_icon)
+                .withDeviceIcon());
+        caresens.addChild(new Item(gs(R.string.source_wizard_caresens_pasta),
+                gs(R.string.source_wizard_dexcom_app_summary),
+                DexCollectionType.UiBased, R.drawable.caresens_icon)
+                .withDeviceIcon());
 
         Tree<Item> dex = root.addChild(new Item("Dexcom",
                 (String) null, R.drawable.dex_icon));
@@ -67,15 +80,36 @@ public class SourceWizard {
                 gs(R.string.source_wizard_dexcom_direct_summary),
                 DexCollectionType.DexcomG6, R.drawable.dexcom_g6_g7_icon)
                 .withDeviceIcon().withConfirmationName("Dexcom"));
+        dex.addChild(new Item(gs(R.string.source_wizard_dexcom_camaps),
+                gs(R.string.source_wizard_dexcom_app_summary),
+                DexCollectionType.UiBased, R.drawable.dexcom_g6_g7_icon)
+                .withDeviceIcon());
+        dex.addChild(new Item(gs(R.string.source_wizard_dexcom_dblg2),
+                gs(R.string.source_wizard_dexcom_app_summary),
+                DexCollectionType.UiBased, R.drawable.dexcom_g6_g7_icon)
+                .withDeviceIcon());
+        dex.addChild(new Item(gs(R.string.source_wizard_dexcom_pasta),
+                gs(R.string.source_wizard_dexcom_app_summary),
+                DexCollectionType.UiBased, R.drawable.dexcom_g6_g7_icon)
+                .withDeviceIcon());
         dex.addChild(new Item(gs(R.string.source_wizard_dexcom_app),
                 gs(R.string.source_wizard_dexcom_app_summary),
                 DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder));
 
-        // Device-first Libre choices. Several human-readable routes intentionally
-        // share collectors; the actual acquisition implementations are untouched.
+        // Two existing Eversense app-based routes, unchanged.
+        Tree<Item> eversense = root.addChild(new Item("Eversense",
+                (String) null, R.drawable.wikimedia_eversense_icon_pbroks13));
+        eversense.addChild(new Item(gs(R.string.source_wizard_eversense_app),
+                gs(R.string.source_wizard_eversense_app_summary),
+                DexCollectionType.UiBased, R.drawable.eversence_360)
+                .withDeviceIcon());
+        eversense.addChild(new Item(gs(R.string.source_wizard_eversense_esel),
+                gs(R.string.source_wizard_eversense_esel_summary),
+                DexCollectionType.NSEmulator, R.drawable.eversence_360)
+                .withDeviceIcon());
+
         Tree<Item> libre = root.addChild(new Item("FreeStyle Libre",
                 (String) null, R.drawable.libre_icon_image));
-        // Primary methods start with the model, rather than collector names.
         libre.addChild(new Item(gs(R.string.source_wizard_libre_one_bridge),
                 gs(R.string.source_wizard_libre_one_bridge_summary),
                 DexCollectionType.LimiTTer, R.drawable.libre_2_icon)
@@ -88,13 +122,14 @@ public class SourceWizard {
                 gs(R.string.source_wizard_libre_two_direct_summary),
                 DexCollectionType.LimiTTer, R.drawable.libre_2_icon)
                 .withDeviceIcon());
+        libre.addChild(new Item(gs(R.string.source_wizard_libre_camaps),
+                gs(R.string.source_wizard_dexcom_app_summary),
+                DexCollectionType.UiBased, R.drawable.libre_123_icon)
+                .withDeviceIcon());
         libre.addChild(new Item(gs(R.string.source_wizard_libre_juggluco),
                 gs(R.string.source_wizard_libre_juggluco_summary),
                 DexCollectionType.NSEmulator, R.drawable.libre_123_icon)
                 .withDeviceIcon());
-
-        // Optional methods: Libre 1 and 2 share the same network/combined
-        // collector types. Keep a single visible choice for each method.
         Tree<Item> libreMore = libre.addChild(new Item(
                 gs(R.string.source_wizard_libre_more),
                 (String) null, R.drawable.source_wizard_source_placeholder)
@@ -113,73 +148,93 @@ public class SourceWizard {
                 DexCollectionType.LibreReceiver, R.drawable.libre_123_icon)
                 .withDeviceIcon());
 
-        // App-mediated MicroTech connections: broadcast from AiDEX App or notifications from LinX App.
-        // Legacy GlucoRx AiDEX uses its dedicated broadcast receiver; newer
-        // AiDEX X / LinX apps use the existing notification-based UiBased mode.
+        // iCAN and rebranded GlucoMen iCan share notification collectors.
+        Tree<Item> ican = root.addChild(new Item("iCAN",
+                gs(R.string.source_wizard_ican_examples), R.drawable.ican3_icon)
+                .withSummary(gs(R.string.source_wizard_ican_examples)));
+        ican.addChild(new Item(gs(R.string.source_wizard_ican_i3_cgm),
+                gs(R.string.source_wizard_dexcom_app_summary),
+                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon());
+        ican.addChild(new Item(gs(R.string.source_wizard_ican_i3_health),
+                gs(R.string.source_wizard_dexcom_app_summary),
+                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon());
+        ican.addChild(new Item(gs(R.string.source_wizard_ican_i6_cgm),
+                gs(R.string.source_wizard_pending_confirmation),
+                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon());
+        ican.addChild(new Item(gs(R.string.source_wizard_glucomen_o3),
+                gs(R.string.source_wizard_pending_confirmation),
+                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon());
+
+        // MiniMed names refer to pump systems; Guardian and Simplera to CGMs.
+        Tree<Item> medtronic = root.addChild(new Item("Medtronic",
+                gs(R.string.source_wizard_medtronic_examples), 0)
+                .withSummary(gs(R.string.source_wizard_medtronic_examples)));
+        medtronic.addChild(new Item(gs(R.string.source_wizard_medtronic_guardian),
+                gs(R.string.source_wizard_dexcom_app_summary),
+                DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder));
+        medtronic.addChild(new Item(gs(R.string.source_wizard_medtronic_minimed),
+                gs(R.string.source_wizard_dexcom_app_summary),
+                DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder));
+        medtronic.addChild(new Item(gs(R.string.source_wizard_medtronic_simplera),
+                gs(R.string.source_wizard_dexcom_app_summary),
+                DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder));
+        Item carelinkLink = new Item(gs(R.string.source_wizard_medtronic_carelink),
+                (String) null, 0).withAuxiliaryTitle();
+
+        medtronic.addChild(carelinkLink);
+
+        // MicroTech branded models and regional notification apps.
         Tree<Item> microtech = root.addChild(new Item(
                 gs(R.string.source_wizard_microtech_group),
                 gs(R.string.source_wizard_microtech_examples),
                 R.drawable.source_wizard_source_placeholder)
                 .withSummary(gs(R.string.source_wizard_microtech_examples)));
-        microtech.addChild(new Item(gs(R.string.source_wizard_microtech_glucorx),
-                gs(R.string.source_wizard_microtech_glucorx_summary),
-                DexCollectionType.AidexReceiver, R.drawable.glucorx_icon)
-                .withDeviceIcon());
+        microtech.addChild(new Item(gs(R.string.source_wizard_microtech_glucotech),
+                gs(R.string.source_wizard_dexcom_app_summary),
+                DexCollectionType.UiBased, R.drawable.aidex_x_icon).withDeviceIcon());
         microtech.addChild(new Item(gs(R.string.source_wizard_microtech_linx),
                 gs(R.string.source_wizard_microtech_linx_summary),
-                DexCollectionType.UiBased, R.drawable.aidex_x_icon)
-                .withDeviceIcon());
-        // Generic MicroTech route opens the shared Companion App explanation,
-        // not an immediate data-source confirmation.
+                DexCollectionType.UiBased, R.drawable.aidex_x_icon).withDeviceIcon());
+        microtech.addChild(new Item(gs(R.string.source_wizard_microtech_glucorx),
+                gs(R.string.source_wizard_microtech_glucorx_summary),
+                DexCollectionType.AidexReceiver, R.drawable.glucorx_icon).withDeviceIcon());
+        microtech.addChild(new Item(gs(R.string.source_wizard_microtech_vitatok),
+                gs(R.string.source_wizard_pending_confirmation),
+                DexCollectionType.UiBased, R.drawable.aidex_x_icon).withDeviceIcon());
         Item microtechOther = new Item(gs(R.string.source_wizard_microtech_other),
-                (String) null, 0)
-                .withAuxiliaryTitle()
+                (String) null, 0).withAuxiliaryTitle()
                 .withSummary(gs(R.string.source_wizard_microtech_other_summary));
         microtech.addChild(microtechOther);
 
-        // Eversense presents its two existing app-based routes under one sensor family.
-        Tree<Item> eversense = root.addChild(new Item("Eversense",
-                (String) null, R.drawable.wikimedia_eversense_icon_pbroks13));
-        eversense.addChild(new Item(gs(R.string.source_wizard_eversense_app),
-                gs(R.string.source_wizard_eversense_app_summary),
-                DexCollectionType.UiBased, R.drawable.eversence_360)
-                .withDeviceIcon());
-        eversense.addChild(new Item(gs(R.string.source_wizard_eversense_esel),
-                gs(R.string.source_wizard_eversense_esel_summary),
-                DexCollectionType.NSEmulator, R.drawable.eversence_360)
-                .withDeviceIcon());
+        // GS1 works through Juggluco's compatible broadcast. SiSensing Eco
+        // is a CHINESE companion package; it is not the international ECO app.
+        Tree<Item> sibionics = root.addChild(new Item("SIBIONICS",
+                gs(R.string.source_wizard_sibionics_examples), 0)
+                .withSummary(gs(R.string.source_wizard_sibionics_examples)));
+        sibionics.addChild(new Item(gs(R.string.source_wizard_sibionics_gs1),
+                gs(R.string.source_wizard_broadcast_route),
+                DexCollectionType.NSEmulator, R.drawable.source_wizard_source_placeholder));
+        sibionics.addChild(new Item(gs(R.string.source_wizard_sibionics_eco),
+                gs(R.string.source_wizard_sibionics_china_only),
+                DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder));
 
-        // One known route per entry: direct, app-based, and inter-app paths live together.
-        // Exact model names for some app aliases will be refined separately.
+        // Catch-all is intentionally last, with only real ungrouped devices.
         Tree<Item> otherSensors = root.addChild(new Item(
                 gs(R.string.source_wizard_other_sensors),
                 gs(R.string.source_wizard_other_sensors),
                 R.drawable.source_wizard_source_placeholder)
                 .withSummary(gs(R.string.source_wizard_other_sensors_examples)));
-        otherSensors.addChild(new Item(gs(R.string.source_wizard_medtrum_a6),
-                gs(R.string.source_wizard_medtrum_a6_summary),
-                DexCollectionType.Medtrum, R.drawable.medtrum_a6_icon)
-                .withDeviceIcon());
         otherSensors.addChild(new Item(gs(R.string.source_wizard_smartguide),
                 gs(R.string.source_wizard_smartguide_summary),
                 DexCollectionType.GluPro, R.drawable.accucheksmartguide_icon)
                 .withDeviceIcon());
-
-        // Existing app aliases stay visible under the device-first catalog
-        // until their exact sensor model names can be verified.
-        addCompanion(otherSensors, "iCan Health", R.drawable.ican3_icon);
-        addCompanion(otherSensors, "Ottai", R.drawable.ottai_icon);
-        addCompanion(otherSensors, "CamAPS FX");
-        addCompanion(otherSensors, "Medtronic (Guardian / MiniMed / Simplera)");
-        addCompanion(otherSensors, "Sinocare CGM");
-        addCompanion(otherSensors, "SiSensing Eco");
-        addCompanion(otherSensors, "Kakao PASTA");
-        addCompanion(otherSensors, "Suswel");
-        addCompanion(otherSensors, "Glucotech");
-        addCompanion(otherSensors, "Diabeloop");
-        otherSensors.addChild(new Item("CareSens Air",
-                DexCollectionType.NSEmulator, R.drawable.caresens_icon)
+        otherSensors.addChild(new Item(gs(R.string.source_wizard_medtrum_a6),
+                gs(R.string.source_wizard_medtrum_a6_summary),
+                DexCollectionType.Medtrum, R.drawable.medtrum_a6_icon)
                 .withDeviceIcon());
+        otherSensors.addChild(new Item(gs(R.string.source_wizard_ottai_m8),
+                gs(R.string.source_wizard_dexcom_app_summary),
+                DexCollectionType.UiBased, R.drawable.ottai_icon).withDeviceIcon());
 
         // These are universal fallback methods, not a second sensor catalog.
         root.addChild(new Item(gs(R.string.source_wizard_apps_section), true));
@@ -226,35 +281,36 @@ public class SourceWizard {
         bridges.addChild(new Item("Wifi Wixel + xBridge Wixel", DexCollectionType.WifiDexBridgeWixel,
                 R.drawable.source_wizard_source_placeholder));
 
-        // Follower and synchronization services, distinct from direct sensors.
+        // Followers are reusable explanation stacks. A Medtronic deep-link
+        // opens the same CareLink stack, not a second copy of its settings.
         root.addChild(new Item(gs(R.string.source_wizard_sync_section), true));
         Tree<Item> followers = root.addChild(new Item(gs(R.string.source_wizard_followers_group),
                 gs(R.string.source_wizard_followers_section),
                 R.drawable.x_sync_follow_icon));
-        followers.addChild(new Item("xDrip+ Sync Follower", DexCollectionType.Follower,
-                R.drawable.x_sync_follow_icon));
-        followers.addChild(new Item("Nightscout Follower", DexCollectionType.NSFollow,
-                R.drawable.nsfollow_icon));
-        followers.addChild(new Item("Dex Share Follower", DexCollectionType.SHFollow,
-                R.drawable.nsfollow_icon));
-        followers.addChild(new Item("Web Follower", DexCollectionType.WebFollow,
-                R.drawable.source_wizard_source_placeholder));
-        followers.addChild(new Item("CareLink Follower", DexCollectionType.CLFollow,
-                R.drawable.source_wizard_source_placeholder));
+        addFollower(followers, "CareLink Follower", R.drawable.source_wizard_source_placeholder,
+                R.string.source_wizard_follower_carelink_body, DexCollectionType.CLFollow);
+        addFollower(followers, "Dex Share Follower", R.drawable.nsfollow_icon,
+                R.string.source_wizard_follower_dexshare_body, DexCollectionType.SHFollow);
+        addFollower(followers, "Nightscout Follower", R.drawable.nsfollow_icon,
+                R.string.source_wizard_follower_nightscout_body, DexCollectionType.NSFollow);
+        addFollower(followers, "Web Follower", R.drawable.source_wizard_source_placeholder,
+                R.string.source_wizard_follower_web_body, DexCollectionType.WebFollow);
+        addFollower(followers, "xDrip+ Sync Follower", R.drawable.x_sync_follow_icon,
+                R.string.source_wizard_follower_xdrip_body, DexCollectionType.Follower);
+        // CareLink is the first child; no duplicate selection or explanation.
+        carelinkLink.withNavigationTarget(followers.getChildren().get(0));
     }
 
-    private void addCompanion(Tree<Item> parent, String label) {
-        addCompanion(parent, label, R.drawable.source_wizard_source_placeholder, false);
-    }
-
-    private void addCompanion(Tree<Item> parent, String label, int drawable) {
-        addCompanion(parent, label, drawable, true);
-    }
-
-    private void addCompanion(Tree<Item> parent, String label, int drawable, boolean withDeviceIcon) {
-        // Individual app labels are aliases for the same existing UiBased collector.
-        final Item item = new Item(label, DexCollectionType.UiBased, drawable);
-        parent.addChild(withDeviceIcon ? item.withDeviceIcon() : item);
+    private Tree<Item> addFollower(Tree<Item> parent, String name, int icon,
+            @StringRes int explanation, DexCollectionType type) {
+        final Tree<Item> stack = parent.addChild(new Item(name, (String) null, icon));
+        stack.addChild(new Item(gs(R.string.source_wizard_follower_about),
+                gs(explanation), 0).withInformationText());
+        stack.addChild(new Item(gs(R.string.source_wizard_try_connection),
+                type, R.drawable.source_wizard_source_placeholder)
+                .withCallToAction().withFullWidthDivider()
+                .withConfirmationName(name));
+        return stack;
     }
 
     // Rows without icons need dividers to start at their text, not an empty icon slot.
@@ -713,8 +769,19 @@ public class SourceWizard {
             for (Tree<Item> child : root.getChildren()) insertVisible(child, 0, items.size());
         }
 
-        // A generic device-app link opens the single shared help section.
+        // Deep links open the entire chain of parents before their destination.
+        // This also keeps the existing MicroTech -> Companion App link working.
         void open(Tree<Item> target) {
+            if (target == null) return;
+            final java.util.ArrayList<Tree<Item>> parents = new java.util.ArrayList<>();
+            for (Tree<Item> parent = target.getParent();
+                    parent != null && parent != root; parent = parent.getParent()) {
+                parents.add(0, parent);
+            }
+            for (Tree<Item> parent : parents) {
+                if (indexOf(parent) < 0) return;
+                if (!expandedBranches.contains(parent)) toggle(parent);
+            }
             if (indexOf(target) < 0) return;
             if (!expandedBranches.contains(target)) toggle(target);
             if (wizardList != null) {
