@@ -59,6 +59,10 @@ public class SourceWizard {
     {
         // Alphabetical device-first catalog. Different app routes can share a
         // collector: these are named presets, not new acquisition protocols.
+        // Preparation is a separate action, not an expandable sensor group.
+        root.addChild(new Item(gs(R.string.source_wizard_before_connection), true));
+        root.addChild(new Item(gs(R.string.source_wizard_readiness_title), (String) null, 0)
+                .withReadinessAction());
         root.addChild(new Item(gs(R.string.source_wizard_sensors_section), true));
 
         // CareSens Air: official broadcast or glucose notifications from PASTA.
@@ -438,6 +442,16 @@ public class SourceWizard {
         }
     }
 
+    // A lightweight first-stage screen: no permission or collector state is touched.
+    // The SW-007/009 status checks will be integrated here in a later phase.
+    private void showReadinessPlaceholder() {
+        new AlertDialog.Builder(activity, AlertDialog.THEME_HOLO_DARK)
+                .setTitle(R.string.source_wizard_readiness_title)
+                .setMessage(R.string.source_wizard_readiness_placeholder)
+                .setPositiveButton(R.string.source_wizard_readiness_close, null)
+                .show();
+    }
+
     private synchronized void dismissDialog() {
         if ((dialog != null) && dialog.isShowing()) {
             dialog.dismiss();
@@ -460,6 +474,7 @@ public class SourceWizard {
         private boolean fullWidthDivider;
         private boolean informationText;
         private boolean broadcastInformation;
+        private boolean readinessAction;
         private boolean callToAction;
         private Tree<Item> navigationTarget;
 
@@ -528,6 +543,15 @@ public class SourceWizard {
             return broadcastInformation;
         }
 
+        Item withReadinessAction() {
+            readinessAction = true;
+            return this;
+        }
+
+        public boolean isReadinessAction() {
+            return readinessAction;
+        }
+
         Item withCallToAction() {
             callToAction = true;
             return this;
@@ -561,7 +585,8 @@ public class SourceWizard {
         public boolean isIconVisible() {
             // All ordinary leaves share the same icon column. Parents and
             // auxiliary navigation rows remain icon-free on purpose.
-            return !section && !isGroup() && !auxiliaryTitle && !informationText && !callToAction;
+            return !section && !isGroup() && !auxiliaryTitle && !informationText
+                    && !callToAction && !readinessAction;
         }
 
         public boolean isDeviceIconVisible() {
@@ -616,7 +641,9 @@ public class SourceWizard {
 
         public void onClick(View v) {
             if (node == null || section || informationText) return;
-            if (navigationTarget != null) {
+            if (readinessAction) {
+                showReadinessPlaceholder();
+            } else if (navigationTarget != null) {
                 if (listModel != null) listModel.open(navigationTarget);
             } else if (isCollectionType()) {
                 getTreeDialog(node);
@@ -751,7 +778,8 @@ public class SourceWizard {
         }
 
         public boolean isGroup() {
-            return !section && !isCollectionType() && !informationText && navigationTarget == null;
+            return !section && !isCollectionType() && !informationText
+                    && !readinessAction && navigationTarget == null;
         }
 
         public boolean isExpanded() {

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="source_wizard_before_connection">Before connecting</string>
+    <string name="source_wizard_readiness_title">Readiness check</string>
+    <string name="source_wizard_readiness_placeholder">Background operation recommendations and preliminary permission checks will appear here. These checks are not connected yet.</string>
+    <string name="source_wizard_readiness_close">Close</string>
     <string name="source_wizard_skip">Skip</string>
     <string name="source_wizard_dexcom_models">Dexcom G6 and G7\nDirect Bluetooth</string>
     <string name="source_wizard_dexcom_direct_summary">[Dex]</string>

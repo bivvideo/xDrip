@@ -140,14 +140,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@{item.displayTitle}"
-                    android:visibility="@{item.group &amp;&amp; !item.auxiliaryTitle ? View.VISIBLE : View.GONE}" />
+                    android:visibility="@{(item.group || item.readinessAction) &amp;&amp; !item.auxiliaryTitle ? View.VISIBLE : View.GONE}" />
 
                 <TextView
                     style="@style/SourceWizardSensorTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@{item.displayTitle}"
-                    android:visibility="@{!item.group &amp;&amp; !item.auxiliaryTitle &amp;&amp; !item.informationText &amp;&amp; !item.callToAction ? View.VISIBLE : View.GONE}" />
+                    android:visibility="@{!item.group &amp;&amp; !item.readinessAction &amp;&amp; !item.auxiliaryTitle &amp;&amp; !item.informationText &amp;&amp; !item.callToAction ? View.VISIBLE : View.GONE}" />
 
                 <!-- The fallback question is intentionally the first, prominent line. -->
                 <TextView

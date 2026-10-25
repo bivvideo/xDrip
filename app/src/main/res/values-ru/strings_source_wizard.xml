@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="source_wizard_before_connection">Перед подключением</string>
+    <string name="source_wizard_readiness_title">Проверка готовности</string>
+    <string name="source_wizard_readiness_placeholder">Здесь появятся рекомендации по фоновой работе xDrip+ и предварительные проверки разрешений. Сейчас проверки ещё не подключены.</string>
+    <string name="source_wizard_readiness_close">Закрыть</string>
     <string name="source_wizard_skip">Пропустить</string>
     <string name="source_wizard_dexcom_models">Dexcom G6 и G7\nНапрямую по Bluetooth</string>
     <string name="source_wizard_dexcom_direct_summary">[Dex]</string>
