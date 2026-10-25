@@ -258,7 +258,8 @@ public class SourceWizard {
                 R.drawable.mm600_series)
                 .withSummary(gs(R.string.source_wizard_broadcast_examples)));
         broadcast.addChild(new Item(gs(R.string.source_wizard_not_found),
-                gs(R.string.source_wizard_broadcast_explanation), 0).withInformationText());
+                gs(R.string.source_wizard_broadcast_explanation), 0)
+                .withInformationText().withBroadcastInformation());
         broadcast.addChild(new Item(gs(R.string.source_wizard_try_connection),
                 DexCollectionType.NSEmulator, R.drawable.source_wizard_source_placeholder)
                 .withCallToAction()
@@ -458,6 +459,7 @@ public class SourceWizard {
         private boolean auxiliaryTitle;
         private boolean fullWidthDivider;
         private boolean informationText;
+        private boolean broadcastInformation;
         private boolean callToAction;
         private Tree<Item> navigationTarget;
 
@@ -515,6 +517,15 @@ public class SourceWizard {
         Item withInformationText() {
             informationText = true;
             return this;
+        }
+
+        Item withBroadcastInformation() {
+            broadcastInformation = true;
+            return this;
+        }
+
+        public boolean isBroadcastInformation() {
+            return broadcastInformation;
         }
 
         Item withCallToAction() {

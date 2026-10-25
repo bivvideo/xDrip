@@ -170,6 +170,69 @@
                     android:textColor="?android:attr/textColorPrimary"
                     android:visibility="@{item.informationText ? View.VISIBLE : View.GONE}" />
 
+                <!-- Broadcast-only, muted examples; other information rows keep the original body. -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="vertical"
+                    android:visibility="@{item.broadcastInformation ? View.VISIBLE : View.GONE}">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/source_wizard_broadcast_examples_heading"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="?android:attr/textColorSecondary" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/source_wizard_broadcast_juggluco_name"
+                        android:textStyle="bold"
+                        android:textSize="13sp"
+                        android:textColor="?android:attr/textColorSecondary" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/source_wizard_broadcast_juggluco_step"
+                        android:textSize="13sp"
+                        android:lineSpacingExtra="3dp"
+                        android:textColor="?android:attr/textColorSecondary" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/source_wizard_broadcast_esel_name"
+                        android:textStyle="bold"
+                        android:textSize="13sp"
+                        android:textColor="?android:attr/textColorSecondary" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/source_wizard_broadcast_esel_step"
+                        android:textSize="13sp"
+                        android:lineSpacingExtra="3dp"
+                        android:textColor="?android:attr/textColorSecondary" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/source_wizard_broadcast_conclusion"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="3dp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:visibility="@{item.broadcastInformation ? View.VISIBLE : View.GONE}" />
+
                 <!-- One explicit call to action after the explanation and divider. -->
                 <TextView
                     android:layout_width="match_parent"
