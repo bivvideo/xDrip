@@ -11,9 +11,15 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
 import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableList;
 import androidx.annotation.StringRes;
+import androidx.annotation.DrawableRes;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.databinding.BindingAdapter;
@@ -442,14 +448,97 @@ public class SourceWizard {
         }
     }
 
-    // A lightweight first-stage screen: no permission or collector state is touched.
-    // The SW-007/009 status checks will be integrated here in a later phase.
+    // SW-008 visual preview. All states are examples; no checks, grants or collector actions.
+    // The parent source picker stays open behind this second Holo dialog.
     private void showReadinessPlaceholder() {
-        new AlertDialog.Builder(activity, AlertDialog.THEME_HOLO_DARK)
-                .setTitle(R.string.source_wizard_readiness_title)
-                .setMessage(R.string.source_wizard_readiness_placeholder)
-                .setPositiveButton(R.string.source_wizard_readiness_close, null)
-                .show();
+        final Dialog readiness = new Dialog(activity, android.R.style.Theme_Holo_Dialog);
+        readiness.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        final View content = LayoutInflater.from(readiness.getContext())
+                .inflate(R.layout.dialog_source_wizard_readiness, null);
+        final LinearLayout stability = content.findViewById(R.id.readinessStabilityRows);
+        final LinearLayout connection = content.findViewById(R.id.readinessConnectionRows);
+
+        // Intentionally mixed sample states to assess all visual variants on a phone.
+        addReadinessPreviewRow(stability, R.string.source_wizard_readiness_battery,
+                R.drawable.source_wizard_readiness_ok, R.string.source_wizard_readiness_status_ok,
+                false, false, false);
+        addReadinessPreviewRow(stability, R.string.source_wizard_readiness_autostart,
+                R.drawable.source_wizard_readiness_missing, R.string.source_wizard_readiness_status_missing,
+                true, false, false);
+        addReadinessPreviewRow(stability, R.string.source_wizard_readiness_pin,
+                R.drawable.source_wizard_readiness_unknown, R.string.source_wizard_readiness_status_unknown,
+                false, true, true);
+
+        addReadinessPreviewRow(connection, R.string.source_wizard_readiness_notification_listener,
+                R.drawable.source_wizard_readiness_ok, R.string.source_wizard_readiness_status_ok,
+                false, false, false);
+        addReadinessPreviewRow(connection, R.string.source_wizard_readiness_bluetooth,
+                R.drawable.source_wizard_readiness_missing, R.string.source_wizard_readiness_status_missing,
+                true, false, false);
+        addReadinessPreviewRow(connection, R.string.source_wizard_readiness_location,
+                R.drawable.source_wizard_readiness_unknown, R.string.source_wizard_readiness_status_unknown,
+                false, true, true);
+
+        content.findViewById(R.id.readinessClose).setOnClickListener(v -> readiness.dismiss());
+
+        final Drawable background = activity.getDrawable(R.drawable.holo_background);
+        if (background instanceof GradientDrawable) {
+            ((GradientDrawable) background.mutate()).setCornerRadius(convertDpToPixel(6));
+        }
+        content.setBackground(background);
+        readiness.setContentView(content);
+        try {
+            readiness.show();
+            final Window window = readiness.getWindow();
+            if (window != null) {
+                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                final int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
+                window.setLayout(screenWidth - Math.round(convertDpToPixel(12)),
+                        WindowManager.LayoutParams.WRAP_CONTENT);
+            }
+            // Keep the header/footer visible even on compact screens.
+            final ScrollView scroll = content.findViewById(R.id.readinessPreviewScroll);
+            final int maximum = Math.round(
+                    activity.getResources().getDisplayMetrics().heightPixels * 0.62f);
+            scroll.post(() -> {
+                if (!readiness.isShowing() || scroll.getChildCount() == 0) return;
+                if (scroll.getChildAt(0).getHeight() > maximum) {
+                    final ViewGroup.LayoutParams lp = scroll.getLayoutParams();
+                    lp.height = maximum;
+                    scroll.setLayoutParams(lp);
+                }
+            });
+        } catch (Exception e) {
+            UserError.Log.e(TAG, "Exception showing readiness preview: " + e);
+        }
+    }
+
+    private void addReadinessPreviewRow(final LinearLayout parent, @StringRes int label,
+            @DrawableRes int statusIcon, @StringRes int statusDescription,
+            boolean fix, boolean info, boolean last) {
+        final View row = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.source_wizard_readiness_row, parent, false);
+        ((TextView) row.findViewById(R.id.readinessRowLabel)).setText(label);
+        final ImageView icon = row.findViewById(R.id.readinessRowStatus);
+        icon.setImageResource(statusIcon);
+        icon.setContentDescription(activity.getString(statusDescription));
+
+        final TextView fixAction = row.findViewById(R.id.readinessRowFix);
+        fixAction.setVisibility(fix ? View.VISIBLE : View.GONE);
+        if (fix) fixAction.setOnClickListener(v -> showReadinessPreviewNotice());
+
+        final TextView infoAction = row.findViewById(R.id.readinessRowInfo);
+        infoAction.setVisibility(info ? View.VISIBLE : View.GONE);
+        if (info) infoAction.setOnClickListener(v -> showReadinessPreviewNotice());
+
+        row.findViewById(R.id.readinessRowDivider)
+                .setVisibility(last ? View.GONE : View.VISIBLE);
+        parent.addView(row);
+    }
+
+    private void showReadinessPreviewNotice() {
+        Toast.makeText(activity, R.string.source_wizard_readiness_preview_action,
+                Toast.LENGTH_SHORT).show();
     }
 
     private synchronized void dismissDialog() {
