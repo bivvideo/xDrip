@@ -73,7 +73,7 @@ public final class SourceWizardReadiness {
                 case LOCATION:
                     // The existing xDrip helper defines which runtime location
                     // grants are needed for legacy Bluetooth scanning.
-                    if (!LocationHelper.isLocationPermissionOk(context)) {
+                    if (needsLocationPermission(context)) {
                         return new Result(State.MISSING, true);
                     }
                     final Boolean locationEnabled =
@@ -87,6 +87,11 @@ public final class SourceWizardReadiness {
             UserError.Log.e(TAG, "Readiness inspection failed for " + requirement + ": " + e);
             return new Result(State.UNKNOWN, false);
         }
+    }
+
+    /** Existing xDrip LocationHelper is the single authority for the grant set. */
+    public static boolean needsLocationPermission(final Context context) {
+        return context != null && !LocationHelper.isLocationPermissionOk(context);
     }
 
     private static Result fromNullable(final Boolean enabled, final boolean canFix) {
@@ -139,7 +144,7 @@ public final class SourceWizardReadiness {
                     if (canOpen(activity, enableBluetooth)) activity.startActivity(enableBluetooth);
                     break;
                 case LOCATION:
-                    if (!LocationHelper.isLocationPermissionOk(activity)) {
+                    if (needsLocationPermission(activity)) {
                         LocationHelper.openLocationPermissionSettings(activity);
                     } else {
                         // Existing system-location dialog; no collection restart.

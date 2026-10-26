@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.os.Build;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -562,7 +563,16 @@ public class SourceWizard {
         final View row = (View) icon.getParent();
         final TextView fix = row.findViewById(R.id.readinessRowFix);
         final TextView info = row.findViewById(R.id.readinessRowInfo);
-        fix.setOnClickListener(v -> SourceWizardReadiness.requestFix(activity, requirement));
+        fix.setOnClickListener(v -> {
+            // Background Location on Android 10+ is configured in app settings.
+            // Explain the manual steps before leaving the wizard.
+            if (requirement == SourceWizardReadiness.Requirement.LOCATION
+                    && SourceWizardReadiness.needsLocationPermission(activity)) {
+                showLocationPermissionInstructions();
+            } else {
+                SourceWizardReadiness.requestFix(activity, requirement);
+            }
+        });
         info.setOnClickListener(v -> showReadinessHelp(requirement, label));
 
         final Runnable finish = () -> {
@@ -616,6 +626,20 @@ public class SourceWizard {
             icon.removeCallbacks(finish);
         });
         return start;
+    }
+
+    private void showLocationPermissionInstructions() {
+        final int message = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+                ? R.string.source_wizard_readiness_location_permission_steps_background
+                : R.string.source_wizard_readiness_location_permission_steps_foreground;
+        new AlertDialog.Builder(activity, AlertDialog.THEME_HOLO_DARK)
+                .setTitle(R.string.please_allow_permission)
+                .setMessage(message)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(R.string.source_wizard_readiness_allow, (dialog, which) ->
+                        SourceWizardReadiness.requestFix(activity,
+                                SourceWizardReadiness.Requirement.LOCATION))
+                .show();
     }
 
     private void showReadinessHelp(final SourceWizardReadiness.Requirement requirement,
