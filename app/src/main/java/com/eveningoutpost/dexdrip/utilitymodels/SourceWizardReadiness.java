@@ -140,7 +140,7 @@ public final class SourceWizardReadiness {
                     break;
                 case LOCATION:
                     if (!LocationHelper.isLocationPermissionOk(activity)) {
-                        LocationHelper.requestLocationPermissionWithoutRestart(activity);
+                        LocationHelper.openLocationPermissionSettings(activity);
                     } else {
                         // Existing system-location dialog; no collection restart.
                         LocationHelper.requestLocation(activity);

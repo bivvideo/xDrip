@@ -223,31 +223,20 @@ public class LocationHelper {
 
 
     /**
-     * User-triggered, preflight-safe permission request. No collector restart,
-     * DexCollectionType mutation, or delayed task is scheduled here.
-     * Reuse the same permission requirements as isLocationPermissionOk().
+     * Open xDrip's own Android app-permission screen for manual location access.
+     * A standalone ACCESS_BACKGROUND_LOCATION request can return without a
+     * dialog on some Android/OEM combinations or after previous denial.
+     * Unlike requestLocationForBluetooth(), this action never restarts a collector.
      */
-    public static void requestLocationPermissionWithoutRestart(final Activity activity) {
-        if (activity == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return;
-        if (ContextCompat.checkSelfPermission(activity,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0x5357);
-            return;
-        }
-        if (Build.VERSION.SDK_INT >= 29
-                && ContextCompat.checkSelfPermission(activity,
-                ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= 30) {
-                // On Android 11+, background location is normally configured in
-                // the app's system permission settings, not a foreground dialog.
-                activity.startActivity(new Intent(
-                        android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        android.net.Uri.parse("package:" + activity.getPackageName())));
-            } else {
-                ActivityCompat.requestPermissions(activity,
-                        new String[]{ACCESS_BACKGROUND_LOCATION}, 0x5357);
-            }
+    public static void openLocationPermissionSettings(final Activity activity) {
+        if (activity == null) return;
+        try {
+            activity.startActivity(new Intent(
+                    android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    android.net.Uri.parse("package:" + activity.getPackageName())));
+        } catch (RuntimeException e) {
+            JoH.static_toast_long(activity.getString(
+                    R.string.source_wizard_readiness_location_settings_unavailable));
         }
     }
 
