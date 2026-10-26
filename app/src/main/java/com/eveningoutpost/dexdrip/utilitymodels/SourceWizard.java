@@ -454,7 +454,7 @@ public class SourceWizard {
     }
 
     // SW-008 readiness window: stability and Notification Listener are live;
-    // Bluetooth and location remain explicitly visual examples.
+    // Every general-readiness row runs its real check; OEM app lock remains unknown by design.
     // The parent source picker stays open behind this second Holo dialog.
     private void showReadinessPlaceholder() {
         final Dialog readiness = new Dialog(activity, android.R.style.Theme_Holo_Dialog);
@@ -486,15 +486,16 @@ public class SourceWizard {
                 R.string.source_wizard_readiness_notification_listener,
                 SourceWizardReadiness.Requirement.NOTIFICATION_LISTENER,
                 false, true, cancelChecks));
-        // Bluetooth and location still use visual examples in this iteration.
-        final ImageView checkingIcon = addReadinessPreviewRow(connection,
+        // Bluetooth and Location are independent live checks in the general,
+        // nonblocking readiness window. Route-specific requirements come later.
+        startChecks.add(addLiveReadinessRow(readiness, connection,
                 R.string.source_wizard_readiness_bluetooth,
-                R.drawable.source_wizard_readiness_checking,
-                R.string.source_wizard_readiness_status_checking,
-                false, false, false);
-        addReadinessPreviewRow(connection, R.string.source_wizard_readiness_location,
-                R.drawable.source_wizard_readiness_unknown, R.string.source_wizard_readiness_status_unknown,
-                false, true, true);
+                SourceWizardReadiness.Requirement.BLUETOOTH,
+                false, true, cancelChecks));
+        startChecks.add(addLiveReadinessRow(readiness, connection,
+                R.string.source_wizard_readiness_location,
+                SourceWizardReadiness.Requirement.LOCATION,
+                true, true, cancelChecks));
 
         // Recheck all live settings when returning from a system Settings screen.
         final boolean[] lostFocus = {false};
@@ -516,15 +517,9 @@ public class SourceWizard {
         readiness.setContentView(content);
         try {
             readiness.show();
-            // Only Bluetooth still uses the perpetual demo spinner.
-            final Animation checkingAnimation = AnimationUtils.loadAnimation(
-                    activity, R.anim.source_wizard_readiness_spin);
-            checkingIcon.startAnimation(checkingAnimation);
-
             final ViewTreeObserver focusObserver = content.getViewTreeObserver();
             focusObserver.addOnWindowFocusChangeListener(focusListener);
             readiness.setOnDismissListener(ignored -> {
-                checkingIcon.clearAnimation();
                 for (Runnable cancel : cancelChecks) cancel.run();
                 if (focusObserver.isAlive()) {
                     focusObserver.removeOnWindowFocusChangeListener(focusListener);
@@ -638,6 +633,12 @@ public class SourceWizard {
                 break;
             case NOTIFICATION_LISTENER:
                 message = R.string.source_wizard_readiness_real_unknown_help;
+                break;
+            case BLUETOOTH:
+                message = R.string.source_wizard_readiness_bluetooth_help;
+                break;
+            case LOCATION:
+                message = R.string.source_wizard_readiness_location_help;
                 break;
             default:
                 return;

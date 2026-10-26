@@ -14,7 +14,7 @@
     <string name="source_wizard_readiness_location">Геолокация</string>
     <string name="source_wizard_readiness_fix">Исправить</string>
     <string name="source_wizard_readiness_info">Информация</string>
-    <string name="source_wizard_readiness_preview_note">Bluetooth и геолокация пока демонстрационные</string>
+    <string name="source_wizard_readiness_preview_note">Проверки добровольные, источник данных не меняется</string>
     <string name="source_wizard_readiness_preview_action">Остальные строки пока демонстрационные. Проверки и действия появятся позже</string>
     <string name="source_wizard_readiness_status_ok">Пример: выполнено</string>
     <string name="source_wizard_readiness_status_missing">Пример: не выполнено</string>
@@ -32,6 +32,8 @@
     <string name="source_wizard_readiness_open_settings">Открыть настройки</string>
     <string name="source_wizard_readiness_battery_help">Не удалось проверить исключение xDrip+ из энергосбережения Android. Проверьте ограничения вручную в настройках батареи приложения. Исключение не отменяет все ограничения производителя.</string>
     <string name="source_wizard_readiness_autostart_help">Автозапуск зависит от производителя, в Android нет универсальной проверки. xDrip+ пытается прочитать состояние на поддерживаемых версиях Xiaomi. Если статус неизвестен, включите автозапуск вручную. На Xiaomi: Настройки → Приложения → Разрешения → Автозапуск (названия могут отличаться).</string>
+    <string name="source_wizard_readiness_bluetooth_help">Не удалось проверить Bluetooth. Включите его вручную в настройках Android. Это системный переключатель, а не разрешение на скрытое включение. Для отдельных сенсоров могут потребоваться дополнительные права.</string>
+    <string name="source_wizard_readiness_location_help">Проверяются доступ xDrip+ к геолокации (в том числе фоновый, когда его требует существующий helper Bluetooth) и системный переключатель геолокации. «Исправить» последовательно запрашивает недостающее разрешение или открывает настройки, только по нажатию. Не всем Bluetooth-маршрутам нужна геолокация; общая проверка не блокирует выбор источника.</string>
     <string name="source_wizard_readiness_pin_help">xDrip+ не может достоверно определить, закреплено ли приложение в списке недавних. Откройте недавние приложения и закрепите xDrip+ значком замка, если телефон это поддерживает. Это не закрепление экрана Android.</string>
     <string name="source_wizard_skip">Пропустить</string>
     <string name="source_wizard_dexcom_models">Dexcom G6 и G7\nНапрямую по Bluetooth</string>

@@ -1,8 +1,13 @@
 package com.eveningoutpost.dexdrip.utilitymodels;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.provider.Settings;
+
+import com.eveningoutpost.dexdrip.models.JoH;
+import com.eveningoutpost.dexdrip.utils.LocationHelper;
 
 import com.eveningoutpost.dexdrip.models.UserError;
 import com.eveningoutpost.dexdrip.services.UiBasedCollector;
@@ -20,7 +25,9 @@ public final class SourceWizardReadiness {
         BATTERY_OPTIMIZATION,
         AUTOSTART,
         APP_LOCK,
-        NOTIFICATION_LISTENER
+        NOTIFICATION_LISTENER,
+        BLUETOOTH,
+        LOCATION
     }
 
     public enum State {
@@ -59,6 +66,20 @@ public final class SourceWizardReadiness {
                 case NOTIFICATION_LISTENER:
                     final boolean enabled = UiBasedCollector.isNotificationServiceEnabled();
                     return new Result(enabled ? State.READY : State.MISSING, !enabled);
+                case BLUETOOTH:
+                    final Boolean bluetoothEnabled = JoH.bluetoothEnabledOrUnknown(context);
+                    return fromNullable(bluetoothEnabled, Boolean.FALSE.equals(bluetoothEnabled)
+                            && canOpen(context, new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)));
+                case LOCATION:
+                    // The existing xDrip helper defines which runtime location
+                    // grants are needed for legacy Bluetooth scanning.
+                    if (!LocationHelper.isLocationPermissionOk(context)) {
+                        return new Result(State.MISSING, true);
+                    }
+                    final Boolean locationEnabled =
+                            LocationHelper.locationServicesEnabledOrUnknown(context);
+                    return fromNullable(locationEnabled, Boolean.FALSE.equals(locationEnabled)
+                            && canOpen(context, new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)));
                 default:
                     return new Result(State.UNKNOWN, false);
             }
@@ -111,6 +132,19 @@ public final class SourceWizardReadiness {
                 case NOTIFICATION_LISTENER:
                     // Reuse the existing UiBased rationale and Android Settings navigation.
                     UiBasedCollector.enableNotificationService(activity);
+                    break;
+                case BLUETOOTH:
+                    // A standard system confirmation, never JoH.setBluetoothEnabled().
+                    final Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    if (canOpen(activity, enableBluetooth)) activity.startActivity(enableBluetooth);
+                    break;
+                case LOCATION:
+                    if (!LocationHelper.isLocationPermissionOk(activity)) {
+                        LocationHelper.requestLocationPermissionWithoutRestart(activity);
+                    } else {
+                        // Existing system-location dialog; no collection restart.
+                        LocationHelper.requestLocation(activity);
+                    }
                     break;
                 default:
                     break;

@@ -34,15 +34,24 @@ public class LocationHelper {
      * @return true if location is enabled, false otherwise.
      */
     public static boolean isLocationEnabled(final Context context) {
+        // Preserve legacy behavior: if unreadable, do not interrupt old flows.
+        return !Boolean.FALSE.equals(locationServicesEnabledOrUnknown(context));
+    }
+
+    /**
+     * Tri-state system Location toggle. Null means unavailable/unreadable;
+     * callers must not interpret it as enabled (unlike the legacy method).
+     */
+    public static Boolean locationServicesEnabledOrUnknown(final Context context) {
+        if (context == null) return null;
         try {
-            final LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-            if (Build.VERSION.SDK_INT >= 28) {
-                return locationManager == null || locationManager.isLocationEnabled();
-            } else {
-                return locationManager == null || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-            }
+            final LocationManager manager =
+                    (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            if (manager == null) return null;
+            if (Build.VERSION.SDK_INT >= 28) return manager.isLocationEnabled();
+            return manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
         } catch (Exception e) {
-            return true;
+            return null;
         }
     }
 
@@ -210,6 +219,36 @@ public class LocationHelper {
             }
         }
         return true;
+    }
+
+
+    /**
+     * User-triggered, preflight-safe permission request. No collector restart,
+     * DexCollectionType mutation, or delayed task is scheduled here.
+     * Reuse the same permission requirements as isLocationPermissionOk().
+     */
+    public static void requestLocationPermissionWithoutRestart(final Activity activity) {
+        if (activity == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return;
+        if (ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0x5357);
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= 29
+                && ContextCompat.checkSelfPermission(activity,
+                ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= 30) {
+                // On Android 11+, background location is normally configured in
+                // the app's system permission settings, not a foreground dialog.
+                activity.startActivity(new Intent(
+                        android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        android.net.Uri.parse("package:" + activity.getPackageName())));
+            } else {
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{ACCESS_BACKGROUND_LOCATION}, 0x5357);
+            }
+        }
     }
 
     public static Boolean locationPermission(final Activity activity) {

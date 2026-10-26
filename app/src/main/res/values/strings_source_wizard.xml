@@ -14,7 +14,7 @@
     <string name="source_wizard_readiness_location">Location</string>
     <string name="source_wizard_readiness_fix">Fix</string>
     <string name="source_wizard_readiness_info">Information</string>
-    <string name="source_wizard_readiness_preview_note">Bluetooth and location are still examples</string>
+    <string name="source_wizard_readiness_preview_note">Checks here are optional and do not change the data source</string>
     <string name="source_wizard_readiness_preview_action">Other rows are a visual preview. Their checks and actions will be added later</string>
     <string name="source_wizard_readiness_status_ok">Example: ready</string>
     <string name="source_wizard_readiness_status_missing">Example: not ready</string>
@@ -32,6 +32,8 @@
     <string name="source_wizard_readiness_open_settings">Open settings</string>
     <string name="source_wizard_readiness_battery_help">Could not verify the Android battery optimization exemption for xDrip+. Open the app battery settings and check restrictions manually. An exemption does not cover all manufacturer-specific background limits.</string>
     <string name="source_wizard_readiness_autostart_help">Autostart is managed by some phone manufacturers, and Android has no universal way to read its state. xDrip+ tries a read-only check on supported Xiaomi systems. If the status is unknown, enable autostart manually in system settings. On Xiaomi, look under Settings → Apps → Permissions → Autostart (names may vary).</string>
+    <string name="source_wizard_readiness_bluetooth_help">Could not check Bluetooth. Open Android Bluetooth settings and turn it on manually. This is a system switch, not permission to change it silently. Individual sensor routes can require additional permissions.</string>
+    <string name="source_wizard_readiness_location_help">Location readiness checks xDrip+ location access (including background access where the existing Bluetooth helper requires it) and the system Location switch. Fix requests the missing permission or opens Location settings, one step at a time, only when you tap. Some Bluetooth routes do not need these permissions; the general check never blocks source selection.</string>
     <string name="source_wizard_readiness_pin_help">xDrip+ cannot reliably detect whether it is locked in the recent-apps list. Open recent apps and lock xDrip+ using a padlock control, if your phone provides one. This is different from Android screen pinning.</string>
     <string name="source_wizard_skip">Skip</string>
     <string name="source_wizard_dexcom_models">Dexcom G6 and G7\nDirect Bluetooth</string>

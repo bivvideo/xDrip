@@ -1872,15 +1872,28 @@ public class JoH {
         return false;
     }
 
-    public static boolean isBluetoothEnabled(final Context context) {
+    /**
+     * Read-only Bluetooth state shared with Source Wizard. Unlike the legacy
+     * boolean API, null represents a missing adapter or an unreadable state.
+     * Never enable or reset Bluetooth during a readiness check.
+     */
+    public static Boolean bluetoothEnabledOrUnknown(final Context context) {
+        if (context == null) return null;
         try {
-            final BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
-            final BluetoothAdapter mBluetoothAdapter = bluetoothManager.getAdapter(); // local scope only
-            return mBluetoothAdapter.isEnabled();
+            final BluetoothManager bluetoothManager =
+                    (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
+            if (bluetoothManager == null) return null;
+            final BluetoothAdapter adapter = bluetoothManager.getAdapter();
+            return adapter == null ? null : adapter.isEnabled();
         } catch (Exception e) {
-            UserError.Log.d(TAG, "isBluetoothEnabled() exception: " + e);
+            UserError.Log.d(TAG, "bluetoothEnabledOrUnknown() exception: " + e);
+            return null;
         }
-        return false;
+    }
+
+    public static boolean isBluetoothEnabled(final Context context) {
+        // Preserve existing callers' false-on-error contract.
+        return Boolean.TRUE.equals(bluetoothEnabledOrUnknown(context));
     }
 
     public synchronized static void setBluetoothEnabled(Context context, boolean state) {
