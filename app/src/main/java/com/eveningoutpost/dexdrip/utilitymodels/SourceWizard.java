@@ -694,9 +694,10 @@ public class SourceWizard {
             // Check current system state again, never trust only the rendered state.
             checkListener.run();
             if (!permissions.isShowing() || !proceed.isEnabled()) return;
-            // SW-010 is not implemented. Never switch the user's current source here.
-            Toast.makeText(activity, R.string.source_wizard_permissions_next_step_pending,
-                    Toast.LENGTH_LONG).show();
+            // TEMP SW-014 phone preview: READY Continue opens the existing error dialog.
+            // Remove this hook after author acceptance; restore the SW-010 placeholder.
+            permissions.dismiss();
+            showNotificationPermissionCheckError();
         });
 
         final Drawable background = activity.getDrawable(R.drawable.holo_background);
