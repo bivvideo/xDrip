@@ -42,19 +42,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:layout_marginBottom="12dp"
                 android:text="@string/source_wizard_readiness_section_stability"
                 android:textAllCaps="true"
                 android:letterSpacing="0.045"
                 android:textSize="14sp"
-                android:textColor="?android:attr/textColorSecondary" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="12dp"
-                android:text="@string/source_wizard_readiness_stability_details"
-                android:textSize="12sp"
                 android:textColor="?android:attr/textColorSecondary" />
 
             <LinearLayout

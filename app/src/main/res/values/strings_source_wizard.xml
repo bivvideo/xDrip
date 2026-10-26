@@ -4,9 +4,8 @@
     <string name="source_wizard_readiness_title">Readiness check</string>
     <string name="source_wizard_readiness_placeholder">Background operation recommendations and preliminary permission checks will appear here. These checks are not connected yet.</string>
     <string name="source_wizard_readiness_close">Close</string>
-    <string name="source_wizard_readiness_section_stability">Background stability</string>
-    <string name="source_wizard_readiness_stability_details">Settings for reliable xDrip+ background operation</string>
-    <string name="source_wizard_readiness_section_access">Recommended permissions and access</string>
+    <string name="source_wizard_readiness_section_stability">Background operation stability</string>
+    <string name="source_wizard_readiness_section_access">Recommended permissions</string>
     <string name="source_wizard_readiness_battery">Disable battery optimization</string>
     <string name="source_wizard_readiness_autostart">Autostart</string>
     <string name="source_wizard_readiness_pin">Keep app running</string>

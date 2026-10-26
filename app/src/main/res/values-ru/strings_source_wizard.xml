@@ -4,9 +4,8 @@
     <string name="source_wizard_readiness_title">Проверка готовности</string>
     <string name="source_wizard_readiness_placeholder">Здесь появятся рекомендации по фоновой работе xDrip+ и предварительные проверки разрешений. Сейчас проверки ещё не подключены.</string>
     <string name="source_wizard_readiness_close">Закрыть</string>
-    <string name="source_wizard_readiness_section_stability">Стабильность работы</string>
-    <string name="source_wizard_readiness_stability_details">Настройки для стабильной фоновой работы xDrip+</string>
-    <string name="source_wizard_readiness_section_access">Рекомендуемые разрешения и доступ</string>
+    <string name="source_wizard_readiness_section_stability">Стабильность фоновой работы</string>
+    <string name="source_wizard_readiness_section_access">Рекомендуемые разрешения</string>
     <string name="source_wizard_readiness_battery">Отключение энергосбережения</string>
     <string name="source_wizard_readiness_autostart">Автозапуск</string>
     <string name="source_wizard_readiness_pin">Закрепление приложения</string>

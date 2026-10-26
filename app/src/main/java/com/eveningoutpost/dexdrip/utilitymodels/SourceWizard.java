@@ -460,11 +460,11 @@ public class SourceWizard {
 
         // Intentionally mixed sample states to assess all visual variants on a phone.
         addReadinessPreviewRow(stability, R.string.source_wizard_readiness_battery,
-                R.drawable.source_wizard_readiness_ok, R.string.source_wizard_readiness_status_ok,
-                false, false, false);
-        addReadinessPreviewRow(stability, R.string.source_wizard_readiness_autostart,
                 R.drawable.source_wizard_readiness_missing, R.string.source_wizard_readiness_status_missing,
                 true, false, false);
+        addReadinessPreviewRow(stability, R.string.source_wizard_readiness_autostart,
+                R.drawable.source_wizard_readiness_ok, R.string.source_wizard_readiness_status_ok,
+                false, false, false);
         addReadinessPreviewRow(stability, R.string.source_wizard_readiness_pin,
                 R.drawable.source_wizard_readiness_unknown, R.string.source_wizard_readiness_status_unknown,
                 false, true, true);
