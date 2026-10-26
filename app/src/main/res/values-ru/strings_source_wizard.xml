@@ -19,6 +19,7 @@
     <string name="source_wizard_readiness_status_ok">Пример: выполнено</string>
     <string name="source_wizard_readiness_status_missing">Пример: не выполнено</string>
     <string name="source_wizard_readiness_status_unknown">Пример: не удалось проверить</string>
+    <string name="source_wizard_readiness_status_checking">Пример: выполняется проверка</string>
     <string name="source_wizard_skip">Пропустить</string>
     <string name="source_wizard_dexcom_models">Dexcom G6 и G7\nНапрямую по Bluetooth</string>
     <string name="source_wizard_dexcom_direct_summary">[Dex]</string>

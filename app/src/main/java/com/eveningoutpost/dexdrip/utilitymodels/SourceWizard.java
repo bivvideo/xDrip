@@ -11,6 +11,8 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -472,14 +474,18 @@ public class SourceWizard {
         addReadinessPreviewRow(connection, R.string.source_wizard_readiness_notification_listener,
                 R.drawable.source_wizard_readiness_ok, R.string.source_wizard_readiness_status_ok,
                 false, false, false);
-        addReadinessPreviewRow(connection, R.string.source_wizard_readiness_bluetooth,
-                R.drawable.source_wizard_readiness_missing, R.string.source_wizard_readiness_status_missing,
-                true, false, false);
+        // The only animated prototype row; it does not interrogate the Bluetooth state.
+        final ImageView checkingIcon = addReadinessPreviewRow(connection,
+                R.string.source_wizard_readiness_bluetooth,
+                R.drawable.source_wizard_readiness_checking,
+                R.string.source_wizard_readiness_status_checking,
+                false, false, false);
         addReadinessPreviewRow(connection, R.string.source_wizard_readiness_location,
                 R.drawable.source_wizard_readiness_unknown, R.string.source_wizard_readiness_status_unknown,
                 false, true, true);
 
         content.findViewById(R.id.readinessClose).setOnClickListener(v -> readiness.dismiss());
+        readiness.setOnDismissListener(ignored -> checkingIcon.clearAnimation());
 
         final Drawable background = activity.getDrawable(R.drawable.holo_background);
         if (background instanceof GradientDrawable) {
@@ -489,6 +495,10 @@ public class SourceWizard {
         readiness.setContentView(content);
         try {
             readiness.show();
+            // Preview only: rotating status, no live permission checks yet.
+            final Animation checkingAnimation = AnimationUtils.loadAnimation(
+                    activity, R.anim.source_wizard_readiness_spin);
+            checkingIcon.startAnimation(checkingAnimation);
             final Window window = readiness.getWindow();
             if (window != null) {
                 window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -513,7 +523,7 @@ public class SourceWizard {
         }
     }
 
-    private void addReadinessPreviewRow(final LinearLayout parent, @StringRes int label,
+    private ImageView addReadinessPreviewRow(final LinearLayout parent, @StringRes int label,
             @DrawableRes int statusIcon, @StringRes int statusDescription,
             boolean fix, boolean info, boolean last) {
         final View row = LayoutInflater.from(parent.getContext())
@@ -534,6 +544,7 @@ public class SourceWizard {
         row.findViewById(R.id.readinessRowDivider)
                 .setVisibility(last ? View.GONE : View.VISIBLE);
         parent.addView(row);
+        return icon;
     }
 
     private void showReadinessPreviewNotice() {

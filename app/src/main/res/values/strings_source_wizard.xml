@@ -19,6 +19,7 @@
     <string name="source_wizard_readiness_status_ok">Example: ready</string>
     <string name="source_wizard_readiness_status_missing">Example: not ready</string>
     <string name="source_wizard_readiness_status_unknown">Example: cannot verify</string>
+    <string name="source_wizard_readiness_status_checking">Example: checking</string>
     <string name="source_wizard_skip">Skip</string>
     <string name="source_wizard_dexcom_models">Dexcom G6 and G7\nDirect Bluetooth</string>
     <string name="source_wizard_dexcom_direct_summary">[Dex]</string>
