@@ -509,7 +509,7 @@ public class SourceWizard {
         ((TextView) root.findViewById(R.id.companionIntro))
                 .setText(activity.getString(R.string.source_wizard_companion_intro, sensor, appName));
         ((TextView) root.findViewById(R.id.companionExplanation))
-                .setText(activity.getString(R.string.source_wizard_companion_explanation, appName));
+                .setText(activity.getString(R.string.source_wizard_companion_setup_explanation, appName));
         ((TextView) root.findViewById(R.id.companionAppName)).setText(appName);
         final ImageView icon = root.findViewById(R.id.companionStatusIcon);
         final TextView status = root.findViewById(R.id.companionStatusText);

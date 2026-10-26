@@ -144,7 +144,7 @@
     <string name="source_wizard_follower_xdrip_body">This phone receives glucose readings from another xDrip+ installation via xDrip Sync. First configure data sharing on the sending phone, then connect this follower.</string>
     <string name="source_wizard_companion_title">Connection setup</string>
     <string name="source_wizard_companion_intro">You selected the %1$s sensor with readings provided by %2$s.</string>
-    <string name="source_wizard_companion_explanation">To receive glucose readings in xDrip+, %1$s must be installed and receiving data from the sensor.</string>
+    <string name="source_wizard_companion_setup_explanation">To receive glucose readings in xDrip+, %1$s must be installed and receiving data from the sensor.</string>
     <string name="source_wizard_companion_question">Continue setup with these settings?</string>
     <string name="source_wizard_companion_installed">App installed</string>
     <string name="source_wizard_companion_missing">App not installed</string>
