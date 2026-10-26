@@ -37,6 +37,8 @@ import com.eveningoutpost.dexdrip.utils.DexCollectionType;
 import com.eveningoutpost.dexdrip.xdrip;
 
 import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import me.tatarka.bindingcollectionadapter2.ItemBinding;
 
@@ -451,7 +453,8 @@ public class SourceWizard {
         }
     }
 
-    // SW-008 visual preview. All states are examples; no checks, grants or collector actions.
+    // SW-008 readiness window: stability and Notification Listener are live;
+    // Bluetooth and location remain explicitly visual examples.
     // The parent source picker stays open behind this second Holo dialog.
     private void showReadinessPlaceholder() {
         final Dialog readiness = new Dialog(activity, android.R.style.Theme_Holo_Dialog);
@@ -461,32 +464,29 @@ public class SourceWizard {
         final LinearLayout stability = content.findViewById(R.id.readinessStabilityRows);
         final LinearLayout connection = content.findViewById(R.id.readinessConnectionRows);
 
-        // Intentionally mixed sample states to assess all visual variants on a phone.
-        addReadinessPreviewRow(stability, R.string.source_wizard_readiness_battery,
-                R.drawable.source_wizard_readiness_missing, R.string.source_wizard_readiness_status_missing,
-                true, false, false);
-        addReadinessPreviewRow(stability, R.string.source_wizard_readiness_autostart,
-                R.drawable.source_wizard_readiness_ok, R.string.source_wizard_readiness_status_ok,
-                false, false, false);
-        addReadinessPreviewRow(stability, R.string.source_wizard_readiness_pin,
-                R.drawable.source_wizard_readiness_unknown, R.string.source_wizard_readiness_status_unknown,
-                false, true, true);
+        // Real, side-effect-free stability probes. App locking is unknown on
+        // current Android APIs; never display a guessed success or failure.
+        final List<Runnable> startChecks = new ArrayList<>();
+        final List<Runnable> cancelChecks = new ArrayList<>();
+        startChecks.add(addLiveReadinessRow(readiness, stability,
+                R.string.source_wizard_readiness_battery,
+                SourceWizardReadiness.Requirement.BATTERY_OPTIMIZATION,
+                false, true, cancelChecks));
+        startChecks.add(addLiveReadinessRow(readiness, stability,
+                R.string.source_wizard_readiness_autostart,
+                SourceWizardReadiness.Requirement.AUTOSTART,
+                false, true, cancelChecks));
+        startChecks.add(addLiveReadinessRow(readiness, stability,
+                R.string.source_wizard_readiness_pin,
+                SourceWizardReadiness.Requirement.APP_LOCK,
+                true, false, cancelChecks));
 
-        // First live requirement: shared UiBased collector check, not a sample.
-        final ImageView listenerIcon = addReadinessPreviewRow(connection,
+        // The existing UiBased collector remains the source of truth here.
+        startChecks.add(addLiveReadinessRow(readiness, connection,
                 R.string.source_wizard_readiness_notification_listener,
-                R.drawable.source_wizard_readiness_checking,
-                R.string.source_wizard_readiness_real_checking,
-                false, false, false);
-        final View listenerRow = (View) listenerIcon.getParent();
-        final TextView listenerFix = listenerRow.findViewById(R.id.readinessRowFix);
-        final TextView listenerInfo = listenerRow.findViewById(R.id.readinessRowInfo);
-        listenerFix.setOnClickListener(v -> SourceWizardReadiness.requestFix(
-                activity, SourceWizardReadiness.Requirement.NOTIFICATION_LISTENER));
-        listenerInfo.setOnClickListener(v ->
-                Toast.makeText(activity, R.string.source_wizard_readiness_real_unknown_help,
-                        Toast.LENGTH_SHORT).show());
-        // The only animated prototype row; it does not interrogate the Bluetooth state.
+                SourceWizardReadiness.Requirement.NOTIFICATION_LISTENER,
+                false, true, cancelChecks));
+        // Bluetooth and location still use visual examples in this iteration.
         final ImageView checkingIcon = addReadinessPreviewRow(connection,
                 R.string.source_wizard_readiness_bluetooth,
                 R.drawable.source_wizard_readiness_checking,
@@ -496,56 +496,14 @@ public class SourceWizard {
                 R.drawable.source_wizard_readiness_unknown, R.string.source_wizard_readiness_status_unknown,
                 false, true, true);
 
-        // Status rendering is UI-only; the coordinator delegates to UiBasedCollector.
-        final Runnable finishListenerCheck = () -> {
-            if (!readiness.isShowing()) return;
-            listenerIcon.clearAnimation();
-            final SourceWizardReadiness.Result result = SourceWizardReadiness.inspect(
-                    SourceWizardReadiness.Requirement.NOTIFICATION_LISTENER);
-            switch (result.state) {
-                case READY:
-                    listenerIcon.setImageResource(R.drawable.source_wizard_readiness_ok);
-                    listenerIcon.setContentDescription(
-                            activity.getString(R.string.source_wizard_readiness_real_ready));
-                    break;
-                case MISSING:
-                    listenerIcon.setImageResource(R.drawable.source_wizard_readiness_missing);
-                    listenerIcon.setContentDescription(
-                            activity.getString(R.string.source_wizard_readiness_real_missing));
-                    break;
-                default:
-                    listenerIcon.setImageResource(R.drawable.source_wizard_readiness_unknown);
-                    listenerIcon.setContentDescription(
-                            activity.getString(R.string.source_wizard_readiness_real_unknown));
-                    break;
-            }
-            listenerFix.setVisibility(result.canFix ? View.VISIBLE : View.GONE);
-            listenerInfo.setVisibility(result.state == SourceWizardReadiness.State.UNKNOWN
-                    ? View.VISIBLE : View.GONE);
-        };
-
-        final Runnable startListenerCheck = () -> {
-            if (!readiness.isShowing()) return;
-            listenerIcon.removeCallbacks(finishListenerCheck);
-            listenerFix.setVisibility(View.GONE);
-            listenerInfo.setVisibility(View.GONE);
-            listenerIcon.setImageResource(R.drawable.source_wizard_readiness_checking);
-            listenerIcon.setContentDescription(
-                    activity.getString(R.string.source_wizard_readiness_real_checking));
-            listenerIcon.startAnimation(AnimationUtils.loadAnimation(
-                    activity, R.anim.source_wizard_readiness_spin));
-            // A short minimum display time makes the real check transition visible.
-            listenerIcon.postDelayed(finishListenerCheck, 450L);
-        };
-
-        // When Settings (or the existing permission rationale) closes, recheck.
+        // Recheck all live settings when returning from a system Settings screen.
         final boolean[] lostFocus = {false};
         final ViewTreeObserver.OnWindowFocusChangeListener focusListener = hasFocus -> {
             if (!hasFocus) {
                 lostFocus[0] = true;
             } else if (lostFocus[0]) {
                 lostFocus[0] = false;
-                startListenerCheck.run();
+                for (Runnable check : startChecks) check.run();
             }
         };
         content.findViewById(R.id.readinessClose).setOnClickListener(v -> readiness.dismiss());
@@ -567,13 +525,12 @@ public class SourceWizard {
             focusObserver.addOnWindowFocusChangeListener(focusListener);
             readiness.setOnDismissListener(ignored -> {
                 checkingIcon.clearAnimation();
-                listenerIcon.clearAnimation();
-                listenerIcon.removeCallbacks(finishListenerCheck);
+                for (Runnable cancel : cancelChecks) cancel.run();
                 if (focusObserver.isAlive()) {
                     focusObserver.removeOnWindowFocusChangeListener(focusListener);
                 }
             });
-            startListenerCheck.run();
+            for (Runnable check : startChecks) check.run();
 
             final Window window = readiness.getWindow();
             if (window != null) {
@@ -599,6 +556,101 @@ public class SourceWizard {
         } catch (Exception e) {
             UserError.Log.e(TAG, "Exception showing readiness preview: " + e);
         }
+    }
+
+    private Runnable addLiveReadinessRow(final Dialog readiness, final LinearLayout parent,
+            @StringRes final int label, final SourceWizardReadiness.Requirement requirement,
+            final boolean last, final boolean animate, final List<Runnable> cancelChecks) {
+        final ImageView icon = addReadinessPreviewRow(parent, label,
+                R.drawable.source_wizard_readiness_unknown,
+                R.string.source_wizard_readiness_status_unknown, false, false, last);
+        final View row = (View) icon.getParent();
+        final TextView fix = row.findViewById(R.id.readinessRowFix);
+        final TextView info = row.findViewById(R.id.readinessRowInfo);
+        fix.setOnClickListener(v -> SourceWizardReadiness.requestFix(activity, requirement));
+        info.setOnClickListener(v -> showReadinessHelp(requirement, label));
+
+        final Runnable finish = () -> {
+            if (!readiness.isShowing()) return;
+            icon.clearAnimation();
+            final SourceWizardReadiness.Result result =
+                    SourceWizardReadiness.inspect(activity, requirement);
+            final int drawable, description;
+            switch (result.state) {
+                case READY:
+                    drawable = R.drawable.source_wizard_readiness_ok;
+                    description = R.string.source_wizard_readiness_real_ready;
+                    break;
+                case MISSING:
+                    drawable = R.drawable.source_wizard_readiness_missing;
+                    description = R.string.source_wizard_readiness_real_missing;
+                    break;
+                default:
+                    drawable = R.drawable.source_wizard_readiness_unknown;
+                    description = R.string.source_wizard_readiness_real_unknown;
+                    break;
+            }
+            icon.setImageResource(drawable);
+            icon.setContentDescription(activity.getString(description));
+            fix.setVisibility(result.state == SourceWizardReadiness.State.MISSING && result.canFix
+                    ? View.VISIBLE : View.GONE);
+            info.setVisibility(result.state == SourceWizardReadiness.State.UNKNOWN
+                    || (result.state == SourceWizardReadiness.State.MISSING && !result.canFix)
+                    ? View.VISIBLE : View.GONE);
+        };
+        final Runnable start = () -> {
+            if (!readiness.isShowing()) return;
+            icon.removeCallbacks(finish);
+            fix.setVisibility(View.GONE);
+            info.setVisibility(View.GONE);
+            if (animate) {
+                icon.setImageResource(R.drawable.source_wizard_readiness_checking);
+                icon.setContentDescription(
+                        activity.getString(R.string.source_wizard_readiness_real_checking));
+                icon.startAnimation(AnimationUtils.loadAnimation(
+                        activity, R.anim.source_wizard_readiness_spin));
+                icon.postDelayed(finish, 450L);
+            } else {
+                // No Android/OEM API can report recent-app lock reliably.
+                finish.run();
+            }
+        };
+        cancelChecks.add(() -> {
+            icon.clearAnimation();
+            icon.removeCallbacks(finish);
+        });
+        return start;
+    }
+
+    private void showReadinessHelp(final SourceWizardReadiness.Requirement requirement,
+            @StringRes final int label) {
+        final int message;
+        switch (requirement) {
+            case BATTERY_OPTIMIZATION:
+                message = R.string.source_wizard_readiness_battery_help;
+                break;
+            case AUTOSTART:
+                message = R.string.source_wizard_readiness_autostart_help;
+                break;
+            case APP_LOCK:
+                message = R.string.source_wizard_readiness_pin_help;
+                break;
+            case NOTIFICATION_LISTENER:
+                message = R.string.source_wizard_readiness_real_unknown_help;
+                break;
+            default:
+                return;
+        }
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity, AlertDialog.THEME_HOLO_DARK)
+                .setTitle(label)
+                .setMessage(message)
+                .setNegativeButton(android.R.string.ok, null);
+        if (requirement == SourceWizardReadiness.Requirement.AUTOSTART
+                && SourceWizardReadiness.canOpenAutostartSettings(activity)) {
+            builder.setPositiveButton(R.string.source_wizard_readiness_open_settings,
+                    (dialog, which) -> SourceWizardReadiness.openAutostartSettings(activity));
+        }
+        builder.show();
     }
 
     private ImageView addReadinessPreviewRow(final LinearLayout parent, @StringRes int label,

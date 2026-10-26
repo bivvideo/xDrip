@@ -100,6 +100,7 @@ import com.eveningoutpost.dexdrip.services.Ob1G5CollectionService;
 import com.eveningoutpost.dexdrip.services.PlusSyncService;
 import com.eveningoutpost.dexdrip.services.WixelReader;
 import com.eveningoutpost.dexdrip.utilitymodels.AlertPlayer;
+import com.eveningoutpost.dexdrip.utilitymodels.BatteryOptimizationHelper;
 import com.eveningoutpost.dexdrip.utilitymodels.BgGraphBuilder;
 import com.eveningoutpost.dexdrip.utilitymodels.CollectionServiceStarter;
 import com.eveningoutpost.dexdrip.utilitymodels.ColorCache;
@@ -643,7 +644,7 @@ public class Home extends ActivityWithMenu implements ActivityCompat.OnRequestPe
             final String packageName = getPackageName();
             //Log.d(TAG, "Maybe ignoring battery optimization");
             final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            if (!pm.isIgnoringBatteryOptimizations(packageName) &&
+            if (!Boolean.TRUE.equals(BatteryOptimizationHelper.isExempt(this)) &&
                     !Pref.getBooleanDefaultFalse("requested_ignore_battery_optimizations_new") && !xdrip.isRunningTest()) {
                 Log.d(TAG, "Requesting ignore battery optimization");
 
@@ -655,13 +656,9 @@ public class Home extends ActivityWithMenu implements ActivityCompat.OnRequestPe
                         @Override
                         public void run() {
                             try {
-                                final Intent intent = new Intent();
-
-                                // ignoring battery optimizations required for constant connection
-                                // to peripheral device - eg CGM transmitter.
-                                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                                intent.setData(Uri.parse("package:" + packageName));
-                                startActivityForResult(intent, REQ_CODE_BATTERY_OPTIMIZATION);
+                                // Shared intent, preserving Home's existing dialog and result handling.
+                                startActivityForResult(BatteryOptimizationHelper.exemptionRequest(this),
+                                        REQ_CODE_BATTERY_OPTIMIZATION);
 
                             } catch (ActivityNotFoundException e) {
                                 JoH.static_toast_short(getString(R.string.no_battery_optimization_whitelisting));

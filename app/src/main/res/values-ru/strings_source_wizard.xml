@@ -14,7 +14,7 @@
     <string name="source_wizard_readiness_location">Геолокация</string>
     <string name="source_wizard_readiness_fix">Исправить</string>
     <string name="source_wizard_readiness_info">Информация</string>
-    <string name="source_wizard_readiness_preview_note">Остальные статусы условные</string>
+    <string name="source_wizard_readiness_preview_note">Bluetooth и геолокация пока демонстрационные</string>
     <string name="source_wizard_readiness_preview_action">Остальные строки пока демонстрационные. Проверки и действия появятся позже</string>
     <string name="source_wizard_readiness_status_ok">Пример: выполнено</string>
     <string name="source_wizard_readiness_status_missing">Пример: не выполнено</string>
@@ -25,6 +25,10 @@
     <string name="source_wizard_readiness_real_checking">Проверяется доступ к чтению уведомлений</string>
     <string name="source_wizard_readiness_real_unknown">Не удалось определить доступ к чтению уведомлений</string>
     <string name="source_wizard_readiness_real_unknown_help">Не удалось проверить доступ к уведомлениям. Попробуйте повторно открыть окно.</string>
+    <string name="source_wizard_readiness_open_settings">Открыть настройки</string>
+    <string name="source_wizard_readiness_battery_help">Не удалось проверить исключение xDrip+ из энергосбережения Android. Проверьте ограничения вручную в настройках батареи приложения. Исключение не отменяет все ограничения производителя.</string>
+    <string name="source_wizard_readiness_autostart_help">Автозапуск зависит от производителя, в Android нет универсальной проверки. xDrip+ пытается прочитать состояние на поддерживаемых версиях Xiaomi. Если статус неизвестен, включите автозапуск вручную. На Xiaomi: Настройки → Приложения → Разрешения → Автозапуск (названия могут отличаться).</string>
+    <string name="source_wizard_readiness_pin_help">xDrip+ не может достоверно определить, закреплено ли приложение в списке недавних. Откройте недавние приложения и закрепите xDrip+ значком замка, если телефон это поддерживает. Это не закрепление экрана Android.</string>
     <string name="source_wizard_skip">Пропустить</string>
     <string name="source_wizard_dexcom_models">Dexcom G6 и G7\nНапрямую по Bluetooth</string>
     <string name="source_wizard_dexcom_direct_summary">[Dex]</string>
