@@ -1886,5 +1886,4 @@
     <string name="glupro_disconnected">Отключено</string>
     <string name="glupro_connected">Подключено</string>
     <string name="glupro_start_time">Включить</string>
-    <string name="notification_listener_permission_explanation">Для получения показаний глюкозы из других приложений xDrip+ необходим доступ к уведомлениям.\n\nРазрешите этот доступ на следующем экране.</string>
 </resources>
