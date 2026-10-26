@@ -11,6 +11,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -471,9 +472,20 @@ public class SourceWizard {
                 R.drawable.source_wizard_readiness_unknown, R.string.source_wizard_readiness_status_unknown,
                 false, true, true);
 
-        addReadinessPreviewRow(connection, R.string.source_wizard_readiness_notification_listener,
-                R.drawable.source_wizard_readiness_ok, R.string.source_wizard_readiness_status_ok,
+        // First live requirement: shared UiBased collector check, not a sample.
+        final ImageView listenerIcon = addReadinessPreviewRow(connection,
+                R.string.source_wizard_readiness_notification_listener,
+                R.drawable.source_wizard_readiness_checking,
+                R.string.source_wizard_readiness_real_checking,
                 false, false, false);
+        final View listenerRow = (View) listenerIcon.getParent();
+        final TextView listenerFix = listenerRow.findViewById(R.id.readinessRowFix);
+        final TextView listenerInfo = listenerRow.findViewById(R.id.readinessRowInfo);
+        listenerFix.setOnClickListener(v -> SourceWizardReadiness.requestFix(
+                activity, SourceWizardReadiness.Requirement.NOTIFICATION_LISTENER));
+        listenerInfo.setOnClickListener(v ->
+                Toast.makeText(activity, R.string.source_wizard_readiness_real_unknown_help,
+                        Toast.LENGTH_SHORT).show());
         // The only animated prototype row; it does not interrogate the Bluetooth state.
         final ImageView checkingIcon = addReadinessPreviewRow(connection,
                 R.string.source_wizard_readiness_bluetooth,
@@ -484,8 +496,59 @@ public class SourceWizard {
                 R.drawable.source_wizard_readiness_unknown, R.string.source_wizard_readiness_status_unknown,
                 false, true, true);
 
+        // Status rendering is UI-only; the coordinator delegates to UiBasedCollector.
+        final Runnable finishListenerCheck = () -> {
+            if (!readiness.isShowing()) return;
+            listenerIcon.clearAnimation();
+            final SourceWizardReadiness.Result result = SourceWizardReadiness.inspect(
+                    SourceWizardReadiness.Requirement.NOTIFICATION_LISTENER);
+            switch (result.state) {
+                case READY:
+                    listenerIcon.setImageResource(R.drawable.source_wizard_readiness_ok);
+                    listenerIcon.setContentDescription(
+                            activity.getString(R.string.source_wizard_readiness_real_ready));
+                    break;
+                case MISSING:
+                    listenerIcon.setImageResource(R.drawable.source_wizard_readiness_missing);
+                    listenerIcon.setContentDescription(
+                            activity.getString(R.string.source_wizard_readiness_real_missing));
+                    break;
+                default:
+                    listenerIcon.setImageResource(R.drawable.source_wizard_readiness_unknown);
+                    listenerIcon.setContentDescription(
+                            activity.getString(R.string.source_wizard_readiness_real_unknown));
+                    break;
+            }
+            listenerFix.setVisibility(result.canFix ? View.VISIBLE : View.GONE);
+            listenerInfo.setVisibility(result.state == SourceWizardReadiness.State.UNKNOWN
+                    ? View.VISIBLE : View.GONE);
+        };
+
+        final Runnable startListenerCheck = () -> {
+            if (!readiness.isShowing()) return;
+            listenerIcon.removeCallbacks(finishListenerCheck);
+            listenerFix.setVisibility(View.GONE);
+            listenerInfo.setVisibility(View.GONE);
+            listenerIcon.setImageResource(R.drawable.source_wizard_readiness_checking);
+            listenerIcon.setContentDescription(
+                    activity.getString(R.string.source_wizard_readiness_real_checking));
+            listenerIcon.startAnimation(AnimationUtils.loadAnimation(
+                    activity, R.anim.source_wizard_readiness_spin));
+            // A short minimum display time makes the real check transition visible.
+            listenerIcon.postDelayed(finishListenerCheck, 450L);
+        };
+
+        // When Settings (or the existing permission rationale) closes, recheck.
+        final boolean[] lostFocus = {false};
+        final ViewTreeObserver.OnWindowFocusChangeListener focusListener = hasFocus -> {
+            if (!hasFocus) {
+                lostFocus[0] = true;
+            } else if (lostFocus[0]) {
+                lostFocus[0] = false;
+                startListenerCheck.run();
+            }
+        };
         content.findViewById(R.id.readinessClose).setOnClickListener(v -> readiness.dismiss());
-        readiness.setOnDismissListener(ignored -> checkingIcon.clearAnimation());
 
         final Drawable background = activity.getDrawable(R.drawable.holo_background);
         if (background instanceof GradientDrawable) {
@@ -495,10 +558,23 @@ public class SourceWizard {
         readiness.setContentView(content);
         try {
             readiness.show();
-            // Preview only: rotating status, no live permission checks yet.
+            // Only Bluetooth still uses the perpetual demo spinner.
             final Animation checkingAnimation = AnimationUtils.loadAnimation(
                     activity, R.anim.source_wizard_readiness_spin);
             checkingIcon.startAnimation(checkingAnimation);
+
+            final ViewTreeObserver focusObserver = content.getViewTreeObserver();
+            focusObserver.addOnWindowFocusChangeListener(focusListener);
+            readiness.setOnDismissListener(ignored -> {
+                checkingIcon.clearAnimation();
+                listenerIcon.clearAnimation();
+                listenerIcon.removeCallbacks(finishListenerCheck);
+                if (focusObserver.isAlive()) {
+                    focusObserver.removeOnWindowFocusChangeListener(focusListener);
+                }
+            });
+            startListenerCheck.run();
+
             final Window window = readiness.getWindow();
             if (window != null) {
                 window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

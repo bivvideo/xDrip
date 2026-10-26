@@ -511,7 +511,8 @@ public class UiBasedCollector extends NotificationListenerService {
         enableNotificationService(activity);
     }
 
-    private static void enableNotificationService(final Activity activity) {
+    // Shared entry point for existing collection setup and the read-only readiness UI.
+    public static void enableNotificationService(final Activity activity) {
         if (!isNotificationServiceEnabled()) {
             JoH.show_ok_dialog(activity, gs(R.string.please_allow_permission),
                     "Permission is needed to receive data from other applications. xDrip does not do anything beyond this scope. Please enable xDrip on the next screen",
@@ -519,7 +520,8 @@ public class UiBasedCollector extends NotificationListenerService {
         }
     }
 
-    private static boolean isNotificationServiceEnabled() {
+    // Read-only check reused by the Source Wizard. Do not change the collector here.
+    public static boolean isNotificationServiceEnabled() {
         val pkgName = xdrip.getAppContext().getPackageName();
         val flat = Settings.Secure.getString(xdrip.getAppContext().getContentResolver(),
                 ENABLED_NOTIFICATION_LISTENERS);
