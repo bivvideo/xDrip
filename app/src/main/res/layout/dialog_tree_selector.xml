@@ -63,11 +63,10 @@
             android:layout_height="1dp"
             android:background="?android:attr/listDivider" />
 
-        <!-- The fixed Skip footer is slightly lighter without a separate card. -->
+        <!-- Fixed Skip footer: the root Holo gradient continues under it. -->
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#14FFFFFF">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:layout_width="match_parent"

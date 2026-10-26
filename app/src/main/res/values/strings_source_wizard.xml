@@ -157,11 +157,10 @@
     <!-- EN DRAFT — final translation review before PR -->
     <string name="source_wizard_permissions_title">Permissions</string>
     <string name="source_wizard_permissions_required">Required permissions</string>
-    <string name="source_wizard_permissions_recommended">Recommended settings for stable operation</string>
     <string name="source_wizard_permissions_granted">Permission granted</string>
     <string name="source_wizard_permissions_missing_detail">To continue setup and receive readings from %1$s, grant xDrip+ notification access.</string>
-    <string name="source_wizard_permissions_unknown_detail">Check manually whether xDrip+ has notification access.</string>
-    <string name="source_wizard_permissions_verify">Check</string>
-    <string name="source_wizard_permissions_instructions">Allow xDrip+ to access notifications so it can receive readings from other apps.\n\nIn Android settings:\n\n1. Find xDrip+.\n2. Enable notification access and confirm.\n3. Return to xDrip+ to refresh the status.\n\nIf this page does not open, navigate to Settings → Privacy → Special access → Notification access.\n\nMenu names vary by device. Open settings only navigates to Android; grant permission there.</string>
     <string name="source_wizard_permissions_next_step_pending">The next connection-instruction step is pending. Your data source has not changed.</string>
+    <string name="source_wizard_permissions_error_title">Unable to check permission</string>
+    <string name="source_wizard_permissions_error_message">Cannot continue setup.</string>
+    <string name="source_wizard_permissions_error_report">Report an error</string>
 </resources>

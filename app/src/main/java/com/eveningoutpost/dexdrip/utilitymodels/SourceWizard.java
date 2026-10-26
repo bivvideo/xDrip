@@ -606,6 +606,13 @@ public class SourceWizard {
     // SW-014: route-specific preflight, using the same checks/rows as SW-008.
     // SW-010/011 will own final source activation; this dialog never starts a collector.
     private void showNamedCompanionPermissions(final Item item, final String appName) {
+        // Unknown means inspection itself failed. No normal UI or source activation.
+        if (SourceWizardReadiness.inspect(activity,
+                SourceWizardReadiness.Requirement.NOTIFICATION_LISTENER).state
+                == SourceWizardReadiness.State.UNKNOWN) {
+            showNotificationPermissionCheckError();
+            return;
+        }
         final Dialog permissions = new Dialog(activity, android.R.style.Theme_Holo_Dialog);
         permissions.requestWindowFeature(Window.FEATURE_NO_TITLE);
         final View content = LayoutInflater.from(permissions.getContext())
@@ -636,6 +643,13 @@ public class SourceWizard {
             if (!permissions.isShowing()) return;
             final SourceWizardReadiness.Result result = SourceWizardReadiness.inspect(
                     activity, SourceWizardReadiness.Requirement.NOTIFICATION_LISTENER);
+            if (result.state == SourceWizardReadiness.State.UNKNOWN) {
+                // Fail closed and replace the checklist with a standalone error.
+                proceed.setEnabled(false);
+                permissions.dismiss();
+                showNotificationPermissionCheckError();
+                return;
+            }
             final int drawable, description;
             switch (result.state) {
                 case READY:
@@ -657,31 +671,29 @@ public class SourceWizard {
                     guidance.setVisibility(View.VISIBLE);
                     break;
                 default:
-                    drawable = R.drawable.source_wizard_readiness_unknown;
-                    description = R.string.source_wizard_readiness_state_unknown;
-                    status.setText(R.string.source_wizard_readiness_state_unknown);
-                    status.setVisibility(View.VISIBLE);
-                    action.setText(R.string.source_wizard_permissions_verify);
-                    action.setVisibility(View.VISIBLE);
-                    guidance.setText(R.string.source_wizard_permissions_unknown_detail);
-                    guidance.setVisibility(View.VISIBLE);
-                    break;
+                    // Normal rows are strictly READY or MISSING.
+                    return;
             }
             icon.setImageResource(drawable);
             icon.setContentDescription(activity.getString(
                     R.string.source_wizard_readiness_notification_listener) + ": "
                     + activity.getString(description));
-            final boolean allowed = result.state != SourceWizardReadiness.State.MISSING;
+            final boolean allowed = result.state == SourceWizardReadiness.State.READY;
             proceed.setEnabled(allowed);
-            proceed.setAlpha(allowed ? 1f : 0.4f);
+            proceed.setAlpha(allowed ? 1f : 0.65f);
         };
-        action.setOnClickListener(v -> showNotificationListenerInstructions());
+        action.setOnClickListener(v ->
+                com.eveningoutpost.dexdrip.services.UiBasedCollector
+                        .openNotificationListenerSettings(activity));
         content.findViewById(R.id.permissionsBack).setOnClickListener(v -> {
             permissions.dismiss();
             showNamedCompanionConfirmation(item);
         });
         proceed.setOnClickListener(v -> {
             if (!proceed.isEnabled()) return;
+            // Check current system state again, never trust only the rendered state.
+            checkListener.run();
+            if (!permissions.isShowing() || !proceed.isEnabled()) return;
             // SW-010 is not implemented. Never switch the user's current source here.
             Toast.makeText(activity, R.string.source_wizard_permissions_next_step_pending,
                     Toast.LENGTH_LONG).show();
@@ -729,16 +741,39 @@ public class SourceWizard {
         }
     }
 
-    private void showNotificationListenerInstructions() {
-        new AlertDialog.Builder(activity, AlertDialog.THEME_HOLO_DARK)
-                .setTitle(R.string.source_wizard_readiness_notification_listener)
-                .setMessage(R.string.source_wizard_permissions_instructions)
-                .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(R.string.source_wizard_readiness_open_settings,
-                        (dialog, which) ->
-                                com.eveningoutpost.dexdrip.services.UiBasedCollector
-                                        .openNotificationListenerSettings(activity))
-                .show();
+    // Exceptional case only. "Report" is a local, no-network placeholder for now.
+    private void showNotificationPermissionCheckError() {
+        UserError.Log.e(TAG, "Source Wizard: notification permission check failed");
+        final Dialog error = new Dialog(activity, android.R.style.Theme_Holo_Dialog);
+        error.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        final View content = LayoutInflater.from(error.getContext())
+                .inflate(R.layout.dialog_source_wizard_permissions_error, null);
+        final Drawable background = activity.getDrawable(R.drawable.holo_background);
+        if (background instanceof GradientDrawable) {
+            ((GradientDrawable) background.mutate()).setCornerRadius(convertDpToPixel(6));
+        }
+        content.setBackground(background);
+        error.setContentView(content);
+        error.setCancelable(false);
+        dialog = error;
+        content.findViewById(R.id.permissionsErrorReport).setOnClickListener(v -> {
+            // Prototype only: no report or personal data sent.
+            error.dismiss();
+            getTreeDialog(null);
+        });
+        try {
+            error.show();
+            final Window window = error.getWindow();
+            if (window != null) {
+                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                final int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
+                window.setLayout(screenWidth - Math.round(convertDpToPixel(12)),
+                        WindowManager.LayoutParams.WRAP_CONTENT);
+            }
+        } catch (Exception e) {
+            UserError.Log.e(TAG, "Cannot display notification permission check error: " + e);
+            getTreeDialog(null);
+        }
     }
 
     private enum CompanionInstallState { INSTALLED, MISSING, UNKNOWN }
@@ -767,7 +802,7 @@ public class SourceWizard {
             final CompanionInstallState state, final boolean bypass) {
         final boolean enabled = state != CompanionInstallState.MISSING || bypass;
         button.setEnabled(enabled);
-        button.setAlpha(enabled ? 1f : 0.4f);
+        button.setAlpha(enabled ? 1f : 0.65f);
     }
 
     // Common, adaptive target height for the named post-picker dialogs.
