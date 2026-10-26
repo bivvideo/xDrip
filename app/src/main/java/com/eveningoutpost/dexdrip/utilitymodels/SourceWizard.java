@@ -595,23 +595,9 @@ public class SourceWizard {
                 window.setLayout(width - Math.round(convertDpToPixel(12)),
                         WindowManager.LayoutParams.WRAP_CONTENT);
             }
-            // Fit the whole body whenever the screen permits. Do not force a
-            // short 61%-height scroll area on ordinary phones; scrolling is a
-            // fallback only for small screens or large accessibility fonts.
-            final ScrollView body = root.findViewById(R.id.companionBodyScroll);
-            body.post(() -> {
-                if (!panel.isShowing() || body.getChildCount() == 0) return;
-                final int screenHeight =
-                        activity.getResources().getDisplayMetrics().heightPixels;
-                // Allow space for the fixed title, buttons and window insets.
-                final int availableBodyHeight = Math.max(0,
-                        screenHeight - Math.round(convertDpToPixel(170)));
-                if (body.getChildAt(0).getHeight() > availableBodyHeight) {
-                    final ViewGroup.LayoutParams params = body.getLayoutParams();
-                    params.height = availableBodyHeight;
-                    body.setLayoutParams(params);
-                }
-            });
+            // A common target height with the wizard; scrolling only when needed.
+            fitWizardDialogBody(panel, root,
+                    root.findViewById(R.id.companionBodyScroll));
         } catch (Exception e) {
             UserError.Log.e(TAG, "Exception showing Companion confirmation: " + e);
         }
@@ -736,17 +722,8 @@ public class SourceWizard {
                 window.setLayout(screenWidth - Math.round(convertDpToPixel(12)),
                         WindowManager.LayoutParams.WRAP_CONTENT);
             }
-            final ScrollView body = content.findViewById(R.id.permissionsBodyScroll);
-            body.post(() -> {
-                if (!permissions.isShowing() || body.getChildCount() == 0) return;
-                final int screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
-                final int maximum = Math.max(0, screenHeight - Math.round(convertDpToPixel(170)));
-                if (body.getChildAt(0).getHeight() > maximum) {
-                    final ViewGroup.LayoutParams lp = body.getLayoutParams();
-                    lp.height = maximum;
-                    body.setLayoutParams(lp);
-                }
-            });
+            fitWizardDialogBody(permissions, content,
+                    content.findViewById(R.id.permissionsBodyScroll));
         } catch (Exception e) {
             UserError.Log.e(TAG, "Exception showing Companion permissions: " + e);
         }
@@ -791,6 +768,27 @@ public class SourceWizard {
         final boolean enabled = state != CompanionInstallState.MISSING || bypass;
         button.setEnabled(enabled);
         button.setAlpha(enabled ? 1f : 0.4f);
+    }
+
+    // Common, adaptive target height for the named post-picker dialogs.
+    // Fill spare space before the footer; never force scrolling on a normal screen.
+    private void fitWizardDialogBody(final Dialog panel, final View content,
+            final ScrollView body) {
+        body.post(() -> {
+            if (!panel.isShowing() || body.getChildCount() == 0) return;
+            final int screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
+            final int maxBody = Math.max(0,
+                    screenHeight - Math.round(convertDpToPixel(170)));
+            final int preferredTotal = Math.round(screenHeight * 0.73f);
+            final int contentHeight = body.getChildAt(0).getHeight();
+            final int availableExtra = Math.max(0, preferredTotal - content.getHeight());
+            final int targetHeight = Math.min(maxBody, contentHeight + availableExtra);
+            final ViewGroup.LayoutParams params = body.getLayoutParams();
+            if (params.height != targetHeight) {
+                params.height = targetHeight;
+                body.setLayoutParams(params);
+            }
+        });
     }
 
     // SW-008 readiness window: stability and Notification Listener are live;
@@ -874,20 +872,8 @@ public class SourceWizard {
                 window.setLayout(screenWidth - Math.round(convertDpToPixel(12)),
                         WindowManager.LayoutParams.WRAP_CONTENT);
             }
-            // Allow the readiness body to grow to fit these rows, closer to the
-            // source picker height. Keep ScrollView active on smaller displays.
-            // Do not modify the header/footer or remove the scrolling fallback.
-            final ScrollView scroll = content.findViewById(R.id.readinessPreviewScroll);
-            final int maximum = Math.round(
-                    activity.getResources().getDisplayMetrics().heightPixels * 0.68f);
-            scroll.post(() -> {
-                if (!readiness.isShowing() || scroll.getChildCount() == 0) return;
-                if (scroll.getChildAt(0).getHeight() > maximum) {
-                    final ViewGroup.LayoutParams lp = scroll.getLayoutParams();
-                    lp.height = maximum;
-                    scroll.setLayoutParams(lp);
-                }
-            });
+            fitWizardDialogBody(readiness, content,
+                    content.findViewById(R.id.readinessPreviewScroll));
         } catch (Exception e) {
             UserError.Log.e(TAG, "Exception showing readiness preview: " + e);
         }
