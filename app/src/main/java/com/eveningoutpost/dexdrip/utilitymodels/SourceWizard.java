@@ -516,7 +516,7 @@ public class SourceWizard {
         ((TextView) root.findViewById(R.id.companionAppName)).setText(appName);
         final ImageView icon = root.findViewById(R.id.companionStatusIcon);
         final TextView status = root.findViewById(R.id.companionStatusText);
-        final TextView hint = root.findViewById(R.id.companionInstallInstructions);
+        final TextView guidance = root.findViewById(R.id.companionGuidance);
         final CheckBox bypass = root.findViewById(R.id.companionBypassInstall);
         final TextView continueButton = root.findViewById(R.id.companionProceed);
         final CompanionInstallState[] state = {CompanionInstallState.UNKNOWN};
@@ -540,13 +540,16 @@ public class SourceWizard {
             icon.setImageResource(picture);
             icon.setContentDescription(appName + ": " + activity.getString(message));
             status.setText(message);
+            // This is ONE mutually exclusive prompt in the same position:
+            // an installed app asks to continue; a missing app asks to install.
             final boolean missing = state[0] == CompanionInstallState.MISSING;
-            hint.setVisibility(state[0] == CompanionInstallState.INSTALLED ? View.GONE : View.VISIBLE);
             if (missing) {
-                hint.setText(activity.getString(
+                guidance.setText(activity.getString(
                         R.string.source_wizard_companion_install_and_return, appName));
             } else if (state[0] == CompanionInstallState.UNKNOWN) {
-                hint.setText(R.string.source_wizard_companion_unknown_explanation);
+                guidance.setText(R.string.source_wizard_companion_unknown_explanation);
+            } else {
+                guidance.setText(R.string.source_wizard_companion_question);
             }
             bypass.setVisibility(missing ? View.VISIBLE : View.GONE);
             if (!missing) bypass.setChecked(false);
