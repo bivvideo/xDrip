@@ -506,10 +506,12 @@ public class SourceWizard {
                 window.setLayout(screenWidth - Math.round(convertDpToPixel(12)),
                         WindowManager.LayoutParams.WRAP_CONTENT);
             }
-            // Keep the header/footer visible even on compact screens.
+            // Allow the readiness body to grow to fit these rows, closer to the
+            // source picker height. Keep ScrollView active on smaller displays.
+            // Do not modify the header/footer or remove the scrolling fallback.
             final ScrollView scroll = content.findViewById(R.id.readinessPreviewScroll);
             final int maximum = Math.round(
-                    activity.getResources().getDisplayMetrics().heightPixels * 0.62f);
+                    activity.getResources().getDisplayMetrics().heightPixels * 0.68f);
             scroll.post(() -> {
                 if (!readiness.isShowing() || scroll.getChildCount() == 0) return;
                 if (scroll.getChildAt(0).getHeight() > maximum) {
