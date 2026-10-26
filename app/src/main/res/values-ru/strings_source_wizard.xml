@@ -14,7 +14,6 @@
     <string name="source_wizard_readiness_location">Геолокация</string>
     <string name="source_wizard_readiness_fix">Исправить</string>
     <string name="source_wizard_readiness_info">Информация</string>
-    <string name="source_wizard_readiness_preview_note">Проверки добровольные, источник данных не меняется</string>
     <string name="source_wizard_readiness_preview_action">Остальные строки пока демонстрационные. Проверки и действия появятся позже</string>
     <string name="source_wizard_readiness_status_ok">Пример: выполнено</string>
     <string name="source_wizard_readiness_status_missing">Пример: не выполнено</string>
@@ -155,4 +154,13 @@
     <string name="source_wizard_companion_back">Назад</string>
     <string name="source_wizard_companion_continue">Продолжить</string>
     <string name="source_wizard_companion_next_step_pending">Следующий этап — проверка разрешений выбранного подключения. Он пока не внедрён; источник данных не изменён.</string>
+    <string name="source_wizard_permissions_title">Разрешения</string>
+    <string name="source_wizard_permissions_required">Обязательные разрешения</string>
+    <string name="source_wizard_permissions_recommended">Рекомендуемые настройки для стабильной работы</string>
+    <string name="source_wizard_permissions_granted">Разрешение предоставлено</string>
+    <string name="source_wizard_permissions_missing_detail">Для продолжения настройки и получения показаний из %1$s разрешите xDrip+ доступ к уведомлениям.</string>
+    <string name="source_wizard_permissions_unknown_detail">Проверьте вручную, разрешён ли xDrip+ доступ к уведомлениям.</string>
+    <string name="source_wizard_permissions_verify">Проверить</string>
+    <string name="source_wizard_permissions_instructions">Чтобы xDrip+ получал показания из других приложений, разрешите ему доступ к уведомлениям.\n\nВ открывшихся настройках:\n\n1. Найдите xDrip+.\n2. Включите доступ к уведомлениям и подтвердите разрешение.\n3. Вернитесь в xDrip+ — статус обновится автоматически.\n\nЕсли нужная страница не открылась, перейдите вручную:\n\nНастройки → Конфиденциальность → Специальный доступ → Доступ к уведомлениям.\n\nНазвания разделов могут отличаться на разных телефонах. Кнопка «Открыть настройки» только открывает Android — разрешение вы выдаёте там.</string>
+    <string name="source_wizard_permissions_next_step_pending">Следующий этап — инструкция подключения. Источник данных пока не изменён.</string>
 </resources>

@@ -516,7 +516,18 @@ public class UiBasedCollector extends NotificationListenerService {
         if (!isNotificationServiceEnabled()) {
             JoH.show_ok_dialog(activity, gs(R.string.please_allow_permission),
                     gs(R.string.notification_listener_permission_explanation),
-                    () -> activity.startActivity(new Intent(ACTION_NOTIFICATION_LISTENER_SETTINGS)));
+                    () -> openNotificationListenerSettings(activity));
+        }
+    }
+
+    // Shared Settings navigation only. The caller owns the explanatory dialog;
+    // the legacy entry point above still shows its original rationale.
+    public static void openNotificationListenerSettings(final Activity activity) {
+        if (activity == null) return;
+        try {
+            activity.startActivity(new Intent(ACTION_NOTIFICATION_LISTENER_SETTINGS));
+        } catch (RuntimeException e) {
+            UserError.Log.e(TAG, "Cannot open Notification Listener settings: " + e);
         }
     }
 

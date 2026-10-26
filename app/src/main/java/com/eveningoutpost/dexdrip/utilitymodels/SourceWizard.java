@@ -560,9 +560,9 @@ public class SourceWizard {
         root.findViewById(R.id.companionBack).setOnClickListener(v -> getTreeDialog(null));
         continueButton.setOnClickListener(v -> {
             if (state[0] == CompanionInstallState.MISSING && !bypass.isChecked()) return;
-            // Do not switch DexCollectionType or restart the running collector.
-            Toast.makeText(activity, R.string.source_wizard_companion_next_step_pending,
-                    Toast.LENGTH_LONG).show();
+            // SW-014 preflight must not switch the collector before final confirmation.
+            panel.dismiss();
+            showNamedCompanionPermissions(item, appName);
         });
         final Drawable background = activity.getDrawable(R.drawable.holo_background);
         if (background instanceof GradientDrawable) {
@@ -615,6 +615,153 @@ public class SourceWizard {
         } catch (Exception e) {
             UserError.Log.e(TAG, "Exception showing Companion confirmation: " + e);
         }
+    }
+
+    // SW-014: route-specific preflight, using the same checks/rows as SW-008.
+    // SW-010/011 will own final source activation; this dialog never starts a collector.
+    private void showNamedCompanionPermissions(final Item item, final String appName) {
+        final Dialog permissions = new Dialog(activity, android.R.style.Theme_Holo_Dialog);
+        permissions.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        final View content = LayoutInflater.from(permissions.getContext())
+                .inflate(R.layout.dialog_source_wizard_permissions, null);
+        final ImageView icon = content.findViewById(R.id.permissionsListenerIcon);
+        final TextView status = content.findViewById(R.id.permissionsListenerStatus);
+        final TextView guidance = content.findViewById(R.id.permissionsListenerGuidance);
+        final TextView action = content.findViewById(R.id.permissionsListenerAction);
+        final TextView proceed = content.findViewById(R.id.permissionsProceed);
+        final LinearLayout stability = content.findViewById(R.id.permissionsStabilityRows);
+
+        final List<Runnable> startChecks = new ArrayList<>();
+        final List<Runnable> cancelChecks = new ArrayList<>();
+        startChecks.add(addLiveReadinessRow(permissions, stability,
+                R.string.source_wizard_readiness_battery,
+                SourceWizardReadiness.Requirement.BATTERY_OPTIMIZATION,
+                false, true, cancelChecks));
+        startChecks.add(addLiveReadinessRow(permissions, stability,
+                R.string.source_wizard_readiness_autostart,
+                SourceWizardReadiness.Requirement.AUTOSTART,
+                false, true, cancelChecks));
+        startChecks.add(addLiveReadinessRow(permissions, stability,
+                R.string.source_wizard_readiness_pin,
+                SourceWizardReadiness.Requirement.APP_LOCK,
+                true, false, cancelChecks));
+
+        final Runnable checkListener = () -> {
+            if (!permissions.isShowing()) return;
+            final SourceWizardReadiness.Result result = SourceWizardReadiness.inspect(
+                    activity, SourceWizardReadiness.Requirement.NOTIFICATION_LISTENER);
+            final int drawable, description;
+            switch (result.state) {
+                case READY:
+                    drawable = R.drawable.source_wizard_readiness_ok;
+                    description = R.string.source_wizard_readiness_state_ready;
+                    status.setText(R.string.source_wizard_permissions_granted);
+                    status.setVisibility(View.VISIBLE);
+                    action.setVisibility(View.GONE);
+                    guidance.setVisibility(View.GONE);
+                    break;
+                case MISSING:
+                    drawable = R.drawable.source_wizard_readiness_missing;
+                    description = R.string.source_wizard_readiness_state_missing;
+                    status.setVisibility(View.GONE);
+                    action.setText(R.string.source_wizard_readiness_fix);
+                    action.setVisibility(View.VISIBLE);
+                    guidance.setText(activity.getString(
+                            R.string.source_wizard_permissions_missing_detail, appName));
+                    guidance.setVisibility(View.VISIBLE);
+                    break;
+                default:
+                    drawable = R.drawable.source_wizard_readiness_unknown;
+                    description = R.string.source_wizard_readiness_state_unknown;
+                    status.setText(R.string.source_wizard_readiness_state_unknown);
+                    status.setVisibility(View.VISIBLE);
+                    action.setText(R.string.source_wizard_permissions_verify);
+                    action.setVisibility(View.VISIBLE);
+                    guidance.setText(R.string.source_wizard_permissions_unknown_detail);
+                    guidance.setVisibility(View.VISIBLE);
+                    break;
+            }
+            icon.setImageResource(drawable);
+            icon.setContentDescription(activity.getString(
+                    R.string.source_wizard_readiness_notification_listener) + ": "
+                    + activity.getString(description));
+            final boolean allowed = result.state != SourceWizardReadiness.State.MISSING;
+            proceed.setEnabled(allowed);
+            proceed.setAlpha(allowed ? 1f : 0.4f);
+        };
+        action.setOnClickListener(v -> showNotificationListenerInstructions());
+        content.findViewById(R.id.permissionsBack).setOnClickListener(v -> {
+            permissions.dismiss();
+            showNamedCompanionConfirmation(item);
+        });
+        proceed.setOnClickListener(v -> {
+            if (!proceed.isEnabled()) return;
+            // SW-010 is not implemented. Never switch the user's current source here.
+            Toast.makeText(activity, R.string.source_wizard_permissions_next_step_pending,
+                    Toast.LENGTH_LONG).show();
+        });
+
+        final Drawable background = activity.getDrawable(R.drawable.holo_background);
+        if (background instanceof GradientDrawable) {
+            ((GradientDrawable) background.mutate()).setCornerRadius(convertDpToPixel(6));
+        }
+        content.setBackground(background);
+        permissions.setContentView(content);
+        permissions.setCancelable(false);
+        dialog = permissions;
+
+        final boolean[] lostFocus = {false};
+        final ViewTreeObserver.OnWindowFocusChangeListener focusListener = focused -> {
+            if (!focused) lostFocus[0] = true;
+            else if (lostFocus[0]) {
+                lostFocus[0] = false;
+                checkListener.run();
+                for (Runnable start : startChecks) start.run();
+            }
+        };
+        try {
+            permissions.show();
+            final ViewTreeObserver observer = content.getViewTreeObserver();
+            observer.addOnWindowFocusChangeListener(focusListener);
+            permissions.setOnDismissListener(ignored -> {
+                for (Runnable cancel : cancelChecks) cancel.run();
+                if (observer.isAlive()) observer.removeOnWindowFocusChangeListener(focusListener);
+            });
+            checkListener.run();
+            for (Runnable start : startChecks) start.run();
+            final Window window = permissions.getWindow();
+            if (window != null) {
+                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                final int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
+                window.setLayout(screenWidth - Math.round(convertDpToPixel(12)),
+                        WindowManager.LayoutParams.WRAP_CONTENT);
+            }
+            final ScrollView body = content.findViewById(R.id.permissionsBodyScroll);
+            body.post(() -> {
+                if (!permissions.isShowing() || body.getChildCount() == 0) return;
+                final int screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
+                final int maximum = Math.max(0, screenHeight - Math.round(convertDpToPixel(170)));
+                if (body.getChildAt(0).getHeight() > maximum) {
+                    final ViewGroup.LayoutParams lp = body.getLayoutParams();
+                    lp.height = maximum;
+                    body.setLayoutParams(lp);
+                }
+            });
+        } catch (Exception e) {
+            UserError.Log.e(TAG, "Exception showing Companion permissions: " + e);
+        }
+    }
+
+    private void showNotificationListenerInstructions() {
+        new AlertDialog.Builder(activity, AlertDialog.THEME_HOLO_DARK)
+                .setTitle(R.string.source_wizard_readiness_notification_listener)
+                .setMessage(R.string.source_wizard_permissions_instructions)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(R.string.source_wizard_readiness_open_settings,
+                        (dialog, which) ->
+                                com.eveningoutpost.dexdrip.services.UiBasedCollector
+                                        .openNotificationListenerSettings(activity))
+                .show();
     }
 
     private enum CompanionInstallState { INSTALLED, MISSING, UNKNOWN }

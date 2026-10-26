@@ -76,28 +76,14 @@
         </LinearLayout>
     </ScrollView>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/source_wizard_row_divider" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#14FFFFFF"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
+        android:gravity="end|center_vertical"
         android:minHeight="52dp"
         android:paddingStart="20dp"
         android:paddingEnd="12dp">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/source_wizard_readiness_preview_note"
-            android:textSize="11sp"
-            android:textColor="?android:attr/textColorSecondary" />
 
         <TextView
             android:id="@+id/readinessClose"
