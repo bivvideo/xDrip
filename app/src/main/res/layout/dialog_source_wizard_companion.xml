@@ -10,8 +10,8 @@
  <ScrollView android:id="@+id/companionBodyScroll" android:layout_width="match_parent" android:layout_height="wrap_content" android:scrollbars="vertical">
   <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
    android:orientation="vertical" android:padding="20dp">
-            <TextView android:id="@+id/companionIntro" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="15sp" android:textColor="?android:attr/textColorPrimary" />
-            <TextView android:id="@+id/companionExplanation" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="15sp" android:layout_marginTop="16dp" android:textColor="?android:attr/textColorSecondary"/>
+            <TextView android:id="@+id/companionIntro" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="16sp" android:textColor="?android:attr/textColorPrimary" />
+            <TextView android:id="@+id/companionExplanation" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="16sp" android:layout_marginTop="16dp" android:textColor="?android:attr/textColorSecondary"/>
    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
     android:layout_marginTop="22dp" android:orientation="horizontal" android:gravity="center_vertical"
     android:background="@drawable/source_wizard_plate_single"
@@ -21,18 +21,18 @@
      android:contentDescription="@string/source_wizard_companion_unknown"/>
     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
      android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
-            <TextView android:id="@+id/companionAppName" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="?android:attr/textColorPrimary" android:textSize="16sp"/>
-            <TextView android:id="@+id/companionStatusText" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textSize="13sp" android:textColor="?android:attr/textColorSecondary"/>
+            <TextView android:id="@+id/companionAppName" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="?android:attr/textColorPrimary" android:textSize="17sp"/>
+            <TextView android:id="@+id/companionStatusText" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textSize="14sp" android:textColor="?android:attr/textColorSecondary"/>
     </LinearLayout>
    </LinearLayout>
-            <TextView android:id="@+id/companionInstallInstructions" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:textSize="14sp" android:textColor="?android:attr/textColorSecondary" android:visibility="gone"/>
+            <TextView android:id="@+id/companionInstallInstructions" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:textSize="15sp" android:textColor="?android:attr/textColorSecondary" android:visibility="gone"/>
    <CheckBox android:id="@+id/companionBypassInstall" android:layout_width="match_parent"
     android:layout_height="wrap_content" android:layout_marginTop="9dp"
-    android:text="@string/source_wizard_companion_bypass" android:textSize="14sp"
+    android:text="@string/source_wizard_companion_bypass" android:textSize="15sp"
     android:textColor="?android:attr/textColorPrimary" android:visibility="gone"/>
    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
     android:layout_marginTop="20dp" android:text="@string/source_wizard_companion_question"
-    android:textSize="15sp" android:textColor="?android:attr/textColorPrimary"/>
+    android:textSize="16sp" android:textColor="?android:attr/textColorPrimary"/>
   </LinearLayout>
  </ScrollView>
  <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/source_wizard_row_divider"/>

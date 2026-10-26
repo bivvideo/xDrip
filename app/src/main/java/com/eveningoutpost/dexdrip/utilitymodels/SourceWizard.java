@@ -277,7 +277,10 @@ public class SourceWizard {
         otherSensors.addChild(new Item(gs(R.string.source_wizard_ottai_m8),
                 gs(R.string.source_wizard_dexcom_app_summary),
                 DexCollectionType.UiBased, R.drawable.ottai_icon).withDeviceIcon()
-                .withCompanionPackages("com.ottai.seas", "com.ottai.tag"));
+                // The China-only Ottai package is intentionally excluded from
+                // this wizard check: it is not a verified working Ottai route.
+                // Keep the legacy collector's own package list unchanged.
+                .withCompanionPackages("com.ottai.seas" /*, "com.ottai.tag" */));
 
         // These are universal fallback methods, not a second sensor catalog.
         root.addChild(new Item(gs(R.string.source_wizard_apps_section), true));
@@ -589,15 +592,20 @@ public class SourceWizard {
                 window.setLayout(width - Math.round(convertDpToPixel(12)),
                         WindowManager.LayoutParams.WRAP_CONTENT);
             }
-            // Large fonts and smaller screens must scroll without hiding footer actions.
+            // Fit the whole body whenever the screen permits. Do not force a
+            // short 61%-height scroll area on ordinary phones; scrolling is a
+            // fallback only for small screens or large accessibility fonts.
             final ScrollView body = root.findViewById(R.id.companionBodyScroll);
-            final int maxBodyHeight = Math.round(
-                    activity.getResources().getDisplayMetrics().heightPixels * 0.61f);
             body.post(() -> {
                 if (!panel.isShowing() || body.getChildCount() == 0) return;
-                if (body.getChildAt(0).getHeight() > maxBodyHeight) {
+                final int screenHeight =
+                        activity.getResources().getDisplayMetrics().heightPixels;
+                // Allow space for the fixed title, buttons and window insets.
+                final int availableBodyHeight = Math.max(0,
+                        screenHeight - Math.round(convertDpToPixel(170)));
+                if (body.getChildAt(0).getHeight() > availableBodyHeight) {
                     final ViewGroup.LayoutParams params = body.getLayoutParams();
-                    params.height = maxBodyHeight;
+                    params.height = availableBodyHeight;
                     body.setLayoutParams(params);
                 }
             });
