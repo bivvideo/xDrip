@@ -641,9 +641,6 @@ public class Home extends ActivityWithMenu implements ActivityCompat.OnRequestPe
 
     private boolean checkBatteryOptimization() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            final String packageName = getPackageName();
-            //Log.d(TAG, "Maybe ignoring battery optimization");
-            final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             if (!Boolean.TRUE.equals(BatteryOptimizationHelper.isExempt(this)) &&
                     !Pref.getBooleanDefaultFalse("requested_ignore_battery_optimizations_new") && !xdrip.isRunningTest()) {
                 Log.d(TAG, "Requesting ignore battery optimization");
@@ -657,7 +654,7 @@ public class Home extends ActivityWithMenu implements ActivityCompat.OnRequestPe
                         public void run() {
                             try {
                                 // Shared intent, preserving Home's existing dialog and result handling.
-                                startActivityForResult(BatteryOptimizationHelper.exemptionRequest(this),
+                                startActivityForResult(BatteryOptimizationHelper.exemptionRequest(Home.this),
                                         REQ_CODE_BATTERY_OPTIMIZATION);
 
                             } catch (ActivityNotFoundException e) {

@@ -25,6 +25,10 @@
     <string name="source_wizard_readiness_real_checking">Проверяется доступ к чтению уведомлений</string>
     <string name="source_wizard_readiness_real_unknown">Не удалось определить доступ к чтению уведомлений</string>
     <string name="source_wizard_readiness_real_unknown_help">Не удалось проверить доступ к уведомлениям. Попробуйте повторно открыть окно.</string>
+    <string name="source_wizard_readiness_state_ready">Выполнено</string>
+    <string name="source_wizard_readiness_state_missing">Не выполнено</string>
+    <string name="source_wizard_readiness_state_unknown">Не удалось проверить</string>
+    <string name="source_wizard_readiness_state_checking">Проверяется</string>
     <string name="source_wizard_readiness_open_settings">Открыть настройки</string>
     <string name="source_wizard_readiness_battery_help">Не удалось проверить исключение xDrip+ из энергосбережения Android. Проверьте ограничения вручную в настройках батареи приложения. Исключение не отменяет все ограничения производителя.</string>
     <string name="source_wizard_readiness_autostart_help">Автозапуск зависит от производителя, в Android нет универсальной проверки. xDrip+ пытается прочитать состояние на поддерживаемых версиях Xiaomi. Если статус неизвестен, включите автозапуск вручную. На Xiaomi: Настройки → Приложения → Разрешения → Автозапуск (названия могут отличаться).</string>

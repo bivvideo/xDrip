@@ -579,19 +579,19 @@ public class SourceWizard {
             switch (result.state) {
                 case READY:
                     drawable = R.drawable.source_wizard_readiness_ok;
-                    description = R.string.source_wizard_readiness_real_ready;
+                    description = R.string.source_wizard_readiness_state_ready;
                     break;
                 case MISSING:
                     drawable = R.drawable.source_wizard_readiness_missing;
-                    description = R.string.source_wizard_readiness_real_missing;
+                    description = R.string.source_wizard_readiness_state_missing;
                     break;
                 default:
                     drawable = R.drawable.source_wizard_readiness_unknown;
-                    description = R.string.source_wizard_readiness_real_unknown;
+                    description = R.string.source_wizard_readiness_state_unknown;
                     break;
             }
             icon.setImageResource(drawable);
-            icon.setContentDescription(activity.getString(description));
+            icon.setContentDescription(activity.getString(label) + ": " + activity.getString(description));
             fix.setVisibility(result.state == SourceWizardReadiness.State.MISSING && result.canFix
                     ? View.VISIBLE : View.GONE);
             info.setVisibility(result.state == SourceWizardReadiness.State.UNKNOWN
@@ -606,7 +606,8 @@ public class SourceWizard {
             if (animate) {
                 icon.setImageResource(R.drawable.source_wizard_readiness_checking);
                 icon.setContentDescription(
-                        activity.getString(R.string.source_wizard_readiness_real_checking));
+                        activity.getString(label) + ": "
+                                + activity.getString(R.string.source_wizard_readiness_state_checking));
                 icon.startAnimation(AnimationUtils.loadAnimation(
                         activity, R.anim.source_wizard_readiness_spin));
                 icon.postDelayed(finish, 450L);
