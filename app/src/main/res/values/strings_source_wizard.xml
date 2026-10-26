@@ -142,4 +142,17 @@
     <string name="source_wizard_follower_nightscout_body">xDrip+ downloads readings from your Nightscout server. You need a working Nightscout address and permission to read its data. Glucose readings must already be uploaded to Nightscout.</string>
     <string name="source_wizard_follower_web_body">xDrip+ reads glucose data from a supported web service. Choose the provider and sign in as needed in the source settings. Available integrations depend on the service.</string>
     <string name="source_wizard_follower_xdrip_body">This phone receives glucose readings from another xDrip+ installation via xDrip Sync. First configure data sharing on the sending phone, then connect this follower.</string>
+    <string name="source_wizard_companion_title">Connection setup</string>
+    <string name="source_wizard_companion_intro">You selected the %1$s sensor with readings provided by %2$s.</string>
+    <string name="source_wizard_companion_explanation">To receive glucose readings in xDrip+, %1$s must be installed and receiving data from the sensor.</string>
+    <string name="source_wizard_companion_question">Continue setup with these settings?</string>
+    <string name="source_wizard_companion_installed">App installed</string>
+    <string name="source_wizard_companion_missing">App not installed</string>
+    <string name="source_wizard_companion_unknown">Unable to check installation</string>
+    <string name="source_wizard_companion_install_and_return">Install %1$s from a trusted source and return to continue setup.</string>
+    <string name="source_wizard_companion_unknown_explanation">Make sure the app is installed. Automatic checking is unavailable.</string>
+    <string name="source_wizard_companion_bypass">Continue without installing</string>
+    <string name="source_wizard_companion_back">Back</string>
+    <string name="source_wizard_companion_continue">Continue</string>
+    <string name="source_wizard_companion_next_step_pending">The next step is checking permissions for this connection. It is not implemented yet; the data source has not changed.</string>
 </resources>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+ <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+  android:paddingStart="20dp" android:paddingEnd="20dp" android:paddingTop="20dp" android:paddingBottom="18dp"
+  android:background="#12FFFFFF" android:text="@string/source_wizard_companion_title"
+  android:textSize="22sp" android:textColor="?android:attr/textColorPrimary"/>
+ <View android:layout_width="match_parent" android:layout_height="1dp"
+  android:background="@color/source_wizard_row_divider"/>
+ <ScrollView android:id="@+id/companionBodyScroll" android:layout_width="match_parent" android:layout_height="wrap_content" android:scrollbars="vertical">
+  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+   android:orientation="vertical" android:padding="20dp">
+            <TextView android:id="@+id/companionIntro" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="15sp" android:textColor="?android:attr/textColorPrimary" />
+            <TextView android:id="@+id/companionExplanation" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="15sp" android:layout_marginTop="16dp" android:textColor="?android:attr/textColorSecondary"/>
+   <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_marginTop="22dp" android:orientation="horizontal" android:gravity="center_vertical"
+    android:background="@drawable/source_wizard_plate_single"
+    android:paddingStart="14dp" android:paddingEnd="14dp" android:paddingTop="15dp" android:paddingBottom="15dp">
+    <ImageView android:id="@+id/companionStatusIcon" android:layout_width="28dp" android:layout_height="28dp"
+     android:src="@drawable/source_wizard_readiness_unknown"
+     android:contentDescription="@string/source_wizard_companion_unknown"/>
+    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+     android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
+            <TextView android:id="@+id/companionAppName" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="?android:attr/textColorPrimary" android:textSize="16sp"/>
+            <TextView android:id="@+id/companionStatusText" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textSize="13sp" android:textColor="?android:attr/textColorSecondary"/>
+    </LinearLayout>
+   </LinearLayout>
+            <TextView android:id="@+id/companionInstallInstructions" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:textSize="14sp" android:textColor="?android:attr/textColorSecondary" android:visibility="gone"/>
+   <CheckBox android:id="@+id/companionBypassInstall" android:layout_width="match_parent"
+    android:layout_height="wrap_content" android:layout_marginTop="9dp"
+    android:text="@string/source_wizard_companion_bypass" android:textSize="14sp"
+    android:textColor="?android:attr/textColorPrimary" android:visibility="gone"/>
+   <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_marginTop="20dp" android:text="@string/source_wizard_companion_question"
+    android:textSize="15sp" android:textColor="?android:attr/textColorPrimary"/>
+  </LinearLayout>
+ </ScrollView>
+ <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/source_wizard_row_divider"/>
+ <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+  android:orientation="horizontal" android:gravity="end|center_vertical" android:background="#14FFFFFF"
+  android:minHeight="56dp" android:paddingStart="12dp" android:paddingEnd="12dp">
+  <TextView android:id="@+id/companionBack" android:layout_width="wrap_content" android:layout_height="52dp"
+   android:gravity="center" android:paddingStart="15dp" android:paddingEnd="15dp"
+   android:background="?android:attr/selectableItemBackground" android:text="@string/source_wizard_companion_back"
+   android:textAllCaps="true" android:textSize="14sp" android:textColor="?android:attr/textColorPrimary"/>
+  <TextView android:id="@+id/companionProceed" android:layout_width="wrap_content" android:layout_height="52dp"
+   android:gravity="center" android:paddingStart="15dp" android:paddingEnd="15dp"
+   android:background="?android:attr/selectableItemBackground" android:text="@string/source_wizard_companion_continue"
+   android:textAllCaps="true" android:textSize="14sp" android:textColor="?android:attr/textColorPrimary"/>
+ </LinearLayout>
+</LinearLayout>

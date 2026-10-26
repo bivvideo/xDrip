@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -16,6 +17,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -87,7 +89,8 @@ public class SourceWizard {
         caresens.addChild(new Item(gs(R.string.source_wizard_caresens_pasta),
                 gs(R.string.source_wizard_dexcom_app_summary),
                 DexCollectionType.UiBased, R.drawable.caresens_icon)
-                .withDeviceIcon());
+                .withDeviceIcon()
+                .withCompanionPackages("com.kakaohealthcare.pasta"));
 
         Tree<Item> dex = root.addChild(new Item("Dexcom",
                 (String) null, R.drawable.dex_icon));
@@ -99,18 +102,29 @@ public class SourceWizard {
         dex.addChild(new Item(gs(R.string.source_wizard_dexcom_camaps),
                 gs(R.string.source_wizard_dexcom_app_summary),
                 DexCollectionType.UiBased, R.drawable.dexcom_g6_g7_icon)
-                .withDeviceIcon());
+                .withDeviceIcon()
+                .withCompanionPackages("com.camdiab.fx_alert.mmoll", "com.camdiab.fx_alert.mgdl", "com.camdiab.fx_alert.hx.mmoll", "com.camdiab.fx_alert.hx.mgdl", "com.camdiab.fx_alert.mmoll.ca"));
         dex.addChild(new Item(gs(R.string.source_wizard_dexcom_dblg2),
                 gs(R.string.source_wizard_dexcom_app_summary),
                 DexCollectionType.UiBased, R.drawable.dexcom_g7_icon)
-                .withDeviceIcon());
+                .withDeviceIcon()
+                .withCompanionPackages("com.diabeloop.dblg2"));
         dex.addChild(new Item(gs(R.string.source_wizard_dexcom_pasta),
                 gs(R.string.source_wizard_dexcom_app_summary),
                 DexCollectionType.UiBased, R.drawable.dexcom_g7_icon)
-                .withDeviceIcon());
+                .withDeviceIcon()
+                .withCompanionPackages("com.kakaohealthcare.pasta"));
         dex.addChild(new Item(gs(R.string.source_wizard_dexcom_app),
                 gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder));
+                DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder)
+                .withCompanionPackages("com.dexcom.g6", "com.dexcom.g7",
+                        "com.dexcom.dexcomone", "com.dexcom.d1plus", "com.dexcom.stelo",
+                        "com.dexcom.g6.region1.mmol", "com.dexcom.g6.region2.mgdl",
+                        "com.dexcom.g6.region3.mgdl", "com.dexcom.g6.region4.mmol",
+                        "com.dexcom.g6.region5.mmol", "com.dexcom.g6.region6.mgdl",
+                        "com.dexcom.g6.region7.mmol", "com.dexcom.g6.region8.mmol",
+                        "com.dexcom.g6.region9.mgdl", "com.dexcom.g6.region10.mgdl",
+                        "com.dexcom.g6.region11.mmol"));
 
         // Two existing Eversense app-based routes, unchanged.
         Tree<Item> eversense = root.addChild(new Item("Eversense",
@@ -118,7 +132,8 @@ public class SourceWizard {
         eversense.addChild(new Item(gs(R.string.source_wizard_eversense_app),
                 gs(R.string.source_wizard_eversense_app_summary),
                 DexCollectionType.UiBased, R.drawable.eversence_360)
-                .withDeviceIcon());
+                .withDeviceIcon()
+                .withCompanionPackages("com.senseonics.gen12androidapp", "com.senseonics.androidapp", "com.senseonics.eversense365.us"));
         eversense.addChild(new Item(gs(R.string.source_wizard_eversense_esel),
                 gs(R.string.source_wizard_eversense_esel_summary),
                 DexCollectionType.NSEmulator, R.drawable.eversence_360)
@@ -141,7 +156,8 @@ public class SourceWizard {
         libre.addChild(new Item(gs(R.string.source_wizard_libre_camaps),
                 gs(R.string.source_wizard_dexcom_app_summary),
                 DexCollectionType.UiBased, R.drawable.libre_123_icon)
-                .withDeviceIcon());
+                .withDeviceIcon()
+                .withCompanionPackages("com.camdiab.fx_alert.mmoll", "com.camdiab.fx_alert.mgdl", "com.camdiab.fx_alert.hx.mmoll", "com.camdiab.fx_alert.hx.mgdl", "com.camdiab.fx_alert.mmoll.ca"));
         libre.addChild(new Item(gs(R.string.source_wizard_libre_juggluco),
                 gs(R.string.source_wizard_libre_juggluco_summary),
                 DexCollectionType.NSEmulator, R.drawable.libra_1234_v2_icon)
@@ -170,16 +186,20 @@ public class SourceWizard {
                 .withSummary(gs(R.string.source_wizard_ican_examples)));
         ican.addChild(new Item(gs(R.string.source_wizard_ican_i3_cgm),
                 gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon());
+                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon()
+                .withCompanionPackages("com.sinocare.cgm.ce"));
         ican.addChild(new Item(gs(R.string.source_wizard_ican_i3_health),
                 gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon());
+                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon()
+                .withCompanionPackages("com.sinocare.ican.health.ce", "com.sinocare.ican.health.ru"));
         ican.addChild(new Item(gs(R.string.source_wizard_ican_i6_cgm),
                 gs(R.string.source_wizard_pending_confirmation),
-                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon());
+                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon()
+                .withCompanionPackages("com.sinocare.cgm.ce"));
         ican.addChild(new Item(gs(R.string.source_wizard_glucomen_o3),
                 gs(R.string.source_wizard_pending_confirmation),
-                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon());
+                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon()
+                .withCompanionPackages("com.sinocare.cgm.ce"));
 
         // MiniMed names refer to pump systems; Guardian and Simplera to CGMs.
         Tree<Item> medtronic = root.addChild(new Item("Medtronic",
@@ -187,13 +207,16 @@ public class SourceWizard {
                 .withSummary(gs(R.string.source_wizard_medtronic_examples)));
         medtronic.addChild(new Item(gs(R.string.source_wizard_medtronic_guardian),
                 gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.guardian_3_4_icon).withDeviceIcon());
+                DexCollectionType.UiBased, R.drawable.guardian_3_4_icon).withDeviceIcon()
+                .withCompanionPackages("com.medtronic.diabetes.guardian", "com.medtronic.diabetes.guardianconnect", "com.medtronic.diabetes.guardianconnect.us"));
         medtronic.addChild(new Item(gs(R.string.source_wizard_medtronic_minimed),
                 gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.medtronic_770_v2_icon).withDeviceIcon());
+                DexCollectionType.UiBased, R.drawable.medtronic_770_v2_icon).withDeviceIcon()
+                .withCompanionPackages("com.medtronic.diabetes.minimedmobile.eu", "com.medtronic.diabetes.minimedmobile.us"));
         medtronic.addChild(new Item(gs(R.string.source_wizard_medtronic_simplera),
                 gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.medtronic_simplera_icon).withDeviceIcon());
+                DexCollectionType.UiBased, R.drawable.medtronic_simplera_icon).withDeviceIcon()
+                .withCompanionPackages("com.medtronic.diabetes.simplera.eu"));
         Item carelinkLink = new Item(gs(R.string.source_wizard_medtronic_carelink),
                 (String) null, 0).withAuxiliaryTitle();
 
@@ -207,10 +230,12 @@ public class SourceWizard {
                 .withSummary(gs(R.string.source_wizard_microtech_examples)));
         microtech.addChild(new Item(gs(R.string.source_wizard_microtech_glucotech),
                 gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.aidex_x_icon).withDeviceIcon());
+                DexCollectionType.UiBased, R.drawable.aidex_x_icon).withDeviceIcon()
+                .withCompanionPackages("com.glucotech.app.android"));
         microtech.addChild(new Item(gs(R.string.source_wizard_microtech_linx),
                 gs(R.string.source_wizard_microtech_linx_summary),
-                DexCollectionType.UiBased, R.drawable.aidex_x_icon).withDeviceIcon());
+                DexCollectionType.UiBased, R.drawable.aidex_x_icon).withDeviceIcon()
+                .withCompanionPackages("com.microtech.aidexx.mgdl", "com.microtech.aidexx.linxneo.mmoll", "com.microtech.aidexx.equil.mmoll", "com.microtech.aidexx.diaexport.mmoll", "com.microtech.aidexx.smart.mmoll", "com.microtech.aidexx.grx1.mmoll", "com.microtech.aidexx"));
         microtech.addChild(new Item(gs(R.string.source_wizard_microtech_glucorx),
                 gs(R.string.source_wizard_microtech_glucorx_summary),
                 DexCollectionType.AidexReceiver, R.drawable.glucorx_icon).withDeviceIcon());
@@ -232,7 +257,8 @@ public class SourceWizard {
                 DexCollectionType.NSEmulator, R.drawable.sibionics_gs1_icon).withDeviceIcon());
         sibionics.addChild(new Item(gs(R.string.source_wizard_sibionics_eco),
                 gs(R.string.source_wizard_sibionics_china_only),
-                DexCollectionType.UiBased, R.drawable.sibionics_gs1_icon).withDeviceIcon());
+                DexCollectionType.UiBased, R.drawable.sibionics_gs1_icon).withDeviceIcon()
+                .withCompanionPackages("com.sisensing.eco"));
 
         // Catch-all is intentionally last, with only real ungrouped devices.
         Tree<Item> otherSensors = root.addChild(new Item(
@@ -250,7 +276,8 @@ public class SourceWizard {
                 .withDeviceIcon());
         otherSensors.addChild(new Item(gs(R.string.source_wizard_ottai_m8),
                 gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.ottai_icon).withDeviceIcon());
+                DexCollectionType.UiBased, R.drawable.ottai_icon).withDeviceIcon()
+                .withCompanionPackages("com.ottai.seas", "com.ottai.tag"));
 
         // These are universal fallback methods, not a second sensor catalog.
         root.addChild(new Item(gs(R.string.source_wizard_apps_section), true));
@@ -435,6 +462,11 @@ public class SourceWizard {
             }
         } else {
             final Item item = branch.data;
+            // Generic Companion and all other source types retain the legacy path.
+            if (item.isNamedCompanionRoute()) {
+                showNamedCompanionConfirmation(item);
+                return;
+            }
             final AlertDialog.Builder builder = new AlertDialog.Builder(activity, AlertDialog.THEME_HOLO_DARK);
             builder.setTitle(R.string.are_you_sure);
             builder.setMessage(activity.getString(R.string.set_data_source_to, item.getConfirmationName()));
@@ -452,6 +484,155 @@ public class SourceWizard {
                 UserError.Log.e(TAG, "Exception showing source confirmation: " + e);
             }
         }
+    }
+
+
+    // SW-005/006 only. The later SW-014 checklist owns final source selection.
+    private void showNamedCompanionConfirmation(final Item item) {
+        final int boundary = item.name.indexOf(10);
+        if (boundary < 1) {
+            getTreeDialog(null);
+            return;
+        }
+        final String sensor = item.name.substring(0, boundary).trim();
+        String app = item.name.substring(boundary + 1).trim();
+        if (app.startsWith("→")) app = app.substring(1).trim();
+        if (app.isEmpty()) {
+            getTreeDialog(null);
+            return;
+        }
+        final String appName = app;
+        final Dialog panel = new Dialog(activity, android.R.style.Theme_Holo_Dialog);
+        panel.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        final View root = LayoutInflater.from(panel.getContext())
+                .inflate(R.layout.dialog_source_wizard_companion, null);
+        ((TextView) root.findViewById(R.id.companionIntro))
+                .setText(activity.getString(R.string.source_wizard_companion_intro, sensor, appName));
+        ((TextView) root.findViewById(R.id.companionExplanation))
+                .setText(activity.getString(R.string.source_wizard_companion_explanation, appName));
+        ((TextView) root.findViewById(R.id.companionAppName)).setText(appName);
+        final ImageView icon = root.findViewById(R.id.companionStatusIcon);
+        final TextView status = root.findViewById(R.id.companionStatusText);
+        final TextView hint = root.findViewById(R.id.companionInstallInstructions);
+        final CheckBox bypass = root.findViewById(R.id.companionBypassInstall);
+        final TextView continueButton = root.findViewById(R.id.companionProceed);
+        final CompanionInstallState[] state = {CompanionInstallState.UNKNOWN};
+        final Runnable refresh = () -> {
+            if (!panel.isShowing()) return;
+            state[0] = inspectCompanionPackages(item.companionPackages);
+            final int picture, message;
+            switch (state[0]) {
+                case INSTALLED:
+                    picture = R.drawable.source_wizard_readiness_ok;
+                    message = R.string.source_wizard_companion_installed;
+                    break;
+                case MISSING:
+                    picture = R.drawable.source_wizard_readiness_missing;
+                    message = R.string.source_wizard_companion_missing;
+                    break;
+                default:
+                    picture = R.drawable.source_wizard_readiness_unknown;
+                    message = R.string.source_wizard_companion_unknown;
+            }
+            icon.setImageResource(picture);
+            icon.setContentDescription(appName + ": " + activity.getString(message));
+            status.setText(message);
+            final boolean missing = state[0] == CompanionInstallState.MISSING;
+            hint.setVisibility(state[0] == CompanionInstallState.INSTALLED ? View.GONE : View.VISIBLE);
+            if (missing) {
+                hint.setText(activity.getString(
+                        R.string.source_wizard_companion_install_and_return, appName));
+            } else if (state[0] == CompanionInstallState.UNKNOWN) {
+                hint.setText(R.string.source_wizard_companion_unknown_explanation);
+            }
+            bypass.setVisibility(missing ? View.VISIBLE : View.GONE);
+            if (!missing) bypass.setChecked(false);
+            updateCompanionContinue(continueButton, state[0], bypass.isChecked());
+        };
+        bypass.setOnCheckedChangeListener((view, checked) ->
+                updateCompanionContinue(continueButton, state[0], checked));
+        root.findViewById(R.id.companionBack).setOnClickListener(v -> getTreeDialog(null));
+        continueButton.setOnClickListener(v -> {
+            if (state[0] == CompanionInstallState.MISSING && !bypass.isChecked()) return;
+            // Do not switch DexCollectionType or restart the running collector.
+            Toast.makeText(activity, R.string.source_wizard_companion_next_step_pending,
+                    Toast.LENGTH_LONG).show();
+        });
+        final Drawable background = activity.getDrawable(R.drawable.holo_background);
+        if (background instanceof GradientDrawable) {
+            ((GradientDrawable) background.mutate()).setCornerRadius(convertDpToPixel(6));
+        }
+        root.setBackground(background);
+        panel.setContentView(root);
+        panel.setCancelable(false);
+        dialog = panel;
+        final boolean[] lostFocus = {false};
+        final ViewTreeObserver.OnWindowFocusChangeListener listener = focus -> {
+            if (!focus) lostFocus[0] = true;
+            else if (lostFocus[0]) {
+                lostFocus[0] = false;
+                refresh.run();
+            }
+        };
+        try {
+            panel.show();
+            final ViewTreeObserver observer = root.getViewTreeObserver();
+            observer.addOnWindowFocusChangeListener(listener);
+            panel.setOnDismissListener(ignored -> {
+                if (observer.isAlive()) observer.removeOnWindowFocusChangeListener(listener);
+            });
+            refresh.run();
+            final Window window = panel.getWindow();
+            if (window != null) {
+                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                final int width = activity.getResources().getDisplayMetrics().widthPixels;
+                window.setLayout(width - Math.round(convertDpToPixel(12)),
+                        WindowManager.LayoutParams.WRAP_CONTENT);
+            }
+            // Large fonts and smaller screens must scroll without hiding footer actions.
+            final ScrollView body = root.findViewById(R.id.companionBodyScroll);
+            final int maxBodyHeight = Math.round(
+                    activity.getResources().getDisplayMetrics().heightPixels * 0.61f);
+            body.post(() -> {
+                if (!panel.isShowing() || body.getChildCount() == 0) return;
+                if (body.getChildAt(0).getHeight() > maxBodyHeight) {
+                    final ViewGroup.LayoutParams params = body.getLayoutParams();
+                    params.height = maxBodyHeight;
+                    body.setLayoutParams(params);
+                }
+            });
+        } catch (Exception e) {
+            UserError.Log.e(TAG, "Exception showing Companion confirmation: " + e);
+        }
+    }
+
+    private enum CompanionInstallState { INSTALLED, MISSING, UNKNOWN }
+
+    private static CompanionInstallState inspectCompanionPackages(final String[] packages) {
+        if (packages == null || packages.length == 0) return CompanionInstallState.UNKNOWN;
+        final android.content.Context context = xdrip.getAppContext();
+        if (context == null) return CompanionInstallState.UNKNOWN;
+        final PackageManager manager = context.getPackageManager();
+        if (manager == null) return CompanionInstallState.UNKNOWN;
+        for (String name : packages) {
+            try {
+                if (manager.getPackageInfo(name, 0) != null) {
+                    return CompanionInstallState.INSTALLED;
+                }
+            } catch (PackageManager.NameNotFoundException ignored) {
+                // Try another regional package variant.
+            } catch (SecurityException | IllegalArgumentException e) {
+                return CompanionInstallState.UNKNOWN;
+            }
+        }
+        return CompanionInstallState.MISSING;
+    }
+
+    private static void updateCompanionContinue(final TextView button,
+            final CompanionInstallState state, final boolean bypass) {
+        final boolean enabled = state != CompanionInstallState.MISSING || bypass;
+        button.setEnabled(enabled);
+        button.setAlpha(enabled ? 1f : 0.4f);
     }
 
     // SW-008 readiness window: stability and Notification Listener are live;
@@ -724,6 +905,7 @@ public class SourceWizard {
         private int depth;
         private String summary;
         private String confirmationName;
+        private String[] companionPackages;
         private boolean section;
         private boolean deviceIcon;
         private boolean auxiliaryTitle;
@@ -887,6 +1069,15 @@ public class SourceWizard {
         Item withConfirmationName(String sourceName) {
             this.confirmationName = sourceName;
             return this;
+        }
+
+        Item withCompanionPackages(final String... packages) {
+            companionPackages = packages.clone();
+            return this;
+        }
+
+        boolean isNamedCompanionRoute() {
+            return type == DexCollectionType.UiBased && !callToAction && name.contains("→");
         }
 
         public String getConfirmationName() {
