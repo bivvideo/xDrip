@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SW-011: the only step that may activate a selected collector after explicit Done. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#12FFFFFF"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="18dp"
+        android:text="@string/source_wizard_finish_title"
+        android:textSize="22sp"
+        android:textColor="?android:attr/textColorPrimary" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/source_wizard_row_divider" />
+    <ScrollView
+        android:id="@+id/finishBodyScroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical"
+        android:overScrollMode="ifContentScrolls">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="24dp">
+            <TextView
+                android:id="@+id/finishMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="17sp"
+                android:textColor="?android:attr/textColorPrimary" />
+        </LinearLayout>
+    </ScrollView>
+    <!-- No divider or separate background behind the standard footer. -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end|center_vertical"
+        android:minHeight="56dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp">
+        <TextView
+            android:id="@+id/finishBack"
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
+            android:gravity="center"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:text="@string/source_wizard_companion_back"
+            android:textAllCaps="true"
+            android:textSize="14sp"
+            android:textColor="?android:attr/textColorPrimary" />
+        <TextView
+            android:id="@+id/finishDone"
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
+            android:gravity="center"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:text="@string/source_wizard_finish_done"
+            android:textAllCaps="true"
+            android:textSize="14sp"
+            android:textColor="?android:attr/textColorPrimary" />
+    </LinearLayout>
+</LinearLayout>
