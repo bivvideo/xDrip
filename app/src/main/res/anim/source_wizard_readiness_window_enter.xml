@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Readiness is a separate dialog: slide the entire window down on entry. -->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:interpolator/decelerate_cubic">
+    <translate
+        android:fromYDelta="-22%p"
+        android:toYDelta="0"
+        android:duration="210" />
+    <alpha
+        android:fromAlpha="0.25"
+        android:toAlpha="1.0"
+        android:duration="210" />
+</set>
