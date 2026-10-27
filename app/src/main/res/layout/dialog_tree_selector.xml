@@ -58,11 +58,6 @@
             app:items="@{viewModel.items}"
             app:layoutManager="@{LayoutManagers.linear()}" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="?android:attr/listDivider" />
-
         <!-- Fixed Skip footer: the root Holo gradient continues under it. -->
         <FrameLayout
             android:layout_width="match_parent"
