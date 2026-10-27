@@ -749,6 +749,8 @@ public class SourceWizard {
         instructions.requestWindowFeature(Window.FEATURE_NO_TITLE);
         final View content = LayoutInflater.from(instructions.getContext())
                 .inflate(R.layout.dialog_source_wizard_instructions, null);
+        ((TextView) content.findViewById(R.id.instructionsHeading)).setText(
+                activity.getString(R.string.source_wizard_instructions_title, appName));
         final LinearLayout steps = content.findViewById(R.id.instructionsSteps);
         final ScrollView body = content.findViewById(R.id.instructionsBodyScroll);
 
@@ -761,19 +763,19 @@ public class SourceWizard {
             int number = 1;
             if (state == CompanionInstallState.MISSING) {
                 addCompanionInstructionStep(steps, number++,
-                        activity.getString(R.string.source_wizard_instructions_install_title, appName),
-                        activity.getString(R.string.source_wizard_instructions_install_detail));
+                        activity.getString(R.string.source_wizard_instructions_install_title),
+                        activity.getString(R.string.source_wizard_instructions_install_detail, appName));
             } else if (state == CompanionInstallState.UNKNOWN) {
                 addCompanionInstructionStep(steps, number++,
-                        activity.getString(R.string.source_wizard_instructions_unknown_title, appName),
-                        activity.getString(R.string.source_wizard_instructions_unknown_detail));
+                        activity.getString(R.string.source_wizard_instructions_unknown_title),
+                        activity.getString(R.string.source_wizard_instructions_unknown_detail, appName));
             }
             addCompanionInstructionStep(steps, number++,
-                    activity.getString(R.string.source_wizard_instructions_open_title, appName),
-                    activity.getString(R.string.source_wizard_instructions_open_detail));
+                    activity.getString(R.string.source_wizard_instructions_open_title),
+                    activity.getString(R.string.source_wizard_instructions_open_detail, appName));
             addCompanionInstructionStep(steps, number++,
-                    activity.getString(R.string.source_wizard_instructions_notify_title, appName),
-                    activity.getString(R.string.source_wizard_instructions_notify_detail));
+                    activity.getString(R.string.source_wizard_instructions_notify_title),
+                    activity.getString(R.string.source_wizard_instructions_notify_detail, appName));
             addCompanionInstructionStep(steps, number,
                     activity.getString(R.string.source_wizard_instructions_check_title),
                     activity.getString(R.string.source_wizard_instructions_check_detail, appName));
@@ -872,8 +874,8 @@ public class SourceWizard {
         finish.requestWindowFeature(Window.FEATURE_NO_TITLE);
         final View content = LayoutInflater.from(finish.getContext())
                 .inflate(R.layout.dialog_source_wizard_finish, null);
-        ((TextView) content.findViewById(R.id.finishMessage)).setText(
-                activity.getString(R.string.source_wizard_finish_message, appName));
+        ((TextView) content.findViewById(R.id.finishMessage))
+                .setText(R.string.source_wizard_finish_message);
         final TextView done = content.findViewById(R.id.finishDone);
 
         content.findViewById(R.id.finishBack).setOnClickListener(v -> {
