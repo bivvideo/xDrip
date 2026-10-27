@@ -27,6 +27,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.preference.PreferenceManager;
 
+import com.eveningoutpost.dexdrip.utilitymodels.SourceWizard;
+
 import java.util.List;
 
 public class NavigationDrawerFragment extends Fragment {
@@ -216,6 +218,19 @@ public class NavigationDrawerFragment extends Fragment {
         }
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
+        }
+        // Source Wizard opens on the current Activity, not as a second Home screen.
+        // Restore the normal drawer selection; this entry is an action, not a page.
+        if (menu_option_list != null && position >= 0 && position < menu_option_list.size()
+                && getString(R.string.source_wizard_drawer_entry)
+                        .equals(menu_option_list.get(position))) {
+            if (menu_position >= 0) {
+                mCurrentSelectedPosition = menu_position;
+                if (mDrawerListView != null) mDrawerListView.setItemChecked(menu_position, true);
+            }
+            final Activity host = getActivity();
+            if (host != null) SourceWizard.start(host, true);
+            return;
         }
         if (mCallbacks != null) {
             mCallbacks.onNavigationDrawerItemSelected(position);
