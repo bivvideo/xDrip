@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- SW-010 reusable numbered step: accent is a sequence, not a readiness status. -->
+<!-- SW-010: one static, rounded action card; sequence markers are not checkboxes. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="20dp"
+    android:layout_marginBottom="10dp"
     android:orientation="horizontal"
-    android:gravity="top">
+    android:gravity="center_vertical"
+    android:paddingStart="14dp"
+    android:paddingEnd="14dp"
+    android:paddingTop="14dp"
+    android:paddingBottom="14dp"
+    android:background="@drawable/source_wizard_plate_single">
     <ImageView
         android:id="@+id/instructionStepIcon"
         android:layout_width="28dp"
@@ -22,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
-            android:textSize="18sp"
+            android:textSize="17sp"
             android:textColor="?android:attr/textColorPrimary" />
         <TextView
             android:id="@+id/instructionStepDetail"
