@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Shared, fixed bottom feather for all Source Wizard pages.
+     Transparent above, gradually covering content in the local Holo gradient
+     just before the stationary footer; not a live blur or a scrolling mask. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:angle="270"
+        android:startColor="#00242A2F"
+        android:centerColor="#80242A2F"
+        android:endColor="#FF242A2F" />
+</shape>
