@@ -546,6 +546,14 @@ public class SourceWizard {
                 0, hasBack ? normal : Math.round(convertDpToPixel(22)), 0);
     }
 
+    // Keep the readiness popup the exact same height as the main wizard.
+    // One geometry calculation avoids short dialogs exposing the dimmed Skip footer.
+    private int wizardWindowHeight() {
+        final int screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
+        return Math.min(Math.round(screenHeight * 0.82f),
+                screenHeight - Math.round(convertDpToPixel(80)));
+    }
+
     // The footer itself is never animated. Both header and body travel through
     // the clipping page viewport, so the Dialog never scales or changes height.
     private void presentWizardPage(final Dialog host, final View view, final int pageIndex) {
@@ -597,10 +605,8 @@ public class SourceWizard {
             if (window != null) {
                 window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 final int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
-                final int screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
-                final int height = Math.min(Math.round(screenHeight * 0.82f),
-                        screenHeight - Math.round(convertDpToPixel(80)));
-                window.setLayout(screenWidth - Math.round(convertDpToPixel(12)), height);
+                window.setLayout(screenWidth - Math.round(convertDpToPixel(12)),
+                        wizardWindowHeight());
             }
         }
         if (outgoing == null) return;
@@ -928,7 +934,8 @@ public class SourceWizard {
             checking[0] = true;
             continueButton.setEnabled(false);
             continueButton.setAlpha(0.65f);
-            continueButton.setText(R.string.source_wizard_companion_warning_scanning);
+            // Keep "Continue" unchanged while the package scan runs: replacing
+            // it with longer text briefly pushes the fixed "Back" button left.
             syncWizardFooter();
             // PackageManager queries run off the UI thread. No collector change.
             new Thread(() -> {
@@ -939,7 +946,6 @@ public class SourceWizard {
                     checking[0] = false;
                     continueButton.setEnabled(true);
                     continueButton.setAlpha(1f);
-                    continueButton.setText(R.string.source_wizard_companion_continue);
                     syncWizardFooter();
                     if (!canAdvanceNamedCompanionRoute(instructions, item, appName)) return;
                     if (otherApps.isEmpty()) {
@@ -1299,11 +1305,8 @@ public class SourceWizard {
                 window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 window.setWindowAnimations(R.style.SourceWizardReadinessWindowAnimation);
                 final int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
-                final int screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
-                final int targetHeight = Math.min(Math.round(screenHeight * 0.73f),
-                        screenHeight - Math.round(convertDpToPixel(170)));
                 window.setLayout(screenWidth - Math.round(convertDpToPixel(12)),
-                        Math.max(Math.round(convertDpToPixel(240)), targetHeight));
+                        wizardWindowHeight());
             }
             readiness.show();
             final ViewTreeObserver focusObserver = content.getViewTreeObserver();
