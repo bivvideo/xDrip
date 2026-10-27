@@ -160,7 +160,7 @@ public class SourceWizard {
                 .withCompanionPackages("com.camdiab.fx_alert.mmoll", "com.camdiab.fx_alert.mgdl", "com.camdiab.fx_alert.hx.mmoll", "com.camdiab.fx_alert.hx.mgdl", "com.camdiab.fx_alert.mmoll.ca"));
         libre.addChild(new Item(gs(R.string.source_wizard_libre_juggluco),
                 gs(R.string.source_wizard_libre_juggluco_summary),
-                DexCollectionType.NSEmulator, R.drawable.libra_1234_v2_icon)
+                DexCollectionType.NSEmulator, R.drawable.libra_1234_v3_icon)
                 .withDeviceIcon());
         Tree<Item> libreMore = libre.addChild(new Item(
                 gs(R.string.source_wizard_libre_more),
@@ -177,7 +177,7 @@ public class SourceWizard {
                 .withDeviceIcon());
         libreMore.addChild(new Item(gs(R.string.source_wizard_libre_juggluco_legacy),
                 gs(R.string.source_wizard_libre_juggluco_legacy_summary),
-                DexCollectionType.LibreReceiver, R.drawable.libra_1234_v2_icon)
+                DexCollectionType.LibreReceiver, R.drawable.libra_1234_v3_icon)
                 .withDeviceIcon());
 
         // iCAN and rebranded GlucoMen iCan share notification collectors.
