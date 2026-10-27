@@ -191,9 +191,9 @@
     <string name="source_wizard_companion_warning_advice">Make sure glucose notifications come from only the app you intend to use.</string>
     <string name="source_wizard_companion_warning_scanning">Checking apps…</string>
     <string name="source_wizard_instructions_units_title">Match measurement units</string>
-    <string name="source_wizard_instructions_units_detail">The units in %1$s must match those in xDrip+.</string>
+    <string name="source_wizard_instructions_units_detail">Set the units in %1$s to match those in xDrip+.</string>
     <string name="source_wizard_instructions_units_set">Current</string>
-    <string name="source_wizard_instructions_units_choose">Choose</string>
+    <string name="source_wizard_instructions_units_choose">Set this value</string>
     <string name="source_wizard_instructions_units_mgdl">mg/dL</string>
     <string name="source_wizard_instructions_units_mmol">mmol/L</string>
     <string name="source_wizard_finish_mini_tap">↰  Tap the menu icon</string>
