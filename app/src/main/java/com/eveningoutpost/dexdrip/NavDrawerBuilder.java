@@ -53,6 +53,11 @@ public class NavDrawerBuilder {
         this.nav_drawer_options.add(context.getString(R.string.home_screen));
         this.nav_drawer_intents.add(new Intent(context, Home.class));
 
+        // An in-place action handled by NavigationDrawerFragment.selectItem().
+        // Keep a parallel safe intent for the legacy position-indexed drawer list.
+        this.nav_drawer_options.add(context.getString(R.string.source_wizard_drawer_entry));
+        this.nav_drawer_intents.add(new Intent(context, Home.class));
+
         if ((is_active_sensor) && (last_two_calibrations != null) && (last_two_calibrations.size() > 0)) {
             this.nav_drawer_options.add(context.getString(R.string.calibration_graph));
             this.nav_drawer_intents.add(new Intent(context, CalibrationGraph.class));
