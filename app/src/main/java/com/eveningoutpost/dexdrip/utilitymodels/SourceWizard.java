@@ -14,9 +14,11 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.Gravity;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.FrameLayout;
 import android.widget.CheckBox;
@@ -70,6 +72,10 @@ public class SourceWizard {
     private Dialog wizardHostDialog;
     private FrameLayout wizardPageHost;
     private FrameLayout wizardFooterHost;
+    private TextView wizardBackButton;
+    private TextView wizardNextButton;
+    private TextView wizardPageBackAction;
+    private TextView wizardPageNextAction;
     private View wizardCurrentPage;
     private Runnable wizardPageCleanup;
     private int wizardPageIndex = -1;
@@ -466,6 +472,26 @@ public class SourceWizard {
         wizardFooterHost = new FrameLayout(host.getContext());
         shell.addView(wizardFooterHost, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, Math.round(convertDpToPixel(56))));
+        // Reuse the existing button styling, but only inflate the visible footer
+        // once. Each wizard page retains its own detached click-targets.
+        final LinearLayout template = (LinearLayout) LayoutInflater.from(host.getContext())
+                .inflate(R.layout.dialog_source_wizard_instructions, null);
+        final View controls = template.getChildAt(template.getChildCount() - 1);
+        template.removeView(controls);
+        wizardBackButton = controls.findViewById(R.id.instructionsBack);
+        wizardNextButton = controls.findViewById(R.id.instructionsProceed);
+        wizardBackButton.setOnClickListener(v -> {
+            if (wizardPageBackAction != null && wizardPageBackAction.isEnabled()) {
+                wizardPageBackAction.performClick();
+            }
+        });
+        wizardNextButton.setOnClickListener(v -> {
+            if (wizardPageNextAction != null && wizardPageNextAction.isEnabled()) {
+                wizardPageNextAction.performClick();
+            }
+        });
+        wizardFooterHost.addView(controls, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         host.setContentView(shell);
         host.setCancelable(false);
         host.setOnDismissListener(ignored -> {
@@ -474,6 +500,10 @@ public class SourceWizard {
             wizardPageCleanup = null;
             if (wizardPageHost != null) wizardPageHost.removeAllViews();
             if (wizardFooterHost != null) wizardFooterHost.removeAllViews();
+            wizardBackButton = null;
+            wizardNextButton = null;
+            wizardPageBackAction = null;
+            wizardPageNextAction = null;
             wizardCurrentPage = null;
             wizardPageIndex = -1;
             wizardHostDialog = null;
@@ -491,6 +521,32 @@ public class SourceWizard {
                 && wizardHostDialog.isShowing();
     }
 
+    private void syncWizardFooter() {
+        if (wizardBackButton == null || wizardNextButton == null
+                || wizardPageNextAction == null) return;
+        final boolean hasBack = wizardPageBackAction != null;
+        wizardBackButton.setVisibility(hasBack ? View.VISIBLE : View.GONE);
+        if (hasBack) {
+            wizardBackButton.setText(wizardPageBackAction.getText());
+            wizardBackButton.setEnabled(wizardPageBackAction.isEnabled());
+            wizardBackButton.setAlpha(wizardPageBackAction.getAlpha());
+        }
+        wizardNextButton.setText(wizardPageNextAction.getText());
+        wizardNextButton.setEnabled(wizardPageNextAction.isEnabled());
+        wizardNextButton.setAlpha(wizardPageNextAction.getAlpha());
+        final LinearLayout.LayoutParams params =
+                (LinearLayout.LayoutParams) wizardNextButton.getLayoutParams();
+        params.width = hasBack ? ViewGroup.LayoutParams.WRAP_CONTENT : 0;
+        params.weight = hasBack ? 0f : 1f;
+        wizardNextButton.setLayoutParams(params);
+        wizardNextButton.setGravity((hasBack ? Gravity.CENTER : Gravity.END)
+                | Gravity.CENTER_VERTICAL);
+        final int normal = Math.round(convertDpToPixel(15));
+        wizardNextButton.setPadding(
+                hasBack ? normal : Math.round(convertDpToPixel(20)),
+                0, hasBack ? normal : Math.round(convertDpToPixel(22)), 0);
+    }
+
     // The footer itself is never animated. Both header and body travel through
     // the clipping page viewport, so the Dialog never scales or changes height.
     private void presentWizardPage(final Dialog host, final View view, final int pageIndex) {
@@ -500,6 +556,18 @@ public class SourceWizard {
         final LinearLayout page = (LinearLayout) view;
         final View footer = page.getChildAt(page.getChildCount() - 1);
         page.removeView(footer);
+        // Page footers are action sources only. The physical controls stay
+        // mounted in wizardFooterHost throughout the full animated route.
+        if (footer instanceof LinearLayout && ((LinearLayout) footer).getChildCount() >= 2) {
+            wizardPageBackAction = (TextView) ((LinearLayout) footer).getChildAt(0);
+            wizardPageNextAction = (TextView) ((LinearLayout) footer).getChildAt(1);
+        } else if (footer instanceof FrameLayout && ((FrameLayout) footer).getChildCount() == 1) {
+            wizardPageBackAction = null;
+            wizardPageNextAction = (TextView) ((FrameLayout) footer).getChildAt(0);
+        } else {
+            throw new IllegalStateException("Unsupported Source Wizard footer");
+        }
+        syncWizardFooter();
         for (int i = 0; i < page.getChildCount(); i++) {
             final View child = page.getChildAt(i);
             if (child instanceof ScrollView || child instanceof RecyclerView) {
@@ -516,9 +584,6 @@ public class SourceWizard {
             wizardPageCleanup.run();
             wizardPageCleanup = null;
         }
-        wizardFooterHost.removeAllViews();
-        wizardFooterHost.addView(footer, new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         final View outgoing = wizardCurrentPage;
         final boolean backwards = pageIndex < wizardPageIndex;
         wizardPageIndex = pageIndex;
@@ -669,9 +734,12 @@ public class SourceWizard {
             bypass.setVisibility(missing ? View.VISIBLE : View.GONE);
             if (!missing) bypass.setChecked(false);
             updateCompanionContinue(continueButton, state[0], bypass.isChecked());
+            syncWizardFooter();
         };
-        bypass.setOnCheckedChangeListener((view, checked) ->
-                updateCompanionContinue(continueButton, state[0], checked));
+        bypass.setOnCheckedChangeListener((view, checked) -> {
+            updateCompanionContinue(continueButton, state[0], checked);
+            syncWizardFooter();
+        });
         root.findViewById(R.id.companionBack).setOnClickListener(v -> getTreeDialog(null));
         continueButton.setOnClickListener(v -> {
             if (state[0] == CompanionInstallState.MISSING && !bypass.isChecked()) return;
@@ -774,6 +842,7 @@ public class SourceWizard {
             final boolean allowed = result.state == SourceWizardReadiness.State.READY;
             proceed.setEnabled(allowed);
             proceed.setAlpha(allowed ? 1f : 0.65f);
+            syncWizardFooter();
         };
         action.setOnClickListener(v ->
                 com.eveningoutpost.dexdrip.services.UiBasedCollector
@@ -861,6 +930,7 @@ public class SourceWizard {
             continueButton.setEnabled(false);
             continueButton.setAlpha(0.65f);
             continueButton.setText(R.string.source_wizard_companion_warning_scanning);
+            syncWizardFooter();
             // PackageManager queries run off the UI thread. No collector change.
             new Thread(() -> {
                 final List<String> otherApps = findOtherInstalledCompanionApps(item);
@@ -871,6 +941,7 @@ public class SourceWizard {
                     continueButton.setEnabled(true);
                     continueButton.setAlpha(1f);
                     continueButton.setText(R.string.source_wizard_companion_continue);
+                    syncWizardFooter();
                     if (!canAdvanceNamedCompanionRoute(instructions, item, appName)) return;
                     if (otherApps.isEmpty()) {
                         // TEMP SW-010 WARNING PREVIEW: remove after phone visual review.
@@ -1051,6 +1122,7 @@ public class SourceWizard {
             if (!item.isNamedCompanionRoute()) return;
             done.setEnabled(false); // Guard against a second Done tap.
             done.setAlpha(0.65f);
+            syncWizardFooter();
             // The same activation calls as the legacy source picker, but without
             // repeating its question after this explicit final confirmation.
             DexCollectionType.setDexCollectionType(item.getCollectionType());
