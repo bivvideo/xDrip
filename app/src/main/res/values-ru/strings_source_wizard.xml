@@ -189,9 +189,9 @@
     <string name="source_wizard_companion_warning_advice">Убедитесь, что уведомления с глюкозой поступают только от нужного приложения.</string>
     <string name="source_wizard_companion_warning_scanning">Проверка приложений…</string>
     <string name="source_wizard_instructions_units_title">Согласуйте единицы измерения</string>
-    <string name="source_wizard_instructions_units_detail">Единицы в %1$s должны совпадать с xDrip+.</string>
+    <string name="source_wizard_instructions_units_detail">Установите в %1$s те же единицы, что используются в xDrip+.</string>
     <string name="source_wizard_instructions_units_set">Установлено</string>
-    <string name="source_wizard_instructions_units_choose">Выберите</string>
+    <string name="source_wizard_instructions_units_choose">Нужно установить</string>
     <string name="source_wizard_instructions_units_mgdl">мг/дл</string>
     <string name="source_wizard_instructions_units_mmol">ммоль/л</string>
     <string name="source_wizard_finish_mini_tap">↰  Нажмите на значок меню</string>
