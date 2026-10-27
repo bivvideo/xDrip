@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Decorative mock system status indicators used only in the SW-011 tutorial. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="61dp" android:height="16dp"
+    android:viewportWidth="61" android:viewportHeight="16">
+    <!-- Signal bars. -->
+    <path android:fillColor="#BFC5CC"
+        android:pathData="M1,13 L4,13 L4,9 L1,9 Z M6,13 L9,13 L9,6 L6,6 Z M11,13 L14,13 L14,3 L11,3 Z"/>
+    <!-- Wi-Fi arcs. -->
+    <path android:strokeColor="#BFC5CC" android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M20,6 Q27,0 34,6 M22.5,9 Q27,5 31.5,9"/>
+    <path android:fillColor="#BFC5CC" android:pathData="M26,12 L27,13 L28,12 L27,11 Z"/>
+    <!-- Battery and filled capacity. -->
+    <path android:strokeColor="#BFC5CC" android:strokeWidth="1"
+        android:pathData="M42,3 L56,3 L56,13 L42,13 Z"/>
+    <path android:fillColor="#BFC5CC"
+        android:pathData="M44,5 L53,5 L53,11 L44,11 Z M57,6 L59,6 L59,10 L57,10 Z"/>
+</vector>
