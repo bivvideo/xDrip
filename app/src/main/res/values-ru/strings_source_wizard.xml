@@ -176,16 +176,25 @@
     <string name="source_wizard_instructions_check_title">Проверьте уведомления</string>
     <string name="source_wizard_instructions_check_detail">Убедитесь, что %1$s отображает показания глюкозы в шторке уведомлений. Затем вернитесь в xDrip+.</string>
     <string name="source_wizard_finish_title">Завершение настройки</string>
-    <string name="source_wizard_finish_message">Нажмите «Готово», чтобы переключить xDrip+ на получение показаний.</string>
+    <string name="source_wizard_finish_message">Нажмите «Готово», чтобы переключить xDrip+ на получение показаний из уведомлений %1$s.</string>
     <string name="source_wizard_finish_done">Готово</string>
     <string name="source_wizard_finish_ready_title">Всё готово к подключению</string>
     <string name="source_wizard_finish_menu_hint">Повторно открыть мастер можно через боковое меню xDrip+.</string>
     <string name="source_wizard_finish_mini_menu_title">Меню xDrip+</string>
     <string name="source_wizard_drawer_entry">Мастер настройки источника</string>
     <!-- SW-010: advisory-only warning about other installed Companion apps -->
-    <string name="source_wizard_companion_warning_title">Обнаружены другие приложения</string>
-    <string name="source_wizard_companion_warning_intro">Помимо выбранного приложения, на телефоне обнаружены другие приложения, поддерживаемые xDrip+:</string>
+    <string name="source_wizard_companion_warning_title">Обнаружены приложения Companion App</string>
+    <string name="source_wizard_companion_warning_intro">xDrip+ использует один источник Companion App для обработки уведомлений следующих установленных приложений:</string>
     <string name="source_wizard_companion_warning_risk">Если несколько приложений одновременно отправляют уведомления с показаниями глюкозы, xDrip+ может смешивать данные разных сенсоров. Это может привести к неверным показаниям на графике и ошибочным предупреждениям.</string>
     <string name="source_wizard_companion_warning_advice">Убедитесь, что уведомления с глюкозой поступают только от нужного приложения.</string>
     <string name="source_wizard_companion_warning_scanning">Проверка приложений…</string>
+    <string name="source_wizard_instructions_units_title">Согласуйте единицы измерения</string>
+    <string name="source_wizard_instructions_units_detail">Единицы в %1$s должны совпадать с xDrip+.</string>
+    <string name="source_wizard_instructions_units_set">Установлено</string>
+    <string name="source_wizard_instructions_units_choose">Выберите</string>
+    <string name="source_wizard_instructions_units_mgdl">мг/дл</string>
+    <string name="source_wizard_instructions_units_mmol">ммоль/л</string>
+    <string name="source_wizard_finish_mini_tap">↰  Нажмите на значок меню</string>
+    <string name="source_wizard_finish_mini_status">9:41</string>
+    <string name="source_wizard_companion_warning_selected">Выбрано в мастере</string>
 </resources>
