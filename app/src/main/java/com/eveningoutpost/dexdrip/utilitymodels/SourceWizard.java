@@ -18,6 +18,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.FrameLayout;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -65,6 +66,14 @@ public class SourceWizard {
     private static volatile SourceWizard sw;
     private Dialog dialog;
     private Activity activity;
+    // One persistent window for the source chooser and named Companion pages.
+    private Dialog wizardHostDialog;
+    private FrameLayout wizardPageHost;
+    private FrameLayout wizardFooterHost;
+    private View wizardCurrentPage;
+    private Runnable wizardPageCleanup;
+    private int wizardPageIndex = -1;
+    private static final long WIZARD_SLIDE_DURATION_MS = 210L;
     // Expansion belongs to this wizard instance, so it survives the confirmation dialog.
     private final HashSet<Tree<Item>> expandedBranches = new HashSet<>();
     private ViewModel listModel;
@@ -429,14 +438,126 @@ public class SourceWizard {
         }
     }
 
+    private Dialog getWizardHostDialog() {
+        if (wizardHostDialog != null) return wizardHostDialog;
+        final Dialog host = new Dialog(activity, android.R.style.Theme_Holo_Dialog);
+        host.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        final LinearLayout shell = new LinearLayout(host.getContext());
+        shell.setOrientation(LinearLayout.VERTICAL);
+        final Drawable background = activity.getDrawable(R.drawable.holo_background);
+        if (background instanceof GradientDrawable) {
+            ((GradientDrawable) background.mutate()).setCornerRadius(convertDpToPixel(6));
+        }
+        shell.setBackground(background);
+        wizardPageHost = new FrameLayout(host.getContext());
+        wizardPageHost.setClipChildren(true);
+        wizardPageHost.setClipToPadding(true);
+        shell.addView(wizardPageHost, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
+        wizardFooterHost = new FrameLayout(host.getContext());
+        shell.addView(wizardFooterHost, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, Math.round(convertDpToPixel(56))));
+        host.setContentView(shell);
+        host.setCancelable(false);
+        host.setOnDismissListener(ignored -> {
+            if (wizardPageCleanup != null) wizardPageCleanup.run();
+            wizardPageCleanup = null;
+            if (wizardPageHost != null) wizardPageHost.removeAllViews();
+            if (wizardFooterHost != null) wizardFooterHost.removeAllViews();
+            wizardCurrentPage = null;
+            wizardPageIndex = -1;
+            wizardHostDialog = null;
+        });
+        wizardHostDialog = host;
+        return host;
+    }
+
+    private void setWizardPageCleanup(final Runnable cleanup) {
+        wizardPageCleanup = cleanup;
+    }
+
+    private boolean isCurrentWizardPage(final View page) {
+        return wizardCurrentPage == page && wizardHostDialog != null
+                && wizardHostDialog.isShowing();
+    }
+
+    // The footer itself is never animated. Both header and body travel through
+    // the clipping page viewport, so the Dialog never scales or changes height.
+    private void presentWizardPage(final Dialog host, final View view, final int pageIndex) {
+        if (host != wizardHostDialog || !(view instanceof LinearLayout)) {
+            throw new IllegalStateException("Not a Source Wizard page");
+        }
+        final LinearLayout page = (LinearLayout) view;
+        final View footer = page.getChildAt(page.getChildCount() - 1);
+        page.removeView(footer);
+        for (int i = 0; i < page.getChildCount(); i++) {
+            final View child = page.getChildAt(i);
+            if (child instanceof ScrollView || child instanceof RecyclerView) {
+                final LinearLayout.LayoutParams params =
+                        (LinearLayout.LayoutParams) child.getLayoutParams();
+                params.height = 0;
+                params.weight = 1f;
+                child.setLayoutParams(params);
+                break;
+            }
+        }
+        page.setBackgroundColor(Color.TRANSPARENT);
+        if (wizardPageCleanup != null) {
+            wizardPageCleanup.run();
+            wizardPageCleanup = null;
+        }
+        wizardFooterHost.removeAllViews();
+        wizardFooterHost.addView(footer, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        final View outgoing = wizardCurrentPage;
+        final boolean backwards = pageIndex < wizardPageIndex;
+        wizardPageIndex = pageIndex;
+        wizardCurrentPage = page;
+        wizardPageHost.addView(page, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        dialog = host;
+        if (!host.isShowing()) {
+            host.show();
+            final Window window = host.getWindow();
+            if (window != null) {
+                window.setWindowAnimations(0);
+                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                final int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
+                final int screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
+                final int height = Math.min(Math.round(screenHeight * 0.82f),
+                        screenHeight - Math.round(convertDpToPixel(80)));
+                window.setLayout(screenWidth - Math.round(convertDpToPixel(12)), height);
+            }
+        }
+        if (outgoing == null) return;
+        // Consume footer touches for 210ms, without mutating button enabled state.
+        final View touchBlocker = new View(activity);
+        touchBlocker.setClickable(true);
+        wizardFooterHost.addView(touchBlocker, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        final int width = Math.max(1, wizardPageHost.getWidth() > 0
+                ? wizardPageHost.getWidth() : activity.getResources().getDisplayMetrics().widthPixels);
+        final int direction = backwards ? -1 : 1;
+        page.setTranslationX(direction * width);
+        outgoing.animate().cancel();
+        page.animate().cancel();
+        outgoing.animate().translationX(-direction * width)
+                .setDuration(WIZARD_SLIDE_DURATION_MS).start();
+        page.animate().translationX(0).setDuration(WIZARD_SLIDE_DURATION_MS)
+                .withEndAction(() -> {
+                    if (outgoing.getParent() == wizardPageHost) wizardPageHost.removeView(outgoing);
+                    if (touchBlocker.getParent() == wizardFooterHost) {
+                        wizardFooterHost.removeView(touchBlocker);
+                    }
+                }).start();
+    }
+
     // A standalone Holo dialog lets the xDrip gradient cover the entire visible
     // chooser, rather than hiding it below opaque AlertDialog title/button panels.
     // Leaf confirmation and its DexCollectionHelper path remain unchanged.
     public void getTreeDialog(Tree<Item> branch) {
-        dismissDialog();
         if (branch == null || !branch.data.isCollectionType()) {
-            final Dialog picker = new Dialog(activity, android.R.style.Theme_Holo_Dialog);
-            picker.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            final Dialog picker = getWizardHostDialog();
             final DialogTreeSelectorBinding binding = DialogTreeSelectorBinding.inflate(
                     LayoutInflater.from(picker.getContext()));
             listModel = new ViewModel();
@@ -446,27 +567,7 @@ public class SourceWizard {
             final int screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
             binding.sourceWizardList.getLayoutParams().height = Math.round(screenHeight * 0.62f);
 
-            final Drawable background = picker.getContext().getDrawable(R.drawable.holo_background);
-            if (background instanceof GradientDrawable) {
-                ((GradientDrawable) background.mutate()).setCornerRadius(convertDpToPixel(6));
-            }
-            binding.getRoot().setBackground(background);
-            picker.setContentView(binding.getRoot());
-            picker.setCancelable(false);
-            dialog = picker;
-            try {
-                picker.show();
-                final Window window = picker.getWindow();
-                if (window != null) {
-                    // The background belongs to the content, so no opaque Holo panel hides it.
-                    window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                    final int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
-                    window.setLayout(screenWidth - Math.round(convertDpToPixel(12)),
-                            WindowManager.LayoutParams.WRAP_CONTENT);
-                }
-            } catch (Exception e) {
-                UserError.Log.e(TAG, "Exception showing source wizard: " + e);
-            }
+            presentWizardPage(picker, binding.getRoot(), 0);
         } else {
             final Item item = branch.data;
             // Generic Companion and all other source types retain the legacy path.
@@ -474,6 +575,7 @@ public class SourceWizard {
                 showNamedCompanionConfirmation(item);
                 return;
             }
+            dismissDialog(); // Legacy source paths keep their existing confirmation.
             final AlertDialog.Builder builder = new AlertDialog.Builder(activity, AlertDialog.THEME_HOLO_DARK);
             builder.setTitle(R.string.are_you_sure);
             builder.setMessage(activity.getString(R.string.set_data_source_to, item.getConfirmationName()));
@@ -509,8 +611,7 @@ public class SourceWizard {
             return;
         }
         final String appName = app;
-        final Dialog panel = new Dialog(activity, android.R.style.Theme_Holo_Dialog);
-        panel.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        final Dialog panel = getWizardHostDialog();
         final View root = LayoutInflater.from(panel.getContext())
                 .inflate(R.layout.dialog_source_wizard_companion, null);
         ((TextView) root.findViewById(R.id.companionIntro))
@@ -525,7 +626,7 @@ public class SourceWizard {
         final TextView continueButton = root.findViewById(R.id.companionProceed);
         final CompanionInstallState[] state = {CompanionInstallState.UNKNOWN};
         final Runnable refresh = () -> {
-            if (!panel.isShowing()) return;
+            if (!isCurrentWizardPage(root)) return;
             state[0] = inspectCompanionPackages(item.companionPackages);
             final int picture, message;
             switch (state[0]) {
@@ -565,17 +666,9 @@ public class SourceWizard {
         continueButton.setOnClickListener(v -> {
             if (state[0] == CompanionInstallState.MISSING && !bypass.isChecked()) return;
             // SW-014 preflight must not switch the collector before final confirmation.
-            panel.dismiss();
             showNamedCompanionPermissions(item, appName);
         });
-        final Drawable background = activity.getDrawable(R.drawable.holo_background);
-        if (background instanceof GradientDrawable) {
-            ((GradientDrawable) background.mutate()).setCornerRadius(convertDpToPixel(6));
-        }
-        root.setBackground(background);
-        panel.setContentView(root);
-        panel.setCancelable(false);
-        dialog = panel;
+        presentWizardPage(panel, root, 1);
         final boolean[] lostFocus = {false};
         final ViewTreeObserver.OnWindowFocusChangeListener listener = focus -> {
             if (!focus) lostFocus[0] = true;
@@ -584,27 +677,12 @@ public class SourceWizard {
                 refresh.run();
             }
         };
-        try {
-            panel.show();
-            final ViewTreeObserver observer = root.getViewTreeObserver();
-            observer.addOnWindowFocusChangeListener(listener);
-            panel.setOnDismissListener(ignored -> {
-                if (observer.isAlive()) observer.removeOnWindowFocusChangeListener(listener);
-            });
-            refresh.run();
-            final Window window = panel.getWindow();
-            if (window != null) {
-                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                final int width = activity.getResources().getDisplayMetrics().widthPixels;
-                window.setLayout(width - Math.round(convertDpToPixel(12)),
-                        WindowManager.LayoutParams.WRAP_CONTENT);
-            }
-            // A common target height with the wizard; scrolling only when needed.
-            fitWizardDialogBody(panel, root,
-                    root.findViewById(R.id.companionBodyScroll));
-        } catch (Exception e) {
-            UserError.Log.e(TAG, "Exception showing Companion confirmation: " + e);
-        }
+        final ViewTreeObserver observer = root.getViewTreeObserver();
+        observer.addOnWindowFocusChangeListener(listener);
+        setWizardPageCleanup(() -> {
+            if (observer.isAlive()) observer.removeOnWindowFocusChangeListener(listener);
+        });
+        refresh.run();
     }
 
     // SW-014: route-specific preflight, using the same checks/rows as SW-008.
@@ -617,8 +695,7 @@ public class SourceWizard {
             showNotificationPermissionCheckError();
             return;
         }
-        final Dialog permissions = new Dialog(activity, android.R.style.Theme_Holo_Dialog);
-        permissions.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        final Dialog permissions = getWizardHostDialog();
         final View content = LayoutInflater.from(permissions.getContext())
                 .inflate(R.layout.dialog_source_wizard_permissions, null);
         final ImageView icon = content.findViewById(R.id.permissionsListenerIcon);
@@ -644,7 +721,7 @@ public class SourceWizard {
                 true, false, cancelChecks));
 
         final Runnable checkListener = () -> {
-            if (!permissions.isShowing()) return;
+            if (!isCurrentWizardPage(content)) return;
             final SourceWizardReadiness.Result result = SourceWizardReadiness.inspect(
                     activity, SourceWizardReadiness.Requirement.NOTIFICATION_LISTENER);
             if (result.state == SourceWizardReadiness.State.UNKNOWN) {
@@ -690,7 +767,6 @@ public class SourceWizard {
                 com.eveningoutpost.dexdrip.services.UiBasedCollector
                         .openNotificationListenerSettings(activity));
         content.findViewById(R.id.permissionsBack).setOnClickListener(v -> {
-            permissions.dismiss();
             showNamedCompanionConfirmation(item);
         });
         proceed.setOnClickListener(v -> {
@@ -699,18 +775,10 @@ public class SourceWizard {
             checkListener.run();
             if (!permissions.isShowing() || !proceed.isEnabled()) return;
             // SW-010: still only navigating; changing the collector belongs to Done.
-            permissions.dismiss();
             showNamedCompanionInstructions(item, appName);
         });
 
-        final Drawable background = activity.getDrawable(R.drawable.holo_background);
-        if (background instanceof GradientDrawable) {
-            ((GradientDrawable) background.mutate()).setCornerRadius(convertDpToPixel(6));
-        }
-        content.setBackground(background);
-        permissions.setContentView(content);
-        permissions.setCancelable(false);
-        dialog = permissions;
+        presentWizardPage(permissions, content, 2);
 
         final boolean[] lostFocus = {false};
         final ViewTreeObserver.OnWindowFocusChangeListener focusListener = focused -> {
@@ -721,36 +789,20 @@ public class SourceWizard {
                 for (Runnable start : startChecks) start.run();
             }
         };
-        try {
-            permissions.show();
-            final ViewTreeObserver observer = content.getViewTreeObserver();
-            observer.addOnWindowFocusChangeListener(focusListener);
-            permissions.setOnDismissListener(ignored -> {
-                for (Runnable cancel : cancelChecks) cancel.run();
-                if (observer.isAlive()) observer.removeOnWindowFocusChangeListener(focusListener);
-            });
-            checkListener.run();
-            for (Runnable start : startChecks) start.run();
-            final Window window = permissions.getWindow();
-            if (window != null) {
-                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                final int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
-                window.setLayout(screenWidth - Math.round(convertDpToPixel(12)),
-                        WindowManager.LayoutParams.WRAP_CONTENT);
-            }
-            fitWizardDialogBody(permissions, content,
-                    content.findViewById(R.id.permissionsBodyScroll));
-        } catch (Exception e) {
-            UserError.Log.e(TAG, "Exception showing Companion permissions: " + e);
-        }
+        final ViewTreeObserver observer = content.getViewTreeObserver();
+        observer.addOnWindowFocusChangeListener(focusListener);
+        setWizardPageCleanup(() -> {
+            for (Runnable cancel : cancelChecks) cancel.run();
+            if (observer.isAlive()) observer.removeOnWindowFocusChangeListener(focusListener);
+        });
+        checkListener.run();
+        for (Runnable start : startChecks) start.run();
     }
-
 
     // SW-010: optional, human-readable Companion app instructions.
     // This screen never switches the current source or touches the collector.
     private void showNamedCompanionInstructions(final Item item, final String appName) {
-        final Dialog instructions = new Dialog(activity, android.R.style.Theme_Holo_Dialog);
-        instructions.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        final Dialog instructions = getWizardHostDialog();
         final View content = LayoutInflater.from(instructions.getContext())
                 .inflate(R.layout.dialog_source_wizard_instructions, null);
         ((TextView) content.findViewById(R.id.instructionsHeading)).setText(
@@ -761,7 +813,7 @@ public class SourceWizard {
         // Reuse SW-006 package inspection on entry and after returning to xDrip+.
         // Installation is informative, not a gate for this UiBased route.
         final Runnable renderSteps = () -> {
-            if (!instructions.isShowing()) return;
+            if (!isCurrentWizardPage(content)) return;
             final CompanionInstallState state = inspectCompanionPackages(item.companionPackages);
             steps.removeAllViews();
             int number = 1;
@@ -786,7 +838,6 @@ public class SourceWizard {
         };
 
         content.findViewById(R.id.instructionsBack).setOnClickListener(v -> {
-            instructions.dismiss();
             showNamedCompanionPermissions(item, appName);
         });
         final TextView continueButton = content.findViewById(R.id.instructionsProceed);
@@ -802,14 +853,13 @@ public class SourceWizard {
             new Thread(() -> {
                 final List<String> otherApps = findOtherInstalledCompanionApps(item);
                 activity.runOnUiThread(() -> {
-                    if (!instructions.isShowing() || dialog != instructions
+                    if (!isCurrentWizardPage(content) || dialog != instructions
                             || activity.isFinishing() || activity.isDestroyed()) return;
                     checking[0] = false;
                     continueButton.setEnabled(true);
                     continueButton.setAlpha(1f);
                     continueButton.setText(R.string.source_wizard_companion_continue);
                     if (!canAdvanceNamedCompanionRoute(instructions, item, appName)) return;
-                    instructions.dismiss();
                     if (otherApps.isEmpty()) {
                         // TEMP SW-010 WARNING PREVIEW: remove after phone visual review.
                         // No real second package is present; show a clearly marked demo row.
@@ -822,14 +872,7 @@ public class SourceWizard {
             }, "source-wizard-companion-check").start();
         });
 
-        final Drawable background = activity.getDrawable(R.drawable.holo_background);
-        if (background instanceof GradientDrawable) {
-            ((GradientDrawable) background.mutate()).setCornerRadius(convertDpToPixel(6));
-        }
-        content.setBackground(background);
-        instructions.setContentView(content);
-        instructions.setCancelable(false);
-        dialog = instructions;
+        presentWizardPage(instructions, content, 3);
         final boolean[] lostFocus = {false};
         final ViewTreeObserver.OnWindowFocusChangeListener listener = focused -> {
             if (!focused) lostFocus[0] = true;
@@ -839,25 +882,12 @@ public class SourceWizard {
                 fitWizardDialogBody(instructions, content, body);
             }
         };
-        try {
-            instructions.show();
-            final ViewTreeObserver observer = content.getViewTreeObserver();
-            observer.addOnWindowFocusChangeListener(listener);
-            instructions.setOnDismissListener(ignored -> {
-                if (observer.isAlive()) observer.removeOnWindowFocusChangeListener(listener);
-            });
-            renderSteps.run();
-            final Window window = instructions.getWindow();
-            if (window != null) {
-                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                final int width = activity.getResources().getDisplayMetrics().widthPixels;
-                window.setLayout(width - Math.round(convertDpToPixel(12)),
-                        WindowManager.LayoutParams.WRAP_CONTENT);
-            }
-            fitWizardDialogBody(instructions, content, body);
-        } catch (Exception e) {
-            UserError.Log.e(TAG, "Exception showing Companion instructions: " + e);
-        }
+        final ViewTreeObserver observer = content.getViewTreeObserver();
+        observer.addOnWindowFocusChangeListener(listener);
+        setWizardPageCleanup(() -> {
+            if (observer.isAlive()) observer.removeOnWindowFocusChangeListener(listener);
+        });
+        renderSteps.run();
     }
 
     private void addCompanionInstructionStep(final LinearLayout parent, final int number,
@@ -934,8 +964,7 @@ public class SourceWizard {
             showNamedCompanionFinish(item, appName, Collections.emptyList());
             return;
         }
-        final Dialog warning = new Dialog(activity, android.R.style.Theme_Holo_Dialog);
-        warning.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        final Dialog warning = getWizardHostDialog();
         final View content = LayoutInflater.from(warning.getContext())
                 .inflate(R.layout.dialog_source_wizard_companion_warning, null);
         final LinearLayout apps = content.findViewById(R.id.companionWarningApps);
@@ -958,38 +987,15 @@ public class SourceWizard {
             }
         }
         content.findViewById(R.id.companionWarningBack).setOnClickListener(v -> {
-            warning.dismiss();
             showNamedCompanionInstructions(item, appName);
         });
         content.findViewById(R.id.companionWarningProceed).setOnClickListener(v -> {
             if (!warning.isShowing()
                     || !canAdvanceNamedCompanionRoute(warning, item, appName)) return;
-            warning.dismiss();
             showNamedCompanionFinish(item, appName, otherApps);
         });
 
-        final Drawable background = activity.getDrawable(R.drawable.holo_background);
-        if (background instanceof GradientDrawable) {
-            ((GradientDrawable) background.mutate()).setCornerRadius(convertDpToPixel(6));
-        }
-        content.setBackground(background);
-        warning.setContentView(content);
-        warning.setCancelable(false);
-        dialog = warning;
-        try {
-            warning.show();
-            final Window window = warning.getWindow();
-            if (window != null) {
-                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                final int width = activity.getResources().getDisplayMetrics().widthPixels;
-                window.setLayout(width - Math.round(convertDpToPixel(12)),
-                        WindowManager.LayoutParams.WRAP_CONTENT);
-            }
-            fitWizardDialogBody(warning, content,
-                    content.findViewById(R.id.companionWarningBodyScroll));
-        } catch (Exception e) {
-            UserError.Log.e(TAG, "Exception showing other Companion warning: " + e);
-        }
+        presentWizardPage(warning, content, 4);
     }
 
     // Reuse the same mandatory Notification Listener check at the two forward
@@ -1012,8 +1018,7 @@ public class SourceWizard {
     // No extra "Are you sure?" and no requirement for a fresh glucose reading.
     private void showNamedCompanionFinish(final Item item, final String appName,
             final List<String> otherApps) {
-        final Dialog finish = new Dialog(activity, android.R.style.Theme_Holo_Dialog);
-        finish.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        final Dialog finish = getWizardHostDialog();
         final View content = LayoutInflater.from(finish.getContext())
                 .inflate(R.layout.dialog_source_wizard_finish, null);
         ((TextView) content.findViewById(R.id.finishMessage))
@@ -1021,7 +1026,6 @@ public class SourceWizard {
         final TextView done = content.findViewById(R.id.finishDone);
 
         content.findViewById(R.id.finishBack).setOnClickListener(v -> {
-            finish.dismiss();
             if (otherApps.isEmpty()) {
                 showNamedCompanionInstructions(item, appName);
             } else {
@@ -1043,27 +1047,7 @@ public class SourceWizard {
             sw = null;
         });
 
-        final Drawable background = activity.getDrawable(R.drawable.holo_background);
-        if (background instanceof GradientDrawable) {
-            ((GradientDrawable) background.mutate()).setCornerRadius(convertDpToPixel(6));
-        }
-        content.setBackground(background);
-        finish.setContentView(content);
-        finish.setCancelable(false);
-        dialog = finish;
-        try {
-            finish.show();
-            final Window window = finish.getWindow();
-            if (window != null) {
-                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                final int width = activity.getResources().getDisplayMetrics().widthPixels;
-                window.setLayout(width - Math.round(convertDpToPixel(12)),
-                        WindowManager.LayoutParams.WRAP_CONTENT);
-            }
-            fitWizardDialogBody(finish, content, content.findViewById(R.id.finishBodyScroll));
-        } catch (Exception e) {
-            UserError.Log.e(TAG, "Exception showing Companion completion: " + e);
-        }
+        presentWizardPage(finish, content, 5);
     }
 
     // Exceptional case only. "Report" is a local, no-network placeholder for now.
@@ -1134,6 +1118,7 @@ public class SourceWizard {
     // Fill spare space before the footer; never force scrolling on a normal screen.
     private void fitWizardDialogBody(final Dialog panel, final View content,
             final ScrollView body) {
+        if (panel == wizardHostDialog) return; // Shared viewport has fixed dimensions.
         body.post(() -> {
             if (!panel.isShowing() || body.getChildCount() == 0) return;
             final int screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
