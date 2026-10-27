@@ -177,7 +177,7 @@
     <string name="source_wizard_instructions_check_title">Check notifications</string>
     <string name="source_wizard_instructions_check_detail">Check that %1$s shows glucose readings in the notification shade. Then return to xDrip+.</string>
     <string name="source_wizard_finish_title">Finish setup</string>
-    <string name="source_wizard_finish_message">Tap Done to switch xDrip+ to receiving glucose readings.</string>
+    <string name="source_wizard_finish_message">Tap Done to switch xDrip+ to receiving glucose readings from %1$s notifications.</string>
     <string name="source_wizard_finish_done">Done</string>
     <!-- EN DRAFT — final translation review before PR -->
     <string name="source_wizard_finish_ready_title">Ready to connect</string>
@@ -185,9 +185,18 @@
     <string name="source_wizard_finish_mini_menu_title">xDrip+ menu</string>
     <string name="source_wizard_drawer_entry">Source setup wizard</string>
     <!-- SW-010: advisory-only warning about other installed Companion apps (EN DRAFT) -->
-    <string name="source_wizard_companion_warning_title">Other apps detected</string>
-    <string name="source_wizard_companion_warning_intro">Other apps supported by xDrip+ were found on this phone in addition to the selected app:</string>
+    <string name="source_wizard_companion_warning_title">Companion apps detected</string>
+    <string name="source_wizard_companion_warning_intro">xDrip+ uses one Companion App source to process notifications from these installed apps:</string>
     <string name="source_wizard_companion_warning_risk">If multiple apps send glucose notifications at the same time, xDrip+ may mix readings from different sensors. This can lead to incorrect glucose values on the graph and misleading alerts.</string>
     <string name="source_wizard_companion_warning_advice">Make sure glucose notifications come from only the app you intend to use.</string>
     <string name="source_wizard_companion_warning_scanning">Checking apps…</string>
+    <string name="source_wizard_instructions_units_title">Match measurement units</string>
+    <string name="source_wizard_instructions_units_detail">The units in %1$s must match those in xDrip+.</string>
+    <string name="source_wizard_instructions_units_set">Current</string>
+    <string name="source_wizard_instructions_units_choose">Choose</string>
+    <string name="source_wizard_instructions_units_mgdl">mg/dL</string>
+    <string name="source_wizard_instructions_units_mmol">mmol/L</string>
+    <string name="source_wizard_finish_mini_tap">↰  Tap the menu icon</string>
+    <string name="source_wizard_finish_mini_status">9:41</string>
+    <string name="source_wizard_companion_warning_selected">Selected in wizard</string>
 </resources>
