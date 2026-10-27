@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Applied exclusively to the separate SW-008 readiness popup. -->
+    <style name="SourceWizardReadinessWindowAnimation">
+        <item name="android:windowEnterAnimation">@anim/source_wizard_readiness_window_enter</item>
+        <item name="android:windowExitAnimation">@anim/source_wizard_readiness_window_exit</item>
+    </style>
+</resources>
