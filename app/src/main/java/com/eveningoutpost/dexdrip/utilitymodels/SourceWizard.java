@@ -811,7 +811,10 @@ public class SourceWizard {
                     if (!canAdvanceNamedCompanionRoute(instructions, item, appName)) return;
                     instructions.dismiss();
                     if (otherApps.isEmpty()) {
-                        showNamedCompanionFinish(item, appName, otherApps);
+                        // TEMP SW-010 WARNING PREVIEW: remove after phone visual review.
+                        // No real second package is present; show a clearly marked demo row.
+                        showOtherCompanionWarning(item, appName,
+                                Collections.singletonList("iCan Health (ТЕСТ — не установлено)"));
                     } else {
                         showOtherCompanionWarning(item, appName, otherApps);
                     }
