@@ -163,19 +163,23 @@
     <string name="source_wizard_permissions_error_message">Продолжить настройку невозможно.</string>
     <string name="source_wizard_permissions_error_report">Сообщить об ошибке</string>
     <!-- SW-010/011 named Companion route -->
-    <string name="source_wizard_instructions_title">Инструкция по подключению</string>
+    <string name="source_wizard_instructions_title">Настройка %1$s</string>
     <string name="source_wizard_instructions_step_number">Шаг %1$d</string>
-    <string name="source_wizard_instructions_install_title">Установите %1$s</string>
-    <string name="source_wizard_instructions_install_detail">Установите приложение из проверенного источника.</string>
-    <string name="source_wizard_instructions_unknown_title">Убедитесь, что %1$s установлено</string>
-    <string name="source_wizard_instructions_unknown_detail">Автоматическая проверка недоступна.</string>
-    <string name="source_wizard_instructions_open_title">Откройте %1$s</string>
-    <string name="source_wizard_instructions_open_detail">Убедитесь, что сенсор подключён и приложение показывает текущий уровень глюкозы.</string>
-    <string name="source_wizard_instructions_notify_title">Включите уведомления %1$s</string>
-    <string name="source_wizard_instructions_notify_detail">Разрешите уведомления приложения в настройках Android.</string>
+    <string name="source_wizard_instructions_install_title">Установите приложение</string>
+    <string name="source_wizard_instructions_install_detail">Установите %1$s из проверенного источника.</string>
+    <string name="source_wizard_instructions_unknown_title">Проверьте установку</string>
+    <string name="source_wizard_instructions_unknown_detail">Не удалось проверить наличие %1$s. Убедитесь, что приложение установлено.</string>
+    <string name="source_wizard_instructions_open_title">Проверьте показания</string>
+    <string name="source_wizard_instructions_open_detail">Убедитесь, что сенсор подключён и %1$s показывает текущий уровень глюкозы.</string>
+    <string name="source_wizard_instructions_notify_title">Включите уведомления</string>
+    <string name="source_wizard_instructions_notify_detail">Разрешите уведомления %1$s в настройках Android.</string>
     <string name="source_wizard_instructions_check_title">Проверьте уведомления</string>
     <string name="source_wizard_instructions_check_detail">Убедитесь, что %1$s отображает показания глюкозы в шторке уведомлений. Затем вернитесь в xDrip+.</string>
     <string name="source_wizard_finish_title">Завершение настройки</string>
-    <string name="source_wizard_finish_message">Нажмите «Готово», чтобы переключить xDrip+ на получение показаний из уведомлений %1$s.</string>
+    <string name="source_wizard_finish_message">Нажмите «Готово», чтобы переключить xDrip+ на получение показаний.</string>
     <string name="source_wizard_finish_done">Готово</string>
+    <string name="source_wizard_finish_ready_title">Всё готово к подключению</string>
+    <string name="source_wizard_finish_menu_hint">Повторно открыть мастер можно через боковое меню xDrip+.</string>
+    <string name="source_wizard_finish_mini_menu_title">Меню xDrip+</string>
+    <string name="source_wizard_drawer_entry">Мастер настройки источника</string>
 </resources>
