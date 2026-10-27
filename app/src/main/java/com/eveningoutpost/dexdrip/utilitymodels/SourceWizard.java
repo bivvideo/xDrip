@@ -694,9 +694,9 @@ public class SourceWizard {
             // Check current system state again, never trust only the rendered state.
             checkListener.run();
             if (!permissions.isShowing() || !proceed.isEnabled()) return;
-            // SW-010 is not implemented. Never switch the user's current source here.
-            Toast.makeText(activity, R.string.source_wizard_permissions_next_step_pending,
-                    Toast.LENGTH_LONG).show();
+            // SW-010: still only navigating; changing the collector belongs to Done.
+            permissions.dismiss();
+            showNamedCompanionInstructions(item, appName);
         });
 
         final Drawable background = activity.getDrawable(R.drawable.holo_background);
@@ -738,6 +738,183 @@ public class SourceWizard {
                     content.findViewById(R.id.permissionsBodyScroll));
         } catch (Exception e) {
             UserError.Log.e(TAG, "Exception showing Companion permissions: " + e);
+        }
+    }
+
+
+    // SW-010: optional, human-readable Companion app instructions.
+    // This screen never switches the current source or touches the collector.
+    private void showNamedCompanionInstructions(final Item item, final String appName) {
+        final Dialog instructions = new Dialog(activity, android.R.style.Theme_Holo_Dialog);
+        instructions.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        final View content = LayoutInflater.from(instructions.getContext())
+                .inflate(R.layout.dialog_source_wizard_instructions, null);
+        final LinearLayout steps = content.findViewById(R.id.instructionsSteps);
+        final ScrollView body = content.findViewById(R.id.instructionsBodyScroll);
+
+        // Reuse SW-006 package inspection on entry and after returning to xDrip+.
+        // Installation is informative, not a gate for this UiBased route.
+        final Runnable renderSteps = () -> {
+            if (!instructions.isShowing()) return;
+            final CompanionInstallState state = inspectCompanionPackages(item.companionPackages);
+            steps.removeAllViews();
+            int number = 1;
+            if (state == CompanionInstallState.MISSING) {
+                addCompanionInstructionStep(steps, number++,
+                        activity.getString(R.string.source_wizard_instructions_install_title, appName),
+                        activity.getString(R.string.source_wizard_instructions_install_detail));
+            } else if (state == CompanionInstallState.UNKNOWN) {
+                addCompanionInstructionStep(steps, number++,
+                        activity.getString(R.string.source_wizard_instructions_unknown_title, appName),
+                        activity.getString(R.string.source_wizard_instructions_unknown_detail));
+            }
+            addCompanionInstructionStep(steps, number++,
+                    activity.getString(R.string.source_wizard_instructions_open_title, appName),
+                    activity.getString(R.string.source_wizard_instructions_open_detail));
+            addCompanionInstructionStep(steps, number++,
+                    activity.getString(R.string.source_wizard_instructions_notify_title, appName),
+                    activity.getString(R.string.source_wizard_instructions_notify_detail));
+            addCompanionInstructionStep(steps, number,
+                    activity.getString(R.string.source_wizard_instructions_check_title),
+                    activity.getString(R.string.source_wizard_instructions_check_detail, appName));
+        };
+
+        content.findViewById(R.id.instructionsBack).setOnClickListener(v -> {
+            instructions.dismiss();
+            showNamedCompanionPermissions(item, appName);
+        });
+        content.findViewById(R.id.instructionsProceed).setOnClickListener(v -> {
+            if (!instructions.isShowing()
+                    || !canAdvanceNamedCompanionRoute(instructions, item, appName)) return;
+            instructions.dismiss();
+            showNamedCompanionFinish(item, appName);
+        });
+
+        final Drawable background = activity.getDrawable(R.drawable.holo_background);
+        if (background instanceof GradientDrawable) {
+            ((GradientDrawable) background.mutate()).setCornerRadius(convertDpToPixel(6));
+        }
+        content.setBackground(background);
+        instructions.setContentView(content);
+        instructions.setCancelable(false);
+        dialog = instructions;
+        final boolean[] lostFocus = {false};
+        final ViewTreeObserver.OnWindowFocusChangeListener listener = focused -> {
+            if (!focused) lostFocus[0] = true;
+            else if (lostFocus[0]) {
+                lostFocus[0] = false;
+                renderSteps.run();
+                fitWizardDialogBody(instructions, content, body);
+            }
+        };
+        try {
+            instructions.show();
+            final ViewTreeObserver observer = content.getViewTreeObserver();
+            observer.addOnWindowFocusChangeListener(listener);
+            instructions.setOnDismissListener(ignored -> {
+                if (observer.isAlive()) observer.removeOnWindowFocusChangeListener(listener);
+            });
+            renderSteps.run();
+            final Window window = instructions.getWindow();
+            if (window != null) {
+                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                final int width = activity.getResources().getDisplayMetrics().widthPixels;
+                window.setLayout(width - Math.round(convertDpToPixel(12)),
+                        WindowManager.LayoutParams.WRAP_CONTENT);
+            }
+            fitWizardDialogBody(instructions, content, body);
+        } catch (Exception e) {
+            UserError.Log.e(TAG, "Exception showing Companion instructions: " + e);
+        }
+    }
+
+    private void addCompanionInstructionStep(final LinearLayout parent, final int number,
+            final String title, final String detail) {
+        final int[] numberedIcons = {
+                R.drawable.source_wizard_step_1,
+                R.drawable.source_wizard_step_2,
+                R.drawable.source_wizard_step_3,
+                R.drawable.source_wizard_step_4,
+                R.drawable.source_wizard_step_5
+        };
+        if (number < 1 || number > numberedIcons.length) return;
+        final View row = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.source_wizard_instruction_step, parent, false);
+        final ImageView icon = row.findViewById(R.id.instructionStepIcon);
+        icon.setImageResource(numberedIcons[number - 1]);
+        icon.setContentDescription(activity.getString(
+                R.string.source_wizard_instructions_step_number, number));
+        ((TextView) row.findViewById(R.id.instructionStepTitle)).setText(title);
+        ((TextView) row.findViewById(R.id.instructionStepDetail)).setText(detail);
+        parent.addView(row);
+    }
+
+    // Reuse the same mandatory Notification Listener check at the two forward
+    // boundaries. A missing/unknown right never silently switches the source.
+    private boolean canAdvanceNamedCompanionRoute(final Dialog current, final Item item,
+            final String appName) {
+        final SourceWizardReadiness.Result result = SourceWizardReadiness.inspect(
+                activity, SourceWizardReadiness.Requirement.NOTIFICATION_LISTENER);
+        if (result.state == SourceWizardReadiness.State.READY) return true;
+        current.dismiss();
+        if (result.state == SourceWizardReadiness.State.UNKNOWN) {
+            showNotificationPermissionCheckError();
+        } else {
+            showNamedCompanionPermissions(item, appName);
+        }
+        return false;
+    }
+
+    // SW-011: only an explicit Done can alter the current data source.
+    // No extra "Are you sure?" and no requirement for a fresh glucose reading.
+    private void showNamedCompanionFinish(final Item item, final String appName) {
+        final Dialog finish = new Dialog(activity, android.R.style.Theme_Holo_Dialog);
+        finish.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        final View content = LayoutInflater.from(finish.getContext())
+                .inflate(R.layout.dialog_source_wizard_finish, null);
+        ((TextView) content.findViewById(R.id.finishMessage)).setText(
+                activity.getString(R.string.source_wizard_finish_message, appName));
+        final TextView done = content.findViewById(R.id.finishDone);
+
+        content.findViewById(R.id.finishBack).setOnClickListener(v -> {
+            finish.dismiss();
+            showNamedCompanionInstructions(item, appName);
+        });
+        done.setOnClickListener(v -> {
+            if (!finish.isShowing() || !done.isEnabled()) return;
+            // Mandatory permission can be revoked while the wizard is open.
+            if (!canAdvanceNamedCompanionRoute(finish, item, appName)) return;
+            if (!item.isNamedCompanionRoute()) return;
+            done.setEnabled(false); // Guard against a second Done tap.
+            done.setAlpha(0.65f);
+            // The same activation calls as the legacy source picker, but without
+            // repeating its question after this explicit final confirmation.
+            DexCollectionType.setDexCollectionType(item.getCollectionType());
+            finish.dismiss();
+            DexCollectionHelper.assistance(activity, item.getCollectionType());
+            sw = null;
+        });
+
+        final Drawable background = activity.getDrawable(R.drawable.holo_background);
+        if (background instanceof GradientDrawable) {
+            ((GradientDrawable) background.mutate()).setCornerRadius(convertDpToPixel(6));
+        }
+        content.setBackground(background);
+        finish.setContentView(content);
+        finish.setCancelable(false);
+        dialog = finish;
+        try {
+            finish.show();
+            final Window window = finish.getWindow();
+            if (window != null) {
+                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                final int width = activity.getResources().getDisplayMetrics().widthPixels;
+                window.setLayout(width - Math.round(convertDpToPixel(12)),
+                        WindowManager.LayoutParams.WRAP_CONTENT);
+            }
+            fitWizardDialogBody(finish, content, content.findViewById(R.id.finishBodyScroll));
+        } catch (Exception e) {
+            UserError.Log.e(TAG, "Exception showing Companion completion: " + e);
         }
     }
 
