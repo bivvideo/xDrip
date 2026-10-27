@@ -439,7 +439,16 @@ public class SourceWizard {
     }
 
     private Dialog getWizardHostDialog() {
-        if (wizardHostDialog != null) return wizardHostDialog;
+        if (wizardHostDialog != null && wizardHostDialog.isShowing()) return wizardHostDialog;
+        // A dismissed host must not be recycled: its delayed onDismiss callback
+        // can otherwise erase a newly opened page during permission recovery.
+        if (wizardHostDialog != null) {
+            if (wizardPageCleanup != null) wizardPageCleanup.run();
+            wizardPageCleanup = null;
+            wizardHostDialog = null;
+            wizardCurrentPage = null;
+            wizardPageIndex = -1;
+        }
         final Dialog host = new Dialog(activity, android.R.style.Theme_Holo_Dialog);
         host.requestWindowFeature(Window.FEATURE_NO_TITLE);
         final LinearLayout shell = new LinearLayout(host.getContext());
@@ -460,6 +469,7 @@ public class SourceWizard {
         host.setContentView(shell);
         host.setCancelable(false);
         host.setOnDismissListener(ignored -> {
+            if (wizardHostDialog != host) return;
             if (wizardPageCleanup != null) wizardPageCleanup.run();
             wizardPageCleanup = null;
             if (wizardPageHost != null) wizardPageHost.removeAllViews();
@@ -517,10 +527,10 @@ public class SourceWizard {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         dialog = host;
         if (!host.isShowing()) {
-            host.show();
             final Window window = host.getWindow();
+            if (window != null) window.setWindowAnimations(0);
+            host.show();
             if (window != null) {
-                window.setWindowAnimations(0);
                 window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 final int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
                 final int screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
@@ -692,6 +702,8 @@ public class SourceWizard {
         if (SourceWizardReadiness.inspect(activity,
                 SourceWizardReadiness.Requirement.NOTIFICATION_LISTENER).state
                 == SourceWizardReadiness.State.UNKNOWN) {
+            // Fail closed: the shared route must not remain open behind the error.
+            dismissDialog();
             showNotificationPermissionCheckError();
             return;
         }
