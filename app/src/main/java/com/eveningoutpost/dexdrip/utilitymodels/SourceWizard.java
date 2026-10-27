@@ -603,7 +603,7 @@ public class SourceWizard {
                 child.setPadding(child.getPaddingLeft(), child.getPaddingTop(),
                         child.getPaddingRight(),
                         child.getPaddingBottom() + Math.round(convertDpToPixel(WIZARD_BOTTOM_FEATHER_DP)));
-                child.setClipToPadding(false);
+                ((ViewGroup) child).setClipToPadding(false);
                 break;
             }
         }
