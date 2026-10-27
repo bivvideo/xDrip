@@ -63,7 +63,7 @@
                 android:textSize="15sp"
                 android:textColor="?android:attr/textColorSecondary" />
 
-            <!-- Static mini-drawer, intentionally non-clickable and always expanded. -->
+            <!-- SW-011: interactive mini-phone tutorial; only the drawer preview toggles. -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -71,48 +71,70 @@
                 android:orientation="vertical"
                 android:paddingBottom="3dp">
 
+                <!-- Decorative Android status bar (this is not the user's real status). -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="26dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:paddingStart="15dp"
                     android:paddingEnd="15dp">
-                    <LinearLayout
-                        android:layout_width="20dp"
-                        android:layout_height="19dp"
-                        android:gravity="center_vertical"
-                        android:orientation="vertical">
-                        <View
-                            android:layout_width="20dp"
-                            android:layout_height="2dp"
-                            android:background="?android:attr/textColorPrimary" />
-                        <View
-                            android:layout_width="20dp"
-                            android:layout_height="2dp"
-                            android:layout_marginTop="4dp"
-                            android:background="?android:attr/textColorPrimary" />
-                        <View
-                            android:layout_width="20dp"
-                            android:layout_height="2dp"
-                            android:layout_marginTop="4dp"
-                            android:background="?android:attr/textColorPrimary" />
-                    </LinearLayout>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="@string/source_wizard_finish_mini_status"
+                        android:textSize="10sp"
+                        android:textColor="?android:attr/textColorSecondary" />
+                    <ImageView
+                        android:layout_width="61dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/source_wizard_mini_status_icons"
+                        android:contentDescription="@null" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/finishMiniMenuToggle"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="@string/source_wizard_finish_mini_tap">
+                    <TextView
+                        android:id="@+id/finishMiniMenuGlyph"
+                        android:layout_width="26dp"
+                        android:layout_height="40dp"
+                        android:gravity="center"
+                        android:text="☰"
+                        android:textSize="22sp"
+                        android:textColor="?android:attr/textColorPrimary"/>
+                    <ImageView
+                        android:layout_width="23dp"
+                        android:layout_height="23dp"
+                        android:layout_marginStart="9dp"
+                        android:src="@drawable/ic_launcher"
+                        android:contentDescription="@null"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:text="@string/source_wizard_finish_mini_menu_title"
-                        android:textSize="14sp"
+                        android:layout_marginStart="8dp"
+                        android:text="xDrip+"
+                        android:textSize="15sp"
                         android:fontFamily="sans-serif-medium"
-                        android:textColor="?android:attr/textColorPrimary" />
+                        android:textColor="?android:attr/textColorPrimary"/>
                 </LinearLayout>
 
-                <View
+                <LinearLayout
+                    android:id="@+id/finishMiniMenuRows"
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/source_wizard_row_divider" />
-
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
@@ -121,32 +143,35 @@
                     android:paddingEnd="12dp"
                     android:text="@string/home_screen"
                     android:textSize="13sp"
-                    android:textColor="?android:attr/textColorSecondary" />
-
+                    android:textColor="?android:attr/textColorSecondary"
+                    />
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
+                    android:layout_marginStart="47dp"
                     android:background="@color/source_wizard_row_divider" />
-
                 <TextView
+                    android:id="@+id/finishMiniMenuMaster"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="42dp"
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
                     android:gravity="center_vertical"
                     android:paddingStart="47dp"
                     android:paddingEnd="12dp"
-                    android:paddingTop="9dp"
-                    android:paddingBottom="9dp"
                     android:text="@string/source_wizard_drawer_entry"
-                    android:fontFamily="sans-serif-medium"
                     android:textSize="16sp"
-                    android:textColor="?android:attr/textColorPrimary" />
-
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    />
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
+                    android:layout_marginStart="47dp"
                     android:background="@color/source_wizard_row_divider" />
-
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
@@ -155,13 +180,13 @@
                     android:paddingEnd="12dp"
                     android:text="@string/system_status"
                     android:textSize="13sp"
-                    android:textColor="?android:attr/textColorSecondary" />
-
+                    android:textColor="?android:attr/textColorSecondary"
+                    />
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
+                    android:layout_marginStart="47dp"
                     android:background="@color/source_wizard_row_divider" />
-
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
@@ -170,8 +195,21 @@
                     android:paddingEnd="12dp"
                     android:text="@string/settings"
                     android:textSize="13sp"
-                    android:textColor="?android:attr/textColorSecondary" />
+                    android:textColor="?android:attr/textColorSecondary"
+                    />
+                </LinearLayout>
 
+                <!-- A one-shot subtle up-arrow hint; hidden after first interaction. -->
+                <TextView
+                    android:id="@+id/finishMiniMenuHint"
+                    android:layout_width="match_parent"
+                    android:layout_height="37dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="19dp"
+                    android:text="@string/source_wizard_finish_mini_tap"
+                    android:textSize="12sp"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:alpha="0.55"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
