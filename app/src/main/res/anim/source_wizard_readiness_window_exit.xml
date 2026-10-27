@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Slide back up when the readiness dialog is dismissed. -->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:interpolator/accelerate_cubic">
+    <translate
+        android:fromYDelta="0"
+        android:toYDelta="-22%p"
+        android:duration="210" />
+    <alpha
+        android:fromAlpha="1.0"
+        android:toAlpha="0.25"
+        android:duration="210" />
+</set>
