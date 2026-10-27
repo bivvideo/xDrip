@@ -182,4 +182,10 @@
     <string name="source_wizard_finish_menu_hint">Повторно открыть мастер можно через боковое меню xDrip+.</string>
     <string name="source_wizard_finish_mini_menu_title">Меню xDrip+</string>
     <string name="source_wizard_drawer_entry">Мастер настройки источника</string>
+    <!-- SW-010: advisory-only warning about other installed Companion apps -->
+    <string name="source_wizard_companion_warning_title">Обнаружены другие приложения</string>
+    <string name="source_wizard_companion_warning_intro">Помимо выбранного приложения, на телефоне обнаружены другие приложения, поддерживаемые xDrip+:</string>
+    <string name="source_wizard_companion_warning_risk">Если несколько приложений одновременно отправляют уведомления с показаниями глюкозы, xDrip+ может смешивать данные разных сенсоров. Это может привести к неверным показаниям на графике и ошибочным предупреждениям.</string>
+    <string name="source_wizard_companion_warning_advice">Убедитесь, что уведомления с глюкозой поступают только от нужного приложения.</string>
+    <string name="source_wizard_companion_warning_scanning">Проверка приложений…</string>
 </resources>
