@@ -79,6 +79,8 @@ public class SourceWizard {
     private Runnable wizardPageCleanup;
     private int wizardPageIndex = -1;
     private static final long WIZARD_SLIDE_DURATION_MS = 210L;
+    // Reserve the same scrollable distance covered by the stationary feather.
+    private static final int WIZARD_BOTTOM_FEATHER_DP = 64;
     // Expansion belongs to this wizard instance, so it survives the confirmation dialog.
     private final HashSet<Tree<Item>> expandedBranches = new HashSet<>();
     private ViewModel listModel;
@@ -462,10 +464,24 @@ public class SourceWizard {
             ((GradientDrawable) background.mutate()).setCornerRadius(convertDpToPixel(6));
         }
         shell.setBackground(background);
+        final FrameLayout pageViewport = new FrameLayout(host.getContext());
         wizardPageHost = new FrameLayout(host.getContext());
         wizardPageHost.setClipChildren(true);
         wizardPageHost.setClipToPadding(true);
-        shell.addView(wizardPageHost, new LinearLayout.LayoutParams(
+        pageViewport.addView(wizardPageHost, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        // One noninteractive fixed overlay for EVERY wizard page, including the
+        // catalog. The pages slide and scroll behind this bottom fade.
+        final View bottomFeather = new View(host.getContext());
+        bottomFeather.setBackgroundResource(R.drawable.source_wizard_bottom_feather);
+        bottomFeather.setClickable(false);
+        bottomFeather.setFocusable(false);
+        final FrameLayout.LayoutParams featherParams = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                Math.round(convertDpToPixel(WIZARD_BOTTOM_FEATHER_DP)),
+                Gravity.BOTTOM);
+        pageViewport.addView(bottomFeather, featherParams);
+        shell.addView(pageViewport, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
         wizardFooterHost = new FrameLayout(host.getContext());
         shell.addView(wizardFooterHost, new LinearLayout.LayoutParams(
@@ -582,6 +598,12 @@ public class SourceWizard {
                 params.height = 0;
                 params.weight = 1f;
                 child.setLayoutParams(params);
+                // Allow the last row to scroll ABOVE the fixed feather and remain
+                // entirely readable instead of disappearing behind the footer.
+                child.setPadding(child.getPaddingLeft(), child.getPaddingTop(),
+                        child.getPaddingRight(),
+                        child.getPaddingBottom() + Math.round(convertDpToPixel(WIZARD_BOTTOM_FEATHER_DP)));
+                child.setClipToPadding(false);
                 break;
             }
         }
