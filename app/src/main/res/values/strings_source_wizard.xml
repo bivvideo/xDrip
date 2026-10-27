@@ -184,4 +184,10 @@
     <string name="source_wizard_finish_menu_hint">You can reopen the wizard from the xDrip+ navigation menu.</string>
     <string name="source_wizard_finish_mini_menu_title">xDrip+ menu</string>
     <string name="source_wizard_drawer_entry">Source setup wizard</string>
+    <!-- SW-010: advisory-only warning about other installed Companion apps (EN DRAFT) -->
+    <string name="source_wizard_companion_warning_title">Other apps detected</string>
+    <string name="source_wizard_companion_warning_intro">Other apps supported by xDrip+ were found on this phone in addition to the selected app:</string>
+    <string name="source_wizard_companion_warning_risk">If multiple apps send glucose notifications at the same time, xDrip+ may mix readings from different sensors. This can lead to incorrect glucose values on the graph and misleading alerts.</string>
+    <string name="source_wizard_companion_warning_advice">Make sure glucose notifications come from only the app you intend to use.</string>
+    <string name="source_wizard_companion_warning_scanning">Checking apps…</string>
 </resources>
