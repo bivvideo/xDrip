@@ -295,10 +295,9 @@ public class SourceWizard {
         otherSensors.addChild(new Item(gs(R.string.source_wizard_ottai_m8),
                 gs(R.string.source_wizard_dexcom_app_summary),
                 DexCollectionType.UiBased, R.drawable.ottai_icon).withDeviceIcon()
-                // The China-only Ottai package is intentionally excluded from
-                // this wizard check: it is not a verified working Ottai route.
-                // Keep the legacy collector's own package list unchanged.
-                .withCompanionPackages("com.ottai.seas" /*, "com.ottai.tag" */));
+                // Detect both international and China-only installations.
+                // This does not confirm that either app publishes valid readings.
+                .withCompanionPackages("com.ottai.seas", "com.ottai.tag"));
 
         // These are universal fallback methods, not a second sensor catalog.
         root.addChild(new Item(gs(R.string.source_wizard_apps_section), true));
@@ -915,6 +914,7 @@ public class SourceWizard {
             addCompanionInstructionStep(steps, number++,
                     activity.getString(R.string.source_wizard_instructions_open_title),
                     activity.getString(R.string.source_wizard_instructions_open_detail, appName));
+            addCompanionUnitsStep(steps, number++, appName);
             addCompanionInstructionStep(steps, number++,
                     activity.getString(R.string.source_wizard_instructions_notify_title),
                     activity.getString(R.string.source_wizard_instructions_notify_detail, appName));
@@ -949,10 +949,7 @@ public class SourceWizard {
                     syncWizardFooter();
                     if (!canAdvanceNamedCompanionRoute(instructions, item, appName)) return;
                     if (otherApps.isEmpty()) {
-                        // TEMP SW-010 WARNING PREVIEW: remove after phone visual review.
-                        // No real second package is present; show a clearly marked demo row.
-                        showOtherCompanionWarning(item, appName,
-                                Collections.singletonList("iCan Health (ТЕСТ — не установлено)"));
+                        showNamedCompanionFinish(item, appName, otherApps);
                     } else {
                         showOtherCompanionWarning(item, appName, otherApps);
                     }
@@ -996,6 +993,31 @@ public class SourceWizard {
                 R.string.source_wizard_instructions_step_number, number));
         ((TextView) row.findViewById(R.id.instructionStepTitle)).setText(title);
         ((TextView) row.findViewById(R.id.instructionStepDetail)).setText(detail);
+        parent.addView(row);
+    }
+
+    // Display the active xDrip+ preference and the value the other app
+    // should use. This educational card NEVER changes units or warning thresholds.
+    private void addCompanionUnitsStep(final LinearLayout parent,
+            final int number, final String appName) {
+        final View row = LayoutInflater.from(parent.getContext()).inflate(
+                R.layout.source_wizard_instruction_units, parent, false);
+        final int[] icons = {R.drawable.source_wizard_step_1,
+                R.drawable.source_wizard_step_2, R.drawable.source_wizard_step_3,
+                R.drawable.source_wizard_step_4, R.drawable.source_wizard_step_5};
+        if (number < 1 || number > icons.length) return;
+        final ImageView icon = row.findViewById(R.id.instructionUnitsIcon);
+        icon.setImageResource(icons[number - 1]);
+        icon.setContentDescription(activity.getString(
+                R.string.source_wizard_instructions_step_number, number));
+        ((TextView) row.findViewById(R.id.instructionUnitsDetail)).setText(
+                activity.getString(R.string.source_wizard_instructions_units_detail, appName));
+        ((TextView) row.findViewById(R.id.instructionUnitsAppLabel)).setText(appName);
+        final int units = Unitized.usingMgDl()
+                ? R.string.source_wizard_instructions_units_mgdl
+                : R.string.source_wizard_instructions_units_mmol;
+        ((TextView) row.findViewById(R.id.instructionUnitsXdripValue)).setText(units);
+        ((TextView) row.findViewById(R.id.instructionUnitsAppValue)).setText(units);
         parent.addView(row);
     }
 
@@ -1057,6 +1079,22 @@ public class SourceWizard {
                 .inflate(R.layout.dialog_source_wizard_companion_warning, null);
         final LinearLayout apps = content.findViewById(R.id.companionWarningApps);
         final LayoutInflater inflater = LayoutInflater.from(content.getContext());
+        // List selected app only when installed; this does not prove active readings.
+        if (inspectCompanionPackages(item.companionPackages) == CompanionInstallState.INSTALLED) {
+            final TextView selectedRow = (TextView) inflater.inflate(
+                    android.R.layout.simple_list_item_1, apps, false);
+            selectedRow.setText(appName + "  ·  "
+                    + activity.getString(R.string.source_wizard_companion_warning_selected));
+            selectedRow.setTextSize(15f);
+            selectedRow.setMinHeight(Math.round(convertDpToPixel(48)));
+            selectedRow.setPadding(Math.round(convertDpToPixel(14)), 0,
+                    Math.round(convertDpToPixel(14)), 0);
+            apps.addView(selectedRow);
+            final View divider = new View(content.getContext());
+            divider.setBackgroundResource(R.color.source_wizard_row_divider);
+            apps.addView(divider, new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, Math.round(convertDpToPixel(1))));
+        }
         for (int i = 0; i < otherApps.size(); i++) {
             final TextView label = (TextView) inflater.inflate(
                     android.R.layout.simple_list_item_1, apps, false);
@@ -1110,7 +1148,24 @@ public class SourceWizard {
         final View content = LayoutInflater.from(finish.getContext())
                 .inflate(R.layout.dialog_source_wizard_finish, null);
         ((TextView) content.findViewById(R.id.finishMessage))
-                .setText(R.string.source_wizard_finish_message);
+                .setText(activity.getString(R.string.source_wizard_finish_message, appName));
+        // Educational mini-drawer, no real source or navigation side effects.
+        final TextView miniGlyph = content.findViewById(R.id.finishMiniMenuGlyph);
+        final View miniRows = content.findViewById(R.id.finishMiniMenuRows);
+        final View miniHint = content.findViewById(R.id.finishMiniMenuHint);
+        final boolean[] miniOpen = {false};
+        content.findViewById(R.id.finishMiniMenuToggle).setOnClickListener(v -> {
+            miniHint.setVisibility(View.GONE);
+            miniOpen[0] = !miniOpen[0];
+            miniRows.setVisibility(miniOpen[0] ? View.VISIBLE : View.GONE);
+            miniGlyph.setText(miniOpen[0] ? "←" : "☰");
+        });
+        content.findViewById(R.id.finishMiniMenuMaster).setOnClickListener(v -> {
+            miniHint.setVisibility(View.GONE);
+            miniOpen[0] = false;
+            miniRows.setVisibility(View.GONE);
+            miniGlyph.setText("☰");
+        });
         final TextView done = content.findViewById(R.id.finishDone);
 
         content.findViewById(R.id.finishBack).setOnClickListener(v -> {
