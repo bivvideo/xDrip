@@ -18,7 +18,6 @@ import android.view.Gravity;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.FrameLayout;
 import android.widget.CheckBox;
@@ -1276,13 +1275,36 @@ public class SourceWizard {
         };
         content.findViewById(R.id.readinessClose).setOnClickListener(v -> readiness.dismiss());
 
+        // Give the popup its final scrollable height before it becomes visible;
+        // resizing an already drawn Holo Dialog was causing an extra jump.
+        final ScrollView readinessBody = content.findViewById(R.id.readinessPreviewScroll);
+        final LinearLayout.LayoutParams bodyParams =
+                (LinearLayout.LayoutParams) readinessBody.getLayoutParams();
+        bodyParams.height = 0;
+        bodyParams.weight = 1f;
+        readinessBody.setLayoutParams(bodyParams);
+
         final Drawable background = activity.getDrawable(R.drawable.holo_background);
         if (background instanceof GradientDrawable) {
             ((GradientDrawable) background.mutate()).setCornerRadius(convertDpToPixel(6));
         }
         content.setBackground(background);
-        readiness.setContentView(content);
+        readiness.setContentView(content, new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         try {
+            final Window window = readiness.getWindow();
+            if (window != null) {
+                // A separate floating popup, not a page in the Source Wizard.
+                // Its Android window animation covers both close and Back.
+                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                window.setWindowAnimations(R.style.SourceWizardReadinessWindowAnimation);
+                final int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
+                final int screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
+                final int targetHeight = Math.min(Math.round(screenHeight * 0.73f),
+                        screenHeight - Math.round(convertDpToPixel(170)));
+                window.setLayout(screenWidth - Math.round(convertDpToPixel(12)),
+                        Math.max(Math.round(convertDpToPixel(240)), targetHeight));
+            }
             readiness.show();
             final ViewTreeObserver focusObserver = content.getViewTreeObserver();
             focusObserver.addOnWindowFocusChangeListener(focusListener);
@@ -1293,16 +1315,6 @@ public class SourceWizard {
                 }
             });
             for (Runnable check : startChecks) check.run();
-
-            final Window window = readiness.getWindow();
-            if (window != null) {
-                window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                final int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
-                window.setLayout(screenWidth - Math.round(convertDpToPixel(12)),
-                        WindowManager.LayoutParams.WRAP_CONTENT);
-            }
-            fitWizardDialogBody(readiness, content,
-                    content.findViewById(R.id.readinessPreviewScroll));
         } catch (Exception e) {
             UserError.Log.e(TAG, "Exception showing readiness preview: " + e);
         }
