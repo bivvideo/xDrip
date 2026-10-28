@@ -204,18 +204,38 @@ public class SourceWizard {
                 DexCollectionType.UiBased,
                 RouteEvidence.EXISTING_CATALOG, "stelo-app", "Stelo App", "Stelo", "com.dexcom.stelo");
 
-        // Two existing Eversense app-based routes, unchanged.
+        // SW-020: Both Eversense models keep the two established mechanisms.
+        // ESEL reads Eversense App notifications (or a patched app) and then
+        // broadcasts to xDrip; it is not a direct sensor connection.
         Tree<Item> eversense = root.addChild(new Item("Eversense",
                 (String) null, R.drawable.wikimedia_eversense_icon_pbroks13));
-        eversense.addChild(new Item(gs(R.string.source_wizard_eversense_app),
-                gs(R.string.source_wizard_eversense_app_summary),
-                DexCollectionType.UiBased, R.drawable.eversence_360)
-                .withDeviceIcon()
-                .withCompanionPackages("com.senseonics.gen12androidapp", "com.senseonics.androidapp", "com.senseonics.eversense365.us"));
-        eversense.addChild(new Item(gs(R.string.source_wizard_eversense_esel),
-                gs(R.string.source_wizard_eversense_esel_summary),
-                DexCollectionType.NSEmulator, R.drawable.eversence_360)
-                .withDeviceIcon());
+        Tree<Item> eversenseE3 = addEversenseModel(eversense, R.string.source_wizard_eversense_model_e3);
+        addEversenseRoute(eversenseE3, R.string.source_wizard_eversense_model_e3,
+                "eversense.e3.companion", R.string.source_wizard_eversense_route_e3_app,
+                R.string.source_wizard_eversense_app_summary,
+                DexCollectionType.UiBased, RouteEvidence.EXISTING_CATALOG,
+                "eversense-app", "Eversense App", "Eversense",
+                "com.senseonics.gen12androidapp", "com.senseonics.androidapp");
+        addEversenseRoute(eversenseE3, R.string.source_wizard_eversense_model_e3,
+                "eversense.e3.esel", R.string.source_wizard_eversense_route_e3_esel,
+                R.string.source_wizard_eversense_esel_summary,
+                DexCollectionType.NSEmulator, RouteEvidence.EXISTING_CATALOG,
+                null, null, null);
+
+        Tree<Item> eversense365 = addEversenseModel(eversense, R.string.source_wizard_eversense_model_365);
+        addEversenseRoute(eversense365, R.string.source_wizard_eversense_model_365,
+                "eversense.365.companion", R.string.source_wizard_eversense_route_365_app,
+                R.string.source_wizard_eversense_app_summary,
+                DexCollectionType.UiBased, RouteEvidence.EXISTING_CATALOG,
+                "eversense-365-app", "Eversense 365 App", "Eversense 365",
+                "com.senseonics.eversense365.us");
+        // Preserve the existing combined E3/365 ESEL path, but its 365
+        // compatibility is still awaiting developer confirmation.
+        addEversenseRoute(eversense365, R.string.source_wizard_eversense_model_365,
+                "eversense.365.esel", R.string.source_wizard_eversense_route_365_esel,
+                R.string.source_wizard_eversense_esel_summary,
+                DexCollectionType.NSEmulator, RouteEvidence.NEEDS_DEVELOPER_REVIEW,
+                null, null, null);
 
         // SW-020: Compact model-first Libre routes. This preserves existing
         // mappings; presence in the catalog is not proof of compatibility.
@@ -1718,6 +1738,29 @@ public class SourceWizard {
             this.appSentenceName = appSentenceName;
             this.evidence = evidence;
         }
+    }
+
+    // Eversense shares the compact model/route UI with Libre and Dexcom.
+    // The transmitter artwork is temporary until model-specific icons arrive.
+    private Tree<Item> addEversenseModel(final Tree<Item> parent,
+            @StringRes final int modelName) {
+        return parent.addChild(new Item(gs(modelName), (String) null,
+                R.drawable.eversence_360).withModelGroup());
+    }
+
+    private void addEversenseRoute(final Tree<Item> parent,
+            @StringRes final int modelName, final String routeId,
+            @StringRes final int routeName, @StringRes final int summaryName,
+            final DexCollectionType type, final RouteEvidence evidence,
+            final String appId, final String appDisplayName,
+            final String appSentenceName, final String... packages) {
+        final String label = gs(routeName);
+        final Item item = new Item(label, gs(summaryName), type, 0)
+                .withCompactRoute()
+                .withRouteMetadata(new SourceRoute("Eversense", gs(modelName), routeId,
+                        label, appId, appDisplayName, appSentenceName, evidence));
+        if (packages != null && packages.length > 0) item.withCompanionPackages(packages);
+        parent.addChild(item);
     }
 
     // SW-020: Dexcom model-first routes reuse the metadata-backed Libre
