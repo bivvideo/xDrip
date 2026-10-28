@@ -269,6 +269,100 @@
 
             </LinearLayout>
 
+            <!-- Only the Readiness action shows compact live counts.
+                 0-count groups stay hidden; TalkBack gets a full description. -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:importantForAccessibility="yes"
+                android:contentDescription="@{item.readinessSummaryDescription}"
+                android:visibility="@{item.readinessAction ? View.VISIBLE : View.GONE}">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:visibility="@{item.readinessReadyVisible ? View.VISIBLE : View.GONE}">
+
+                    <ImageView
+                        android:layout_width="19dp"
+                        android:layout_height="19dp"
+                        android:src="@drawable/source_wizard_readiness_ok"
+                        android:importantForAccessibility="no" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:text="@{item.readinessReadyCountText}"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="14sp"
+                        android:includeFontPadding="false"
+                        android:importantForAccessibility="no" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="7dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:visibility="@{item.readinessMissingVisible ? View.VISIBLE : View.GONE}">
+
+                    <ImageView
+                        android:layout_width="19dp"
+                        android:layout_height="19dp"
+                        android:src="@drawable/source_wizard_readiness_missing"
+                        android:importantForAccessibility="no" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:text="@{item.readinessMissingCountText}"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="14sp"
+                        android:includeFontPadding="false"
+                        android:importantForAccessibility="no" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="7dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:visibility="@{item.readinessUnknownVisible ? View.VISIBLE : View.GONE}">
+
+                    <TextView
+                        android:layout_width="19dp"
+                        android:layout_height="19dp"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:background="@drawable/source_wizard_readiness_question_circle"
+                        android:text="?"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#7D858C"
+                        android:importantForAccessibility="no" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:text="@{item.readinessUnknownCountText}"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="14sp"
+                        android:includeFontPadding="false"
+                        android:importantForAccessibility="no" />
+                </LinearLayout>
+            </LinearLayout>
+
             <!-- Single Holo-tinted vector, rotated right/down for collapsed/expanded groups. -->
             <ImageView
                 android:layout_width="24dp"
