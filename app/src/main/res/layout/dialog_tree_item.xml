@@ -339,16 +339,10 @@
                     android:gravity="center_vertical"
                     android:visibility="@{item.readinessUnknownVisible ? View.VISIBLE : View.GONE}">
 
-                    <TextView
+                    <ImageView
                         android:layout_width="19dp"
                         android:layout_height="19dp"
-                        android:gravity="center"
-                        android:includeFontPadding="false"
-                        android:background="@drawable/source_wizard_readiness_question_circle"
-                        android:text="?"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:textColor="#7D858C"
+                        android:src="@drawable/source_wizard_readiness_question_circle"
                         android:importantForAccessibility="no" />
 
                     <TextView
