@@ -112,39 +112,97 @@ public class SourceWizard {
                 .withDeviceIcon()
                 .withCompanionPackages("com.kakaohealthcare.pasta"));
 
-        Tree<Item> dex = root.addChild(new Item("Dexcom",
-                (String) null, R.drawable.dex_icon));
-        // Preserve the original direct-connection DexcomG6 -> DexcomG5 setup path.
-        dex.addChild(new Item(gs(R.string.source_wizard_dexcom_models),
-                gs(R.string.source_wizard_dexcom_direct_summary),
-                DexCollectionType.DexcomG6, R.drawable.dexcom_g6_g7_icon)
-                .withDeviceIcon().withConfirmationName("Dexcom"));
-        dex.addChild(new Item(gs(R.string.source_wizard_dexcom_camaps),
-                gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.dexcom_g6_g7_icon)
-                .withDeviceIcon()
-                .withCompanionPackages("com.camdiab.fx_alert.mmoll", "com.camdiab.fx_alert.mgdl", "com.camdiab.fx_alert.hx.mmoll", "com.camdiab.fx_alert.hx.mgdl", "com.camdiab.fx_alert.mmoll.ca"));
-        dex.addChild(new Item(gs(R.string.source_wizard_dexcom_dblg2),
-                gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.dexcom_g7_icon)
-                .withDeviceIcon()
-                .withCompanionPackages("com.diabeloop.dblg2"));
-        dex.addChild(new Item(gs(R.string.source_wizard_dexcom_pasta),
-                gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.dexcom_g7_icon)
-                .withDeviceIcon()
-                .withCompanionPackages("com.kakaohealthcare.pasta"));
-        dex.addChild(new Item(gs(R.string.source_wizard_dexcom_app),
-                gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.source_wizard_source_placeholder)
-                .withCompanionPackages("com.dexcom.g6", "com.dexcom.g7",
-                        "com.dexcom.dexcomone", "com.dexcom.d1plus", "com.dexcom.stelo",
-                        "com.dexcom.g6.region1.mmol", "com.dexcom.g6.region2.mgdl",
-                        "com.dexcom.g6.region3.mgdl", "com.dexcom.g6.region4.mmol",
-                        "com.dexcom.g6.region5.mmol", "com.dexcom.g6.region6.mgdl",
-                        "com.dexcom.g6.region7.mmol", "com.dexcom.g6.region8.mmol",
-                        "com.dexcom.g6.region9.mgdl", "com.dexcom.g6.region10.mgdl",
-                        "com.dexcom.g6.region11.mmol"));
+        // SW-020: device-first Dexcom. No G7 15 Day and no Companion Bluetooth.
+        Tree<Item> dex = root.addChild(new Item("Dexcom", (String) null, R.drawable.dex_icon));
+        Tree<Item> dexg6 = addDexcomModel(dex, R.string.source_wizard_dexcom_model_g6, R.drawable.source_wizard_dexcom_g6_trial);
+        addDexcomRoute(dexg6, R.string.source_wizard_dexcom_model_g6,
+                "dexcom.g6.direct",
+                R.string.source_wizard_dexcom_route_direct,
+                R.string.source_wizard_dexcom_direct_summary,
+                DexCollectionType.DexcomG6,
+                RouteEvidence.EXISTING_CATALOG, null, null, null);
+        addDexcomRoute(dexg6, R.string.source_wizard_dexcom_model_g6,
+                "dexcom.g6.camaps",
+                R.string.source_wizard_dexcom_route_camaps,
+                R.string.source_wizard_dexcom_app_summary,
+                DexCollectionType.UiBased,
+                RouteEvidence.EXISTING_CATALOG, "camaps-fx", "CamAPS FX", "CamAPS FX", "com.camdiab.fx_alert.mmoll", "com.camdiab.fx_alert.mgdl", "com.camdiab.fx_alert.hx.mmoll", "com.camdiab.fx_alert.hx.mgdl", "com.camdiab.fx_alert.mmoll.ca");
+        addDexcomRoute(dexg6, R.string.source_wizard_dexcom_model_g6,
+                "dexcom.g6.g6app",
+                R.string.source_wizard_dexcom_route_g6_app,
+                R.string.source_wizard_dexcom_app_summary,
+                DexCollectionType.UiBased,
+                RouteEvidence.EXISTING_CATALOG, "dexcom-g6-app", "Dexcom G6 App", "Dexcom G6", "com.dexcom.g6", "com.dexcom.g6.region1.mmol", "com.dexcom.g6.region2.mgdl", "com.dexcom.g6.region3.mgdl", "com.dexcom.g6.region4.mmol", "com.dexcom.g6.region5.mmol", "com.dexcom.g6.region6.mgdl", "com.dexcom.g6.region7.mmol", "com.dexcom.g6.region8.mmol", "com.dexcom.g6.region9.mgdl", "com.dexcom.g6.region10.mgdl", "com.dexcom.g6.region11.mmol");
+        Tree<Item> dexg7 = addDexcomModel(dex, R.string.source_wizard_dexcom_model_g7, R.drawable.dexcom_g7_icon);
+        addDexcomRoute(dexg7, R.string.source_wizard_dexcom_model_g7,
+                "dexcom.g7.direct",
+                R.string.source_wizard_dexcom_route_direct,
+                R.string.source_wizard_dexcom_direct_summary,
+                DexCollectionType.DexcomG6,
+                RouteEvidence.EXISTING_CATALOG, null, null, null);
+        addDexcomRoute(dexg7, R.string.source_wizard_dexcom_model_g7,
+                "dexcom.g7.camaps",
+                R.string.source_wizard_dexcom_route_camaps,
+                R.string.source_wizard_dexcom_app_summary,
+                DexCollectionType.UiBased,
+                RouteEvidence.EXISTING_CATALOG, "camaps-fx", "CamAPS FX", "CamAPS FX", "com.camdiab.fx_alert.mmoll", "com.camdiab.fx_alert.mgdl", "com.camdiab.fx_alert.hx.mmoll", "com.camdiab.fx_alert.hx.mgdl", "com.camdiab.fx_alert.mmoll.ca");
+        addDexcomRoute(dexg7, R.string.source_wizard_dexcom_model_g7,
+                "dexcom.g7.dblg2",
+                R.string.source_wizard_dexcom_route_dblg2,
+                R.string.source_wizard_dexcom_app_summary,
+                DexCollectionType.UiBased,
+                RouteEvidence.EXISTING_CATALOG, "dblg2", "DBLG2", "DBLG2", "com.diabeloop.dblg2");
+        addDexcomRoute(dexg7, R.string.source_wizard_dexcom_model_g7,
+                "dexcom.g7.g7app",
+                R.string.source_wizard_dexcom_route_g7_app,
+                R.string.source_wizard_dexcom_app_summary,
+                DexCollectionType.UiBased,
+                RouteEvidence.EXISTING_CATALOG, "dexcom-g7-app", "Dexcom G7 App", "Dexcom G7", "com.dexcom.g7");
+        addDexcomRoute(dexg7, R.string.source_wizard_dexcom_model_g7,
+                "dexcom.g7.pasta",
+                R.string.source_wizard_dexcom_route_pasta_app,
+                R.string.source_wizard_dexcom_app_summary,
+                DexCollectionType.UiBased,
+                RouteEvidence.EXISTING_CATALOG, "pasta-app", "PASTA App", "PASTA", "com.kakaohealthcare.pasta");
+        Tree<Item> dexone = addDexcomModel(dex, R.string.source_wizard_dexcom_model_one, R.drawable.source_wizard_dexcom_g6_trial);
+        addDexcomRoute(dexone, R.string.source_wizard_dexcom_model_one,
+                "dexcom.one.direct",
+                R.string.source_wizard_dexcom_route_direct,
+                R.string.source_wizard_dexcom_direct_summary,
+                DexCollectionType.DexcomG6,
+                RouteEvidence.NEEDS_DEVELOPER_REVIEW, null, null, null);
+        addDexcomRoute(dexone, R.string.source_wizard_dexcom_model_one,
+                "dexcom.one.oneapp",
+                R.string.source_wizard_dexcom_route_one_app,
+                R.string.source_wizard_dexcom_app_summary,
+                DexCollectionType.UiBased,
+                RouteEvidence.EXISTING_CATALOG, "dexcom-one-app", "Dexcom ONE App", "Dexcom ONE", "com.dexcom.dexcomone");
+        Tree<Item> dexoneplus = addDexcomModel(dex, R.string.source_wizard_dexcom_model_one_plus, R.drawable.dexcom_g7_icon);
+        addDexcomRoute(dexoneplus, R.string.source_wizard_dexcom_model_one_plus,
+                "dexcom.one_plus.direct",
+                R.string.source_wizard_dexcom_route_direct,
+                R.string.source_wizard_dexcom_direct_summary,
+                DexCollectionType.DexcomG6,
+                RouteEvidence.NEEDS_DEVELOPER_REVIEW, null, null, null);
+        addDexcomRoute(dexoneplus, R.string.source_wizard_dexcom_model_one_plus,
+                "dexcom.one_plus.oneplusapp",
+                R.string.source_wizard_dexcom_route_one_plus_app,
+                R.string.source_wizard_dexcom_app_summary,
+                DexCollectionType.UiBased,
+                RouteEvidence.EXISTING_CATALOG, "dexcom-one-plus-app", "Dexcom ONE+ App", "Dexcom ONE+", "com.dexcom.d1plus");
+        Tree<Item> dexstelo = addDexcomModel(dex, R.string.source_wizard_dexcom_model_stelo, R.drawable.dexcom_g7_icon);
+        addDexcomRoute(dexstelo, R.string.source_wizard_dexcom_model_stelo,
+                "dexcom.stelo.direct",
+                R.string.source_wizard_dexcom_route_direct,
+                R.string.source_wizard_dexcom_direct_summary,
+                DexCollectionType.DexcomG6,
+                RouteEvidence.NEEDS_DEVELOPER_REVIEW, null, null, null);
+        addDexcomRoute(dexstelo, R.string.source_wizard_dexcom_model_stelo,
+                "dexcom.stelo.steloapp",
+                R.string.source_wizard_dexcom_route_stelo_app,
+                R.string.source_wizard_dexcom_app_summary,
+                DexCollectionType.UiBased,
+                RouteEvidence.EXISTING_CATALOG, "stelo-app", "Stelo App", "Stelo", "com.dexcom.stelo");
 
         // Two existing Eversense app-based routes, unchanged.
         Tree<Item> eversense = root.addChild(new Item("Eversense",
