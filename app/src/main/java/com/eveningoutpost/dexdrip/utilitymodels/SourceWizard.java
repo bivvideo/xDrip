@@ -166,51 +166,51 @@ public class SourceWizard {
         Tree<Item> libre1 = addLibreModel(libre, R.string.source_wizard_libre_model_1);
         addLibreRoute(libre1, "1", R.string.source_wizard_libre_model_1,
                 "bridge", R.string.source_wizard_libre_route_bridge,
-                R.string.source_wizard_one_bridge_summary, DexCollectionType.LimiTTer,
+                R.string.source_wizard_libre_one_bridge_summary, DexCollectionType.LimiTTer,
                 null, null, null);
         addLibreRoute(libre1, "1", R.string.source_wizard_libre_model_1,
                 "alarm", R.string.source_wizard_libre_route_alarm,
-                R.string.source_wizard_one_alarm_summary, DexCollectionType.LibreAlarm,
+                R.string.source_wizard_libre_one_alarm_summary, DexCollectionType.LibreAlarm,
                 null, null, null);
         addLibreRoute(libre1, "1", R.string.source_wizard_libre_model_1,
                 "network", R.string.source_wizard_libre_route_network,
-                R.string.source_wizard_network_summary, DexCollectionType.LibreWifi,
+                R.string.source_wizard_libre_network_summary, DexCollectionType.LibreWifi,
                 null, null, null);
         addLibreRoute(libre1, "1", R.string.source_wizard_libre_model_1,
                 "combined", R.string.source_wizard_libre_route_combined,
-                R.string.source_wizard_combined_summary, DexCollectionType.LimiTTerWifi,
+                R.string.source_wizard_libre_combined_summary, DexCollectionType.LimiTTerWifi,
                 null, null, null);
 
         Tree<Item> libre2 = addLibreModel(libre, R.string.source_wizard_libre_model_2);
         addLibreRoute(libre2, "2", R.string.source_wizard_libre_model_2,
                 "direct", R.string.source_wizard_libre_route_direct,
-                R.string.source_wizard_two_direct_summary, DexCollectionType.LimiTTer,
+                R.string.source_wizard_libre_two_direct_summary, DexCollectionType.LimiTTer,
                 null, null, null);
         addLibreRoute(libre2, "2", R.string.source_wizard_libre_model_2,
                 "network", R.string.source_wizard_libre_route_network,
-                R.string.source_wizard_network_summary, DexCollectionType.LibreWifi,
+                R.string.source_wizard_libre_network_summary, DexCollectionType.LibreWifi,
                 null, null, null);
         addLibreRoute(libre2, "2", R.string.source_wizard_libre_model_2,
                 "combined", R.string.source_wizard_libre_route_combined,
-                R.string.source_wizard_combined_summary, DexCollectionType.LimiTTerWifi,
+                R.string.source_wizard_libre_combined_summary, DexCollectionType.LimiTTerWifi,
                 null, null, null);
         addLibreRoute(libre2, "2", R.string.source_wizard_libre_model_2,
                 "juggluco-eversense", R.string.source_wizard_libre_route_juggluco_eversense,
-                R.string.source_wizard_juggluco_summary, DexCollectionType.NSEmulator,
+                R.string.source_wizard_libre_juggluco_summary, DexCollectionType.NSEmulator,
                 "juggluco", "Juggluco", "Juggluco");
         addLibreRoute(libre2, "2", R.string.source_wizard_libre_model_2,
                 "juggluco-patched", R.string.source_wizard_libre_route_juggluco_patched,
-                R.string.source_wizard_juggluco_legacy_summary, DexCollectionType.LibreReceiver,
+                R.string.source_wizard_libre_juggluco_legacy_summary, DexCollectionType.LibreReceiver,
                 "juggluco", "Juggluco", "Juggluco");
 
         Tree<Item> libre2plus = addLibreModel(libre, R.string.source_wizard_libre_model_2_plus);
         addLibreRoute(libre2plus, "2plus", R.string.source_wizard_libre_model_2_plus,
                 "juggluco-eversense", R.string.source_wizard_libre_route_juggluco_eversense,
-                R.string.source_wizard_juggluco_summary, DexCollectionType.NSEmulator,
+                R.string.source_wizard_libre_juggluco_summary, DexCollectionType.NSEmulator,
                 "juggluco", "Juggluco", "Juggluco");
         addLibreRoute(libre2plus, "2plus", R.string.source_wizard_libre_model_2_plus,
                 "juggluco-patched", R.string.source_wizard_libre_route_juggluco_patched,
-                R.string.source_wizard_juggluco_legacy_summary, DexCollectionType.LibreReceiver,
+                R.string.source_wizard_libre_juggluco_legacy_summary, DexCollectionType.LibreReceiver,
                 "juggluco", "Juggluco", "Juggluco");
 
         Tree<Item> libre3 = addLibreModel(libre, R.string.source_wizard_libre_model_3);
@@ -221,11 +221,11 @@ public class SourceWizard {
                 "com.camdiab.fx_alert.mmoll", "com.camdiab.fx_alert.mgdl", "com.camdiab.fx_alert.hx.mmoll", "com.camdiab.fx_alert.hx.mgdl", "com.camdiab.fx_alert.mmoll.ca");
         addLibreRoute(libre3, "3", R.string.source_wizard_libre_model_3,
                 "juggluco-eversense", R.string.source_wizard_libre_route_juggluco_eversense,
-                R.string.source_wizard_juggluco_summary, DexCollectionType.NSEmulator,
+                R.string.source_wizard_libre_juggluco_summary, DexCollectionType.NSEmulator,
                 "juggluco", "Juggluco", "Juggluco");
         addLibreRoute(libre3, "3", R.string.source_wizard_libre_model_3,
                 "juggluco-patched", R.string.source_wizard_libre_route_juggluco_patched,
-                R.string.source_wizard_juggluco_legacy_summary, DexCollectionType.LibreReceiver,
+                R.string.source_wizard_libre_juggluco_legacy_summary, DexCollectionType.LibreReceiver,
                 "juggluco", "Juggluco", "Juggluco");
 
         Tree<Item> libre3plus = addLibreModel(libre, R.string.source_wizard_libre_model_3_plus);
@@ -236,11 +236,11 @@ public class SourceWizard {
                 "com.camdiab.fx_alert.mmoll", "com.camdiab.fx_alert.mgdl", "com.camdiab.fx_alert.hx.mmoll", "com.camdiab.fx_alert.hx.mgdl", "com.camdiab.fx_alert.mmoll.ca");
         addLibreRoute(libre3plus, "3plus", R.string.source_wizard_libre_model_3_plus,
                 "juggluco-eversense", R.string.source_wizard_libre_route_juggluco_eversense,
-                R.string.source_wizard_juggluco_summary, DexCollectionType.NSEmulator,
+                R.string.source_wizard_libre_juggluco_summary, DexCollectionType.NSEmulator,
                 "juggluco", "Juggluco", "Juggluco");
         addLibreRoute(libre3plus, "3plus", R.string.source_wizard_libre_model_3_plus,
                 "juggluco-patched", R.string.source_wizard_libre_route_juggluco_patched,
-                R.string.source_wizard_juggluco_legacy_summary, DexCollectionType.LibreReceiver,
+                R.string.source_wizard_libre_juggluco_legacy_summary, DexCollectionType.LibreReceiver,
                 "juggluco", "Juggluco", "Juggluco");
 
         // iCAN and rebranded GlucoMen iCan share notification collectors.
