@@ -363,26 +363,67 @@ public class SourceWizard {
 
         medtronic.addChild(carelinkLink);
 
-        // MicroTech branded models and regional notification apps.
+        // SW-020: model-first MicroTech. Each visible Companion App leaf checks
+        // ONLY that app's package; the collector's global whitelist is unchanged.
         Tree<Item> microtech = root.addChild(new Item(
                 gs(R.string.source_wizard_microtech_group),
                 gs(R.string.source_wizard_microtech_examples),
                 R.drawable.source_wizard_source_placeholder)
                 .withSummary(gs(R.string.source_wizard_microtech_examples)));
-        microtech.addChild(new Item(gs(R.string.source_wizard_microtech_glucotech),
-                gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.aidex_x_icon).withDeviceIcon()
-                .withCompanionPackages("com.glucotech.app.android"));
-        microtech.addChild(new Item(gs(R.string.source_wizard_microtech_linx),
-                gs(R.string.source_wizard_microtech_linx_summary),
-                DexCollectionType.UiBased, R.drawable.aidex_x_icon).withDeviceIcon()
-                .withCompanionPackages("com.microtech.aidexx.mgdl", "com.microtech.aidexx.linxneo.mmoll", "com.microtech.aidexx.equil.mmoll", "com.microtech.aidexx.diaexport.mmoll", "com.microtech.aidexx.smart.mmoll", "com.microtech.aidexx.grx1.mmoll", "com.microtech.aidexx"));
-        microtech.addChild(new Item(gs(R.string.source_wizard_microtech_glucorx),
-                gs(R.string.source_wizard_microtech_glucorx_summary),
-                DexCollectionType.AidexReceiver, R.drawable.glucorx_icon).withDeviceIcon());
-        microtech.addChild(new Item(gs(R.string.source_wizard_microtech_vitatok),
-                gs(R.string.source_wizard_pending_confirmation),
-                DexCollectionType.UiBased, R.drawable.aidex_x_icon).withDeviceIcon());
+        Tree<Item> mtGlucorx = addMicrotechModel(microtech,
+                R.string.source_wizard_microtech_model_glucorx,
+                R.drawable.glucorx_icon);
+        addMicrotechRoute(mtGlucorx, R.string.source_wizard_microtech_model_glucorx,
+                "microtech.glucorx.glucorx",
+                R.string.source_wizard_microtech_route_glucorx,
+                R.string.source_wizard_microtech_glucorx_summary,
+                DexCollectionType.AidexReceiver, RouteEvidence.EXISTING_CATALOG,
+                null, null, null);
+
+        Tree<Item> mtLinx = addMicrotechModel(microtech,
+                R.string.source_wizard_microtech_model_linx,
+                R.drawable.aidex_x_icon);
+        addMicrotechRoute(mtLinx, R.string.source_wizard_microtech_model_linx,
+                "microtech.linx.linx",
+                R.string.source_wizard_microtech_route_linx,
+                R.string.source_wizard_microtech_linx_summary,
+                DexCollectionType.UiBased, RouteEvidence.EXISTING_CATALOG,
+                "linx-cgm", "LinX CGM", "LinX CGM", "com.microtech.aidexx.mgdl");
+        addMicrotechRoute(mtLinx, R.string.source_wizard_microtech_model_linx,
+                "microtech.linx.vitatok",
+                R.string.source_wizard_microtech_route_vitatok,
+                R.string.source_wizard_microtech_linx_summary,
+                DexCollectionType.UiBased, RouteEvidence.NEEDS_DEVELOPER_REVIEW,
+                "vitatok", "VitaTok", "VitaTok", "com.suswel.ai");
+        addMicrotechRoute(mtLinx, R.string.source_wizard_microtech_model_linx,
+                "microtech.linx.vixxa",
+                R.string.source_wizard_microtech_route_vixxa,
+                R.string.source_wizard_microtech_linx_summary,
+                DexCollectionType.UiBased, RouteEvidence.EXISTING_CATALOG,
+                "vixxa-1", "Vixxa 1", "Vixxa 1", "com.microtech.aidexx.grx1.mmoll");
+
+        Tree<Item> mtVista = addMicrotechModel(microtech,
+                R.string.source_wizard_microtech_model_vista,
+                R.drawable.aidex_x_icon);
+        addMicrotechRoute(mtVista, R.string.source_wizard_microtech_model_vista,
+                "microtech.vista.vista",
+                R.string.source_wizard_microtech_route_vista,
+                R.string.source_wizard_microtech_linx_summary,
+                DexCollectionType.UiBased, RouteEvidence.NEEDS_DEVELOPER_REVIEW,
+                "linx-vista", "LinX Vista", "LinX Vista", "com.microtech.aidexx.linxneo.mmoll");
+
+        Tree<Item> mtDiaexpert = addMicrotechModel(microtech,
+                R.string.source_wizard_microtech_model_diaexpert,
+                R.drawable.aidex_x_icon);
+        addMicrotechRoute(mtDiaexpert, R.string.source_wizard_microtech_model_diaexpert,
+                "microtech.diaexpert.diaexpert",
+                R.string.source_wizard_microtech_route_diaexpert,
+                R.string.source_wizard_microtech_linx_summary,
+                DexCollectionType.UiBased, RouteEvidence.NEEDS_DEVELOPER_REVIEW,
+                "diaexpert-cgm-2", "DiaExpert CGM 2", "DiaExpert CGM 2", "com.microtech.aidexx.diaexport.mmoll");
+
+        // The old generic row is a navigation link to the universal Companion
+        // explanation, NOT a MicroTech collector or a regional-app shortcut.
         Item microtechOther = new Item(gs(R.string.source_wizard_microtech_other),
                 (String) null, 0).withAuxiliaryTitle()
                 .withSummary(gs(R.string.source_wizard_microtech_other_summary));
@@ -1738,6 +1779,29 @@ public class SourceWizard {
             this.appSentenceName = appSentenceName;
             this.evidence = evidence;
         }
+    }
+
+    // Group by device, keep each route bound to exactly one app package.
+    // This is UI metadata only; it does not filter UiBasedCollector notifications.
+    private Tree<Item> addMicrotechModel(final Tree<Item> parent,
+            @StringRes final int modelName, @DrawableRes final int icon) {
+        return parent.addChild(new Item(gs(modelName), (String) null, icon)
+                .withModelGroup());
+    }
+
+    private void addMicrotechRoute(final Tree<Item> parent,
+            @StringRes final int modelName, final String routeId,
+            @StringRes final int routeName, @StringRes final int summaryName,
+            final DexCollectionType type, final RouteEvidence evidence,
+            final String appId, final String appDisplayName,
+            final String appSentenceName, final String... packages) {
+        final String label = gs(routeName);
+        final Item item = new Item(label, gs(summaryName), type, 0)
+                .withCompactRoute()
+                .withRouteMetadata(new SourceRoute("MicroTech", gs(modelName), routeId,
+                        label, appId, appDisplayName, appSentenceName, evidence));
+        if (packages != null && packages.length > 0) item.withCompanionPackages(packages);
+        parent.addChild(item);
     }
 
     // Eversense shares the compact model/route UI with Libre and Dexcom.
