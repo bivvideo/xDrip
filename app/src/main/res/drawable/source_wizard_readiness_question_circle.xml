@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="oval">
-    <solid android:color="@android:color/transparent" />
-    <stroke
-        android:width="1.4dp"
-        android:color="#7D858C" />
-    <size
-        android:width="19dp"
-        android:height="19dp" />
-</shape>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="28dp"
+    android:height="28dp"
+    android:viewportWidth="28"
+    android:viewportHeight="28">
+    <!-- The outer ring exactly matches the READY/MISSING vectors, so all
+         three appear the same size inside their 19dp ImageViews. -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#7D858C"
+        android:strokeWidth="1.4"
+        android:pathData="M14,3 C7.925,3 3,7.925 3,14 C3,20.075 7.925,25 14,25 C20.075,25 25,20.075 25,14 C25,7.925 20.075,3 14,3 Z" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#7D858C"
+        android:strokeWidth="2.4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M11,11 C11,9.35 12.25,8.3 14,8.3 C15.8,8.3 17,9.45 17,11 C17,13.05 14,13.45 14,16.25" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#7D858C"
+        android:strokeWidth="2.4"
+        android:strokeLineCap="round"
+        android:pathData="M14,19.5 L14,19.6" />
+</vector>
