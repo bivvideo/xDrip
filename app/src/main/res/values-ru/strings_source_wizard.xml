@@ -226,4 +226,11 @@
     <string name="source_wizard_dexcom_route_one_app">→ Dexcom ONE App</string>
     <string name="source_wizard_dexcom_route_one_plus_app">→ Dexcom ONE+ App</string>
     <string name="source_wizard_dexcom_route_stelo_app">→ Stelo App</string>
+    <!-- SW-020: model-first Eversense, preserving ESEL's two-app chain. -->
+    <string name="source_wizard_eversense_model_e3">Eversense E3</string>
+    <string name="source_wizard_eversense_model_365">Eversense 365</string>
+    <string name="source_wizard_eversense_route_e3_app">→ Eversense App</string>
+    <string name="source_wizard_eversense_route_365_app">→ Eversense 365 App</string>
+    <string name="source_wizard_eversense_route_e3_esel">→ Eversense App → ESEL</string>
+    <string name="source_wizard_eversense_route_365_esel">→ Eversense 365 App → ESEL</string>
 </resources>
