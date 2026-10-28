@@ -1327,10 +1327,23 @@ public class SourceWizard {
             syncWizardFooter();
             // The same activation calls as the legacy source picker, but without
             // repeating its question after this explicit final confirmation.
-            DexCollectionType.setDexCollectionType(item.getCollectionType());
+            final DexCollectionType previousType = DexCollectionType.getDexCollectionType();
+            final DexCollectionType selectedType = item.getCollectionType();
+            DexCollectionType.setDexCollectionType(selectedType);
             finish.dismiss();
-            DexCollectionHelper.assistance(activity, item.getCollectionType());
+            DexCollectionHelper.assistance(activity, selectedType);
             sw = null;
+
+            // The navigation drawer is built from the active collector. When a
+            // named Companion route changes it, refresh the hosting Activity
+            // after the dialog closes so the drawer has no stale row positions.
+            // No menu or collector implementation changes are needed.
+            if (previousType != selectedType) {
+                final Activity host = activity;
+                host.getWindow().getDecorView().post(() -> {
+                    if (!host.isFinishing() && !host.isDestroyed()) host.recreate();
+                });
+            }
         });
 
         presentWizardPage(finish, content, 5);
