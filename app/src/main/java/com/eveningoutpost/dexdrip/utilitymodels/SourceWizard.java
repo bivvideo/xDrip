@@ -1649,6 +1649,29 @@ public class SourceWizard {
         }
     }
 
+    // SW-020: Dexcom model-first routes reuse the metadata-backed Libre
+    // Companion flow; direct routes retain their existing BLE entrypoint.
+    private Tree<Item> addDexcomModel(final Tree<Item> parent,
+            @StringRes final int modelName, @DrawableRes final int icon) {
+        return parent.addChild(new Item(gs(modelName), (String) null, icon)
+                .withModelGroup());
+    }
+
+    private void addDexcomRoute(final Tree<Item> parent,
+            @StringRes final int modelName, final String routeId,
+            @StringRes final int routeName, @StringRes final int summaryName,
+            final DexCollectionType type, final RouteEvidence evidence,
+            final String appId, final String appDisplayName,
+            final String appSentenceName, final String... packages) {
+        final String label = gs(routeName);
+        final Item item = new Item(label, gs(summaryName), type, 0)
+                .withCompactRoute()
+                .withRouteMetadata(new SourceRoute("Dexcom", gs(modelName), routeId,
+                        label, appId, appDisplayName, appSentenceName, evidence));
+        if (packages != null && packages.length > 0) item.withCompanionPackages(packages);
+        parent.addChild(item);
+    }
+
     private Tree<Item> addLibreModel(final Tree<Item> family, @StringRes final int modelName) {
         return family.addChild(new Item(gs(modelName), (String) null,
                 R.drawable.libra_1234_v3_icon).withModelGroup());
