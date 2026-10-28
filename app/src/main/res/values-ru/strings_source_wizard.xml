@@ -211,4 +211,19 @@
     <string name="source_wizard_libre_route_juggluco_eversense">→ Juggluco · EverSense</string>
     <string name="source_wizard_libre_route_juggluco_patched">→ Juggluco · Patched Libre</string>
     <string name="source_wizard_libre_route_camaps">→ CamAPS FX</string>
+    <!-- SW-020 Dexcom device-first pilot (RU reference). -->
+    <string name="source_wizard_dexcom_model_g6">Dexcom G6</string>
+    <string name="source_wizard_dexcom_model_g7">Dexcom G7</string>
+    <string name="source_wizard_dexcom_model_one">Dexcom ONE</string>
+    <string name="source_wizard_dexcom_model_one_plus">Dexcom ONE+</string>
+    <string name="source_wizard_dexcom_model_stelo">Stelo</string>
+    <string name="source_wizard_dexcom_route_direct">Напрямую по Bluetooth</string>
+    <string name="source_wizard_dexcom_route_camaps">→ CamAPS FX</string>
+    <string name="source_wizard_dexcom_route_dblg2">→ DBLG2</string>
+    <string name="source_wizard_dexcom_route_g6_app">→ Dexcom G6 App</string>
+    <string name="source_wizard_dexcom_route_g7_app">→ Dexcom G7 App</string>
+    <string name="source_wizard_dexcom_route_pasta_app">→ PASTA App</string>
+    <string name="source_wizard_dexcom_route_one_app">→ Dexcom ONE App</string>
+    <string name="source_wizard_dexcom_route_one_plus_app">→ Dexcom ONE+ App</string>
+    <string name="source_wizard_dexcom_route_stelo_app">→ Stelo App</string>
 </resources>
