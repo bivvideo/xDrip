@@ -363,23 +363,16 @@ public class SourceWizard {
 
         medtronic.addChild(carelinkLink);
 
-        // SW-020: model-first MicroTech. Each visible Companion App leaf checks
-        // ONLY that app's package; the collector's global whitelist is unchanged.
+        // SW-020: multi-route devices get model stacks first (alphabetical);
+        // single-route devices follow as full-width leaves (alphabetical).
+        // Each visible Companion route checks only its own APK package.
         Tree<Item> microtech = root.addChild(new Item(
                 gs(R.string.source_wizard_microtech_group),
                 gs(R.string.source_wizard_microtech_examples),
                 R.drawable.source_wizard_source_placeholder)
                 .withSummary(gs(R.string.source_wizard_microtech_examples)));
-        Tree<Item> mtGlucorx = addMicrotechModel(microtech,
-                R.string.source_wizard_microtech_model_glucorx,
-                R.drawable.glucorx_icon);
-        addMicrotechRoute(mtGlucorx, R.string.source_wizard_microtech_model_glucorx,
-                "microtech.glucorx.glucorx",
-                R.string.source_wizard_microtech_route_glucorx,
-                R.string.source_wizard_microtech_glucorx_summary,
-                DexCollectionType.AidexReceiver, RouteEvidence.EXISTING_CATALOG,
-                null, null, null);
 
+        // Multi-route model: LinX CGM / AiDEX X.
         Tree<Item> mtLinx = addMicrotechModel(microtech,
                 R.string.source_wizard_microtech_model_linx,
                 R.drawable.aidex_x_icon);
@@ -402,28 +395,29 @@ public class SourceWizard {
                 DexCollectionType.UiBased, RouteEvidence.EXISTING_CATALOG,
                 "vixxa-1", "Vixxa 1", "Vixxa 1", "com.microtech.aidexx.grx1.mmoll");
 
-        Tree<Item> mtVista = addMicrotechModel(microtech,
-                R.string.source_wizard_microtech_model_vista,
-                R.drawable.aidex_x_icon);
-        addMicrotechRoute(mtVista, R.string.source_wizard_microtech_model_vista,
-                "microtech.vista.vista",
-                R.string.source_wizard_microtech_route_vista,
-                R.string.source_wizard_microtech_linx_summary,
-                DexCollectionType.UiBased, RouteEvidence.NEEDS_DEVELOPER_REVIEW,
-                "linx-vista", "LinX Vista", "LinX Vista", "com.microtech.aidexx.linxneo.mmoll");
-
-        Tree<Item> mtDiaexpert = addMicrotechModel(microtech,
-                R.string.source_wizard_microtech_model_diaexpert,
-                R.drawable.aidex_x_icon);
-        addMicrotechRoute(mtDiaexpert, R.string.source_wizard_microtech_model_diaexpert,
-                "microtech.diaexpert.diaexpert",
+        // Single-route devices: DiaExpert, GlucoRx, LinX Vista (alphabetical).
+        addMicrotechSingleRoute(microtech, R.string.source_wizard_microtech_model_diaexpert,
                 R.string.source_wizard_microtech_route_diaexpert,
-                R.string.source_wizard_microtech_linx_summary,
+                R.string.source_wizard_microtech_linx_summary, R.drawable.aidex_x_icon,
+                "microtech.diaexpert.diaexpert",
                 DexCollectionType.UiBased, RouteEvidence.NEEDS_DEVELOPER_REVIEW,
-                "diaexpert-cgm-2", "DiaExpert CGM 2", "DiaExpert CGM 2", "com.microtech.aidexx.diaexport.mmoll");
+                "diaexpert-cgm-2", "DiaExpert CGM 2", "DiaExpert CGM 2",
+                "com.microtech.aidexx.diaexport.mmoll");
+        addMicrotechSingleRoute(microtech, R.string.source_wizard_microtech_model_glucorx,
+                R.string.source_wizard_microtech_route_glucorx,
+                R.string.source_wizard_microtech_glucorx_summary, R.drawable.glucorx_icon,
+                "microtech.glucorx.glucorx",
+                DexCollectionType.AidexReceiver, RouteEvidence.EXISTING_CATALOG,
+                null, null, null);
+        addMicrotechSingleRoute(microtech, R.string.source_wizard_microtech_model_vista,
+                R.string.source_wizard_microtech_route_vista,
+                R.string.source_wizard_microtech_linx_summary, R.drawable.aidex_x_icon,
+                "microtech.vista.vista",
+                DexCollectionType.UiBased, RouteEvidence.NEEDS_DEVELOPER_REVIEW,
+                "linx-vista", "LinX Vista", "LinX Vista",
+                "com.microtech.aidexx.linxneo.mmoll");
 
-        // The old generic row is a navigation link to the universal Companion
-        // explanation, NOT a MicroTech collector or a regional-app shortcut.
+        // Generic fall-back remains a link to the existing Companion App page.
         Item microtechOther = new Item(gs(R.string.source_wizard_microtech_other),
                 (String) null, 0).withAuxiliaryTitle()
                 .withSummary(gs(R.string.source_wizard_microtech_other_summary));
@@ -1800,6 +1794,26 @@ public class SourceWizard {
                 .withCompactRoute()
                 .withRouteMetadata(new SourceRoute("MicroTech", gs(modelName), routeId,
                         label, appId, appDisplayName, appSentenceName, evidence));
+        if (packages != null && packages.length > 0) item.withCompanionPackages(packages);
+        parent.addChild(item);
+    }
+
+    // Single-route sensors are direct leaves: model icon and a visible
+    // app-route subtitle, without an otherwise empty intermediate stack.
+    private void addMicrotechSingleRoute(final Tree<Item> parent,
+            @StringRes final int modelName, @StringRes final int routeName,
+            @StringRes final int summaryName, @DrawableRes final int icon,
+            final String routeId, final DexCollectionType type,
+            final RouteEvidence evidence, final String appId,
+            final String appDisplayName, final String appSentenceName,
+            final String... packages) {
+        final String model = gs(modelName);
+        final String routeLabel = gs(routeName);
+        final Item item = new Item(model + "\n" + routeLabel,
+                gs(summaryName), type, icon)
+                .withDeviceIcon()
+                .withRouteMetadata(new SourceRoute("MicroTech", model, routeId,
+                        routeLabel, appId, appDisplayName, appSentenceName, evidence));
         if (packages != null && packages.length > 0) item.withCompanionPackages(packages);
         parent.addChild(item);
     }
