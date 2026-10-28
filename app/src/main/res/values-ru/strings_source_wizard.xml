@@ -244,4 +244,16 @@
     <string name="source_wizard_microtech_route_vixxa">→ Vixxa 1</string>
     <string name="source_wizard_microtech_route_vista">→ LinX Vista</string>
     <string name="source_wizard_microtech_route_diaexpert">→ DiaExpert CGM 2</string>
+    <!-- SW-020: Medtronic device-first, including pump-specific UI strings. -->
+    <string name="source_wizard_medtronic_model_guardian3">Guardian 3</string>
+    <string name="source_wizard_medtronic_model_guardian4">Guardian 4</string>
+    <string name="source_wizard_medtronic_model_minimed">MiniMed 770G / 780G</string>
+    <string name="source_wizard_medtronic_model_simplera">Simplera CGM</string>
+    <string name="source_wizard_medtronic_route_guardian_connect">→ Guardian Connect</string>
+    <string name="source_wizard_medtronic_route_guardian_app">→ Guardian App</string>
+    <string name="source_wizard_medtronic_route_minimed_mobile">→ MiniMed Mobile</string>
+    <string name="source_wizard_medtronic_route_simplera_app">→ Simplera App</string>
+    <string name="source_wizard_companion_pump_intro">Вы выбрали помпу %1$s с передачей показаний через приложение %2$s.</string>
+    <string name="source_wizard_companion_pump_setup_explanation">Для получения данных в xDrip+ приложение %1$s должно быть установлено и получать показания от помпы.</string>
+    <string name="source_wizard_instructions_open_pump_detail">Убедитесь, что помпа передаёт данные в %1$s и приложение показывает текущий уровень глюкозы.</string>
 </resources>
