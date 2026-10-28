@@ -85,6 +85,7 @@ public class SourceWizard {
     private final HashSet<Tree<Item>> expandedBranches = new HashSet<>();
     private ViewModel listModel;
     private RecyclerView wizardList;
+    private Item readinessItem;
     // Navigation is organized by user intent, not by internal collector names.
     // Display-only changes: each leaf still uses an existing DexCollectionType.
     private Tree<Item> root = new Tree<>(new Item(
@@ -95,8 +96,9 @@ public class SourceWizard {
         // collector: these are named presets, not new acquisition protocols.
         // Preparation is a separate action, not an expandable sensor group.
         root.addChild(new Item(gs(R.string.source_wizard_before_connection), true));
-        root.addChild(new Item(gs(R.string.source_wizard_readiness_title), (String) null, 0)
-                .withReadinessAction());
+        readinessItem = new Item(gs(R.string.source_wizard_readiness_title), (String) null, 0)
+                .withReadinessAction();
+        root.addChild(readinessItem);
         root.addChild(new Item(gs(R.string.source_wizard_sensors_section), true));
 
         // CareSens Air: official broadcast or glucose notifications from PASTA.
@@ -843,6 +845,7 @@ public class SourceWizard {
                     LayoutInflater.from(picker.getContext()));
             listModel = new ViewModel();
             binding.setViewModel(listModel);
+            refreshReadinessSummary();
             binding.sourceWizardList.setItemAnimator(null);
             wizardList = binding.sourceWizardList;
             final int screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
@@ -1513,6 +1516,30 @@ public class SourceWizard {
         });
     }
 
+    // SW-008: the summary uses exactly the same six read-only Requirement
+    // checks shown in the popup. UNKNOWN is not treated as READY or MISSING.
+    // No source selection, permission requests or collector restarts here.
+    private void refreshReadinessSummary() {
+        if (readinessItem == null || activity == null
+                || activity.isFinishing() || activity.isDestroyed()) return;
+        int ready = 0;
+        int missing = 0;
+        int unknown = 0;
+        for (SourceWizardReadiness.Requirement requirement
+                : SourceWizardReadiness.Requirement.values()) {
+            final SourceWizardReadiness.Result result =
+                    SourceWizardReadiness.inspect(activity, requirement);
+            switch (result.state) {
+                case READY: ready++; break;
+                case MISSING: missing++; break;
+                default: unknown++; break;
+            }
+        }
+        if (readinessItem.setReadinessSummary(ready, missing, unknown) && listModel != null) {
+            listModel.refreshVisibleRow(readinessItem);
+        }
+    }
+
     // SW-008 readiness window: stability and Notification Listener are live;
     // Every general-readiness row runs its real check; OEM app lock remains unknown by design.
     // The parent source picker stays open behind this second Holo dialog.
@@ -1604,6 +1631,9 @@ public class SourceWizard {
                 if (focusObserver.isAlive()) {
                     focusObserver.removeOnWindowFocusChangeListener(focusListener);
                 }
+                // The chooser stays open behind this dialog; refresh its
+                // compact counts after returning from Android Settings.
+                refreshReadinessSummary();
             });
             for (Runnable check : startChecks) check.run();
         } catch (Exception e) {
@@ -1954,6 +1984,10 @@ public class SourceWizard {
         private boolean broadcastInformation;
         private boolean readinessAction;
         private boolean callToAction;
+        private int readinessReady;
+        private int readinessMissing;
+        private int readinessUnknown;
+        private boolean readinessSummaryAvailable;
         private Tree<Item> navigationTarget;
 
         Item(String name, boolean section) {
@@ -2055,6 +2089,47 @@ public class SourceWizard {
 
         public boolean isReadinessAction() {
             return readinessAction;
+        }
+
+        boolean setReadinessSummary(int ready, int missing, int unknown) {
+            if (readinessSummaryAvailable && readinessReady == ready
+                    && readinessMissing == missing && readinessUnknown == unknown) return false;
+            readinessReady = ready;
+            readinessMissing = missing;
+            readinessUnknown = unknown;
+            readinessSummaryAvailable = true;
+            return true;
+        }
+
+        public boolean isReadinessReadyVisible() {
+            return readinessAction && readinessSummaryAvailable && readinessReady > 0;
+        }
+
+        public boolean isReadinessMissingVisible() {
+            return readinessAction && readinessSummaryAvailable && readinessMissing > 0;
+        }
+
+        public boolean isReadinessUnknownVisible() {
+            return readinessAction && readinessSummaryAvailable && readinessUnknown > 0;
+        }
+
+        public String getReadinessReadyCountText() {
+            return Integer.toString(readinessReady);
+        }
+
+        public String getReadinessMissingCountText() {
+            return Integer.toString(readinessMissing);
+        }
+
+        public String getReadinessUnknownCountText() {
+            return Integer.toString(readinessUnknown);
+        }
+
+        public String getReadinessSummaryDescription() {
+            return readinessSummaryAvailable
+                    ? activity.getString(R.string.source_wizard_readiness_summary_accessibility,
+                            readinessReady, readinessMissing, readinessUnknown)
+                    : "";
         }
 
         Item withCallToAction() {
