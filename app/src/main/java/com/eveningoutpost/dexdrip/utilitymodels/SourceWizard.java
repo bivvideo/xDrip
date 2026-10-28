@@ -342,25 +342,42 @@ public class SourceWizard {
                 DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon()
                 .withCompanionPackages("com.sinocare.cgm.ce"));
 
-        // MiniMed names refer to pump systems; Guardian and Simplera to CGMs.
+        // SW-019/020: Medtronic device-first, one leaf per device/app route.
+        // MiniMed 770G/780G are insulin pumps, NOT CGM sensor models.
         Tree<Item> medtronic = root.addChild(new Item("Medtronic",
                 gs(R.string.source_wizard_medtronic_examples), 0)
                 .withSummary(gs(R.string.source_wizard_medtronic_examples)));
-        medtronic.addChild(new Item(gs(R.string.source_wizard_medtronic_guardian),
-                gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.guardian_3_4_icon).withDeviceIcon()
-                .withCompanionPackages("com.medtronic.diabetes.guardian", "com.medtronic.diabetes.guardianconnect", "com.medtronic.diabetes.guardianconnect.us"));
-        medtronic.addChild(new Item(gs(R.string.source_wizard_medtronic_minimed),
-                gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.medtronic_770_v2_icon).withDeviceIcon()
-                .withCompanionPackages("com.medtronic.diabetes.minimedmobile.eu", "com.medtronic.diabetes.minimedmobile.us"));
-        medtronic.addChild(new Item(gs(R.string.source_wizard_medtronic_simplera),
-                gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.medtronic_simplera_icon).withDeviceIcon()
-                .withCompanionPackages("com.medtronic.diabetes.simplera.eu"));
+
+        addMedtronicCompanion(medtronic,
+                R.string.source_wizard_medtronic_model_guardian3,
+                R.string.source_wizard_medtronic_route_guardian_connect,
+                R.drawable.guardian_3_4_icon, "medtronic.guardian3.connect",
+                "guardian-connect", "Guardian Connect", "Guardian Connect", false,
+                "com.medtronic.diabetes.guardianconnect",
+                "com.medtronic.diabetes.guardianconnect.us");
+        addMedtronicCompanion(medtronic,
+                R.string.source_wizard_medtronic_model_guardian4,
+                R.string.source_wizard_medtronic_route_guardian_app,
+                R.drawable.guardian_3_4_icon, "medtronic.guardian4.guardian-app",
+                "guardian-app", "Guardian App", "Guardian", false,
+                "com.medtronic.diabetes.guardian");
+        addMedtronicCompanion(medtronic,
+                R.string.source_wizard_medtronic_model_minimed,
+                R.string.source_wizard_medtronic_route_minimed_mobile,
+                R.drawable.medtronic_770_v2_icon, "medtronic.minimed.mobile",
+                "minimed-mobile", "MiniMed Mobile", "MiniMed Mobile", true,
+                "com.medtronic.diabetes.minimedmobile.eu",
+                "com.medtronic.diabetes.minimedmobile.us");
+        addMedtronicCompanion(medtronic,
+                R.string.source_wizard_medtronic_model_simplera,
+                R.string.source_wizard_medtronic_route_simplera_app,
+                R.drawable.medtronic_simplera_icon, "medtronic.simplera.app",
+                "simplera-app", "Simplera App", "Simplera", false,
+                "com.medtronic.diabetes.simplera.eu");
+
+        // CareLink is an existing shared Follower screen, not another sensor.
         Item carelinkLink = new Item(gs(R.string.source_wizard_medtronic_carelink),
                 (String) null, 0).withAuxiliaryTitle();
-
         medtronic.addChild(carelinkLink);
 
         // SW-020: multi-route devices get model stacks first (alphabetical);
@@ -891,9 +908,13 @@ public class SourceWizard {
         final View root = LayoutInflater.from(panel.getContext())
                 .inflate(R.layout.dialog_source_wizard_companion, null);
         ((TextView) root.findViewById(R.id.companionIntro))
-                .setText(activity.getString(R.string.source_wizard_companion_intro, sensor, appSentenceName));
+                .setText(activity.getString(item.pumpDevice
+                        ? R.string.source_wizard_companion_pump_intro
+                        : R.string.source_wizard_companion_intro, sensor, appSentenceName));
         ((TextView) root.findViewById(R.id.companionExplanation))
-                .setText(activity.getString(R.string.source_wizard_companion_setup_explanation, appSentenceName));
+                .setText(activity.getString(item.pumpDevice
+                        ? R.string.source_wizard_companion_pump_setup_explanation
+                        : R.string.source_wizard_companion_setup_explanation, appSentenceName));
         ((TextView) root.findViewById(R.id.companionAppName)).setText(appName);
         final ImageView icon = root.findViewById(R.id.companionStatusIcon);
         final TextView status = root.findViewById(R.id.companionStatusText);
@@ -1110,7 +1131,9 @@ public class SourceWizard {
             }
             addCompanionInstructionStep(steps, number++,
                     activity.getString(R.string.source_wizard_instructions_open_title),
-                    activity.getString(R.string.source_wizard_instructions_open_detail, appName));
+                    activity.getString(item.pumpDevice
+                            ? R.string.source_wizard_instructions_open_pump_detail
+                            : R.string.source_wizard_instructions_open_detail, appName));
             addCompanionUnitsStep(steps, number++, appName);
             addCompanionInstructionStep(steps, number++,
                     activity.getString(R.string.source_wizard_instructions_notify_title),
@@ -1775,6 +1798,28 @@ public class SourceWizard {
         }
     }
 
+    // Medtronic has only single-route device rows. Guardian, pumps and
+    // standalone Simplera must never be combined into one app identity.
+    private void addMedtronicCompanion(final Tree<Item> parent,
+            @StringRes final int modelName, @StringRes final int routeName,
+            @DrawableRes final int icon, final String routeId,
+            final String appId, final String appDisplayName,
+            final String appSentenceName, final boolean isPump,
+            final String... packages) {
+        final String model = gs(modelName);
+        final String route = gs(routeName);
+        final Item item = new Item(model + "\n" + route,
+                gs(R.string.source_wizard_dexcom_app_summary),
+                DexCollectionType.UiBased, icon)
+                .withDeviceIcon()
+                .withRouteMetadata(new SourceRoute("Medtronic", model, routeId,
+                        route, appId, appDisplayName, appSentenceName,
+                        RouteEvidence.EXISTING_CATALOG))
+                .withCompanionPackages(packages);
+        if (isPump) item.withPumpDevice();
+        parent.addChild(item);
+    }
+
     // Group by device, keep each route bound to exactly one app package.
     // This is UI metadata only; it does not filter UiBasedCollector notifications.
     private Tree<Item> addMicrotechModel(final Tree<Item> parent,
@@ -1902,6 +1947,7 @@ public class SourceWizard {
         private boolean compactRoute;
         private boolean section;
         private boolean deviceIcon;
+        private boolean pumpDevice;
         private boolean auxiliaryTitle;
         private boolean fullWidthDivider;
         private boolean informationText;
@@ -1948,6 +1994,11 @@ public class SourceWizard {
 
         Item withDeviceIcon() {
             deviceIcon = true;
+            return this;
+        }
+
+        Item withPumpDevice() {
+            pumpDevice = true;
             return this;
         }
 
