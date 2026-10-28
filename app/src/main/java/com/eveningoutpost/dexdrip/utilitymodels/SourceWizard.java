@@ -435,6 +435,13 @@ public class SourceWizard {
         }
     }
 
+    // Use an explicit adapter so compact rows keep their own minimum height
+    // without depending on Android's ambiguous minHeight setter mapping.
+    @BindingAdapter("sourceWizardRowMinHeight")
+    public static void bindSourceWizardRowMinHeight(View view, int minHeightPx) {
+        view.setMinimumHeight(minHeightPx);
+    }
+
     // Data Binding has no built-in setter for layout_margin* attributes.
     // Apply the group-specific margins from one supported custom adapter,
     // instead of binding Android LayoutParams directly in XML.
