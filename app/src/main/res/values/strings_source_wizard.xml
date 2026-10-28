@@ -258,4 +258,6 @@
     <string name="source_wizard_companion_pump_intro">You selected the %1$s insulin pump and will receive glucose data through the %2$s app.</string>
     <string name="source_wizard_companion_pump_setup_explanation">To receive data in xDrip+, %1$s must be installed and receiving readings from the pump.</string>
     <string name="source_wizard_instructions_open_pump_detail">Make sure the pump sends readings to %1$s and the app shows the current glucose level.</string>
+    <!-- EN DRAFT — final translation review before PR. -->
+    <string name="source_wizard_readiness_summary_accessibility">Readiness check: %1$d ready, %2$d missing, %3$d unknown.</string>
 </resources>
