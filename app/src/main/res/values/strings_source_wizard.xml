@@ -246,4 +246,16 @@
     <string name="source_wizard_microtech_route_vixxa">→ Vixxa 1</string>
     <string name="source_wizard_microtech_route_vista">→ LinX Vista</string>
     <string name="source_wizard_microtech_route_diaexpert">→ DiaExpert CGM 2</string>
+    <!-- EN DRAFT — final translation review before PR (SW-020 Medtronic). -->
+    <string name="source_wizard_medtronic_model_guardian3">Guardian 3</string>
+    <string name="source_wizard_medtronic_model_guardian4">Guardian 4</string>
+    <string name="source_wizard_medtronic_model_minimed">MiniMed 770G / 780G</string>
+    <string name="source_wizard_medtronic_model_simplera">Simplera CGM</string>
+    <string name="source_wizard_medtronic_route_guardian_connect">→ Guardian Connect</string>
+    <string name="source_wizard_medtronic_route_guardian_app">→ Guardian App</string>
+    <string name="source_wizard_medtronic_route_minimed_mobile">→ MiniMed Mobile</string>
+    <string name="source_wizard_medtronic_route_simplera_app">→ Simplera App</string>
+    <string name="source_wizard_companion_pump_intro">You selected the %1$s insulin pump and will receive glucose data through the %2$s app.</string>
+    <string name="source_wizard_companion_pump_setup_explanation">To receive data in xDrip+, %1$s must be installed and receiving readings from the pump.</string>
+    <string name="source_wizard_instructions_open_pump_detail">Make sure the pump sends readings to %1$s and the app shows the current glucose level.</string>
 </resources>
