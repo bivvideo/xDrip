@@ -233,4 +233,15 @@
     <string name="source_wizard_eversense_route_365_app">→ Eversense 365 App</string>
     <string name="source_wizard_eversense_route_e3_esel">→ Eversense App → ESEL</string>
     <string name="source_wizard_eversense_route_365_esel">→ Eversense 365 App → ESEL</string>
+    <!-- SW-020: device-first MicroTech app-specific routes (RU reference). -->
+    <string name="source_wizard_microtech_model_glucorx">GlucoRx AiDEX</string>
+    <string name="source_wizard_microtech_model_linx">LinX CGM / AiDEX X</string>
+    <string name="source_wizard_microtech_model_vista">LinX Vista</string>
+    <string name="source_wizard_microtech_model_diaexpert">DiaExpert CGM 2</string>
+    <string name="source_wizard_microtech_route_glucorx">→ AiDEX App</string>
+    <string name="source_wizard_microtech_route_linx">→ LinX CGM</string>
+    <string name="source_wizard_microtech_route_vitatok">→ VitaTok</string>
+    <string name="source_wizard_microtech_route_vixxa">→ Vixxa 1</string>
+    <string name="source_wizard_microtech_route_vista">→ LinX Vista</string>
+    <string name="source_wizard_microtech_route_diaexpert">→ DiaExpert CGM 2</string>
 </resources>
