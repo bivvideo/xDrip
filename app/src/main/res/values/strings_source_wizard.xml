@@ -199,4 +199,18 @@
     <string name="source_wizard_finish_mini_tap">↰  Tap the menu icon</string>
     <string name="source_wizard_finish_mini_status">9:41</string>
     <string name="source_wizard_companion_warning_selected">Selected in wizard</string>
+    <!-- EN DRAFT — final translation review before PR (SW-020). -->
+    <string name="source_wizard_libre_model_1">Libre 1</string>
+    <string name="source_wizard_libre_model_2">Libre 2</string>
+    <string name="source_wizard_libre_model_2_plus">Libre 2+</string>
+    <string name="source_wizard_libre_model_3">Libre 3</string>
+    <string name="source_wizard_libre_model_3_plus">Libre 3+</string>
+    <string name="source_wizard_libre_route_bridge">Via Bluetooth bridge: BluCon, Bubble, LimiTTer, blueReader</string>
+    <string name="source_wizard_libre_route_alarm">Via Sony SmartWatch 3 (NFC) and LibreAlarm</string>
+    <string name="source_wizard_libre_route_direct">Direct Bluetooth</string>
+    <string name="source_wizard_libre_route_network">Via network receiver</string>
+    <string name="source_wizard_libre_route_combined">Bluetooth and network receiver</string>
+    <string name="source_wizard_libre_route_juggluco_eversense">→ Juggluco · EverSense</string>
+    <string name="source_wizard_libre_route_juggluco_patched">→ Juggluco · Patched Libre</string>
+    <string name="source_wizard_libre_route_camaps">→ CamAPS FX</string>
 </resources>

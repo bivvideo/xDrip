@@ -159,46 +159,89 @@ public class SourceWizard {
                 DexCollectionType.NSEmulator, R.drawable.eversence_360)
                 .withDeviceIcon());
 
+        // SW-020: Compact model-first Libre routes. This preserves existing
+        // mappings; presence in the catalog is not proof of compatibility.
         Tree<Item> libre = root.addChild(new Item("FreeStyle Libre",
                 (String) null, R.drawable.libre_icon_image));
-        libre.addChild(new Item(gs(R.string.source_wizard_libre_one_bridge),
-                gs(R.string.source_wizard_libre_one_bridge_summary),
-                DexCollectionType.LimiTTer, R.drawable.libre_1_bridge_icon)
-                .withDeviceIcon());
-        libre.addChild(new Item(gs(R.string.source_wizard_libre_one_alarm),
-                gs(R.string.source_wizard_libre_one_alarm_summary),
-                DexCollectionType.LibreAlarm, R.drawable.ic_watch_grey600_48dp)
-                .withDeviceIcon());
-        libre.addChild(new Item(gs(R.string.source_wizard_libre_two_direct),
-                gs(R.string.source_wizard_libre_two_direct_summary),
-                DexCollectionType.LimiTTer, R.drawable.libre_2_icon)
-                .withDeviceIcon());
-        libre.addChild(new Item(gs(R.string.source_wizard_libre_camaps),
-                gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.libre_123_icon)
-                .withDeviceIcon()
-                .withCompanionPackages("com.camdiab.fx_alert.mmoll", "com.camdiab.fx_alert.mgdl", "com.camdiab.fx_alert.hx.mmoll", "com.camdiab.fx_alert.hx.mgdl", "com.camdiab.fx_alert.mmoll.ca"));
-        libre.addChild(new Item(gs(R.string.source_wizard_libre_juggluco),
-                gs(R.string.source_wizard_libre_juggluco_summary),
-                DexCollectionType.NSEmulator, R.drawable.libra_1234_v3_icon)
-                .withDeviceIcon());
-        Tree<Item> libreMore = libre.addChild(new Item(
-                gs(R.string.source_wizard_libre_more),
-                (String) null, R.drawable.source_wizard_source_placeholder)
-                .withAuxiliaryTitle()
-                .withFullWidthDivider());
-        libreMore.addChild(new Item(gs(R.string.source_wizard_libre_network),
-                gs(R.string.source_wizard_libre_network_summary),
-                DexCollectionType.LibreWifi, R.drawable.libre_2_icon)
-                .withDeviceIcon());
-        libreMore.addChild(new Item(gs(R.string.source_wizard_libre_combined),
-                gs(R.string.source_wizard_libre_combined_summary),
-                DexCollectionType.LimiTTerWifi, R.drawable.libre_2_icon)
-                .withDeviceIcon());
-        libreMore.addChild(new Item(gs(R.string.source_wizard_libre_juggluco_legacy),
-                gs(R.string.source_wizard_libre_juggluco_legacy_summary),
-                DexCollectionType.LibreReceiver, R.drawable.libra_1234_v3_icon)
-                .withDeviceIcon());
+        Tree<Item> libre1 = addLibreModel(libre, R.string.source_wizard_libre_model_1);
+        addLibreRoute(libre1, "1", R.string.source_wizard_libre_model_1,
+                "bridge", R.string.source_wizard_libre_route_bridge,
+                R.string.source_wizard_one_bridge_summary, DexCollectionType.LimiTTer,
+                null, null, null);
+        addLibreRoute(libre1, "1", R.string.source_wizard_libre_model_1,
+                "alarm", R.string.source_wizard_libre_route_alarm,
+                R.string.source_wizard_one_alarm_summary, DexCollectionType.LibreAlarm,
+                null, null, null);
+        addLibreRoute(libre1, "1", R.string.source_wizard_libre_model_1,
+                "network", R.string.source_wizard_libre_route_network,
+                R.string.source_wizard_network_summary, DexCollectionType.LibreWifi,
+                null, null, null);
+        addLibreRoute(libre1, "1", R.string.source_wizard_libre_model_1,
+                "combined", R.string.source_wizard_libre_route_combined,
+                R.string.source_wizard_combined_summary, DexCollectionType.LimiTTerWifi,
+                null, null, null);
+
+        Tree<Item> libre2 = addLibreModel(libre, R.string.source_wizard_libre_model_2);
+        addLibreRoute(libre2, "2", R.string.source_wizard_libre_model_2,
+                "direct", R.string.source_wizard_libre_route_direct,
+                R.string.source_wizard_two_direct_summary, DexCollectionType.LimiTTer,
+                null, null, null);
+        addLibreRoute(libre2, "2", R.string.source_wizard_libre_model_2,
+                "network", R.string.source_wizard_libre_route_network,
+                R.string.source_wizard_network_summary, DexCollectionType.LibreWifi,
+                null, null, null);
+        addLibreRoute(libre2, "2", R.string.source_wizard_libre_model_2,
+                "combined", R.string.source_wizard_libre_route_combined,
+                R.string.source_wizard_combined_summary, DexCollectionType.LimiTTerWifi,
+                null, null, null);
+        addLibreRoute(libre2, "2", R.string.source_wizard_libre_model_2,
+                "juggluco-eversense", R.string.source_wizard_libre_route_juggluco_eversense,
+                R.string.source_wizard_juggluco_summary, DexCollectionType.NSEmulator,
+                "juggluco", "Juggluco", "Juggluco");
+        addLibreRoute(libre2, "2", R.string.source_wizard_libre_model_2,
+                "juggluco-patched", R.string.source_wizard_libre_route_juggluco_patched,
+                R.string.source_wizard_juggluco_legacy_summary, DexCollectionType.LibreReceiver,
+                "juggluco", "Juggluco", "Juggluco");
+
+        Tree<Item> libre2plus = addLibreModel(libre, R.string.source_wizard_libre_model_2_plus);
+        addLibreRoute(libre2plus, "2plus", R.string.source_wizard_libre_model_2_plus,
+                "juggluco-eversense", R.string.source_wizard_libre_route_juggluco_eversense,
+                R.string.source_wizard_juggluco_summary, DexCollectionType.NSEmulator,
+                "juggluco", "Juggluco", "Juggluco");
+        addLibreRoute(libre2plus, "2plus", R.string.source_wizard_libre_model_2_plus,
+                "juggluco-patched", R.string.source_wizard_libre_route_juggluco_patched,
+                R.string.source_wizard_juggluco_legacy_summary, DexCollectionType.LibreReceiver,
+                "juggluco", "Juggluco", "Juggluco");
+
+        Tree<Item> libre3 = addLibreModel(libre, R.string.source_wizard_libre_model_3);
+        addLibreRoute(libre3, "3", R.string.source_wizard_libre_model_3,
+                "camaps", R.string.source_wizard_libre_route_camaps,
+                R.string.source_wizard_dexcom_app_summary, DexCollectionType.UiBased,
+                "camaps-fx", "CamAPS FX", "CamAPS FX",
+                "com.camdiab.fx_alert.mmoll", "com.camdiab.fx_alert.mgdl", "com.camdiab.fx_alert.hx.mmoll", "com.camdiab.fx_alert.hx.mgdl", "com.camdiab.fx_alert.mmoll.ca");
+        addLibreRoute(libre3, "3", R.string.source_wizard_libre_model_3,
+                "juggluco-eversense", R.string.source_wizard_libre_route_juggluco_eversense,
+                R.string.source_wizard_juggluco_summary, DexCollectionType.NSEmulator,
+                "juggluco", "Juggluco", "Juggluco");
+        addLibreRoute(libre3, "3", R.string.source_wizard_libre_model_3,
+                "juggluco-patched", R.string.source_wizard_libre_route_juggluco_patched,
+                R.string.source_wizard_juggluco_legacy_summary, DexCollectionType.LibreReceiver,
+                "juggluco", "Juggluco", "Juggluco");
+
+        Tree<Item> libre3plus = addLibreModel(libre, R.string.source_wizard_libre_model_3_plus);
+        addLibreRoute(libre3plus, "3plus", R.string.source_wizard_libre_model_3_plus,
+                "camaps", R.string.source_wizard_libre_route_camaps,
+                R.string.source_wizard_dexcom_app_summary, DexCollectionType.UiBased,
+                "camaps-fx", "CamAPS FX", "CamAPS FX",
+                "com.camdiab.fx_alert.mmoll", "com.camdiab.fx_alert.mgdl", "com.camdiab.fx_alert.hx.mmoll", "com.camdiab.fx_alert.hx.mgdl", "com.camdiab.fx_alert.mmoll.ca");
+        addLibreRoute(libre3plus, "3plus", R.string.source_wizard_libre_model_3_plus,
+                "juggluco-eversense", R.string.source_wizard_libre_route_juggluco_eversense,
+                R.string.source_wizard_juggluco_summary, DexCollectionType.NSEmulator,
+                "juggluco", "Juggluco", "Juggluco");
+        addLibreRoute(libre3plus, "3plus", R.string.source_wizard_libre_model_3_plus,
+                "juggluco-patched", R.string.source_wizard_libre_route_juggluco_patched,
+                R.string.source_wizard_juggluco_legacy_summary, DexCollectionType.LibreReceiver,
+                "juggluco", "Juggluco", "Juggluco");
 
         // iCAN and rebranded GlucoMen iCan share notification collectors.
         Tree<Item> ican = root.addChild(new Item("iCAN",
@@ -699,26 +742,38 @@ public class SourceWizard {
 
     // SW-005/006 only. The later SW-014 checklist owns final source selection.
     private void showNamedCompanionConfirmation(final Item item) {
-        final int boundary = item.name.indexOf(10);
-        if (boundary < 1) {
-            getTreeDialog(null);
-            return;
+        // Model-based Libre routes do not parse translated labels for identity.
+        // Existing non-Libre cards keep their former parser during SW-019 audit.
+        final String sensor;
+        final String appName;
+        final String appSentenceName;
+        if (item.routeMetadata != null && item.routeMetadata.appId != null) {
+            sensor = item.routeMetadata.model;
+            appName = item.routeMetadata.appDisplayName;
+            appSentenceName = item.routeMetadata.appSentenceName;
+        } else {
+            final int boundary = item.name.indexOf(10);
+            if (boundary < 1) {
+                getTreeDialog(null);
+                return;
+            }
+            sensor = item.name.substring(0, boundary).trim();
+            String app = item.name.substring(boundary + 1).trim();
+            if (app.startsWith("→")) app = app.substring(1).trim();
+            if (app.isEmpty()) {
+                getTreeDialog(null);
+                return;
+            }
+            appName = app;
+            appSentenceName = app;
         }
-        final String sensor = item.name.substring(0, boundary).trim();
-        String app = item.name.substring(boundary + 1).trim();
-        if (app.startsWith("→")) app = app.substring(1).trim();
-        if (app.isEmpty()) {
-            getTreeDialog(null);
-            return;
-        }
-        final String appName = app;
         final Dialog panel = getWizardHostDialog();
         final View root = LayoutInflater.from(panel.getContext())
                 .inflate(R.layout.dialog_source_wizard_companion, null);
         ((TextView) root.findViewById(R.id.companionIntro))
-                .setText(activity.getString(R.string.source_wizard_companion_intro, sensor, appName));
+                .setText(activity.getString(R.string.source_wizard_companion_intro, sensor, appSentenceName));
         ((TextView) root.findViewById(R.id.companionExplanation))
-                .setText(activity.getString(R.string.source_wizard_companion_setup_explanation, appName));
+                .setText(activity.getString(R.string.source_wizard_companion_setup_explanation, appSentenceName));
         ((TextView) root.findViewById(R.id.companionAppName)).setText(appName);
         final ImageView icon = root.findViewById(R.id.companionStatusIcon);
         final TextView status = root.findViewById(R.id.companionStatusText);
@@ -751,7 +806,7 @@ public class SourceWizard {
             final boolean missing = state[0] == CompanionInstallState.MISSING;
             if (missing) {
                 guidance.setText(activity.getString(
-                        R.string.source_wizard_companion_install_and_return, appName));
+                        R.string.source_wizard_companion_install_and_return, appSentenceName));
             } else if (state[0] == CompanionInstallState.UNKNOWN) {
                 guidance.setText(R.string.source_wizard_companion_unknown_explanation);
             } else {
@@ -1560,6 +1615,55 @@ public class SourceWizard {
         }
     }
 
+    // A route is identified independently of its localized one-line label.
+    // EXISTING_CATALOG records provenance, not universal verified compatibility.
+    private enum RouteEvidence { EXISTING_CATALOG, NEEDS_DEVELOPER_REVIEW }
+
+    private static final class SourceRoute {
+        final String family;
+        final String model;
+        final String routeId;
+        final String routeLabel;
+        final String appId;
+        final String appDisplayName;
+        final String appSentenceName;
+        final RouteEvidence evidence;
+        SourceRoute(String family, String model, String routeId, String routeLabel,
+                String appId, String appDisplayName, String appSentenceName,
+                RouteEvidence evidence) {
+            this.family = family;
+            this.model = model;
+            this.routeId = routeId;
+            this.routeLabel = routeLabel;
+            this.appId = appId;
+            this.appDisplayName = appDisplayName;
+            this.appSentenceName = appSentenceName;
+            this.evidence = evidence;
+        }
+    }
+
+    private Tree<Item> addLibreModel(final Tree<Item> family, @StringRes final int modelName) {
+        return family.addChild(new Item(gs(modelName), (String) null,
+                R.drawable.libra_1234_v3_icon).withModelGroup());
+    }
+
+    private void addLibreRoute(final Tree<Item> parent, final String modelCode,
+            @StringRes final int modelName, final String routeCode,
+            @StringRes final int routeName, @StringRes final int summary,
+            final DexCollectionType type, final String appId,
+            final String appDisplayName, final String appSentenceName,
+            final String... packages) {
+        final String label = gs(routeName);
+        final Item item = new Item(label, gs(summary), type, 0)
+                .withCompactRoute()
+                .withRouteMetadata(new SourceRoute("FreeStyle Libre", gs(modelName),
+                        "libre." + modelCode + "." + routeCode, label,
+                        appId, appDisplayName, appSentenceName,
+                        RouteEvidence.EXISTING_CATALOG));
+        if (packages != null && packages.length > 0) item.withCompanionPackages(packages);
+        parent.addChild(item);
+    }
+
     // Source labels are UI-only; DexCollectionType mappings remain unchanged.
     public class Item {
         public String name;
@@ -1571,6 +1675,9 @@ public class SourceWizard {
         private String summary;
         private String confirmationName;
         private String[] companionPackages;
+        private SourceRoute routeMetadata;
+        private boolean modelGroup;
+        private boolean compactRoute;
         private boolean section;
         private boolean deviceIcon;
         private boolean auxiliaryTitle;
@@ -1620,6 +1727,28 @@ public class SourceWizard {
         Item withDeviceIcon() {
             deviceIcon = true;
             return this;
+        }
+
+        Item withModelGroup() {
+            modelGroup = true;
+            deviceIcon = true;
+            return this;
+        }
+
+        Item withCompactRoute() {
+            compactRoute = true;
+            return this;
+        }
+
+        Item withRouteMetadata(final SourceRoute route) {
+            routeMetadata = route;
+            return this;
+        }
+
+        public boolean isModelGroup() { return modelGroup; }
+        public boolean isCompactRoute() { return compactRoute; }
+        public int getPlateMinHeight() {
+            return Math.round(convertDpToPixel(compactRoute ? 52 : 62));
         }
 
         Item withAuxiliaryTitle() {
@@ -1688,7 +1817,8 @@ public class SourceWizard {
         public boolean isIconVisible() {
             // All ordinary leaves share the same icon column. Parents and
             // auxiliary navigation rows remain icon-free on purpose.
-            return !section && !isGroup() && !auxiliaryTitle && !informationText
+            return !section && (!isGroup() || modelGroup) && !compactRoute
+                    && !auxiliaryTitle && !informationText
                     && !callToAction && !readinessAction;
         }
 
@@ -1728,7 +1858,7 @@ public class SourceWizard {
             // The line before Libre's auxiliary "Additional connection methods"
             // is full width, matching the separator below it when expanded.
             if (fullWidthDivider) return 0;
-            return Math.round(convertDpToPixel(isIconVisible() ? 84 : 22));
+            return Math.round(convertDpToPixel(compactRoute ? 84 : (isIconVisible() ? 84 : 22)));
         }
 
         Item withConfirmationName(String sourceName) {
@@ -1742,12 +1872,17 @@ public class SourceWizard {
         }
 
         boolean isNamedCompanionRoute() {
-            return type == DexCollectionType.UiBased && !callToAction && name.contains("→");
+            return type == DexCollectionType.UiBased && !callToAction
+                    && (routeMetadata != null ? routeMetadata.appId != null : name.contains("→"));
         }
 
         public String getConfirmationName() {
-            // Two visual title lines should remain one line in the
-            // existing source confirmation dialog.
+            if (routeMetadata != null) {
+                return routeMetadata.model
+                        + (routeMetadata.routeLabel.startsWith("→") ? " " : " — ")
+                        + routeMetadata.routeLabel;
+            }
+            // Retain legacy confirmation text for routes not yet migrated.
             return confirmationName != null ? confirmationName : name.replace('\n', ' ');
         }
 
@@ -1870,7 +2005,7 @@ public class SourceWizard {
         }
 
         public int getPlateRowStartPadding() {
-            return Math.round(convertDpToPixel(depth > 0 ? 22 : 12));
+            return Math.round(convertDpToPixel(compactRoute ? 84 : (depth > 0 ? 22 : 12)));
         }
 
         // One full-weight separator after the expanded parent, followed by

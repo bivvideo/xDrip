@@ -65,7 +65,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="62dp"
+                android:minHeight="@{item.plateMinHeight}"
                 android:layout_marginStart="0dp"
                 android:layout_marginEnd="0dp"
                 android:layout_marginTop="0dp"
@@ -140,14 +140,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@{item.displayTitle}"
-                    android:visibility="@{(item.group || item.readinessAction) &amp;&amp; !item.auxiliaryTitle ? View.VISIBLE : View.GONE}" />
+                    android:visibility="@{(item.group || item.readinessAction) &amp;&amp; !item.modelGroup &amp;&amp; !item.auxiliaryTitle ? View.VISIBLE : View.GONE}" />
 
                 <TextView
                     style="@style/SourceWizardSensorTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@{item.displayTitle}"
-                    android:visibility="@{!item.group &amp;&amp; !item.readinessAction &amp;&amp; !item.auxiliaryTitle &amp;&amp; !item.informationText &amp;&amp; !item.callToAction ? View.VISIBLE : View.GONE}" />
+                    android:visibility="@{item.modelGroup || (!item.group &amp;&amp; !item.compactRoute &amp;&amp; !item.readinessAction &amp;&amp; !item.auxiliaryTitle &amp;&amp; !item.informationText &amp;&amp; !item.callToAction) ? View.VISIBLE : View.GONE}" />
 
                 <!-- The fallback question is intentionally the first, prominent line. -->
                 <TextView
@@ -256,8 +256,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:text="@{item.displayRoute}"
-                    android:visibility="@{item.routeVisible ? View.VISIBLE : View.GONE}" />
+                    android:text="@{item.compactRoute ? item.displayTitle : item.displayRoute}"
+                    android:visibility="@{item.compactRoute || item.routeVisible ? View.VISIBLE : View.GONE}" />
 
                 <TextView
                     style="@style/SourceWizardTechnicalHint"

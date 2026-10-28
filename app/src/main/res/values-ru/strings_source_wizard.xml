@@ -197,4 +197,18 @@
     <string name="source_wizard_finish_mini_tap">↰  Нажмите на значок меню</string>
     <string name="source_wizard_finish_mini_status">9:41</string>
     <string name="source_wizard_companion_warning_selected">Выбрано в мастере</string>
+    <!-- SW-020 Libre model groups and compact routes. -->
+    <string name="source_wizard_libre_model_1">Libre 1</string>
+    <string name="source_wizard_libre_model_2">Libre 2</string>
+    <string name="source_wizard_libre_model_2_plus">Libre 2+</string>
+    <string name="source_wizard_libre_model_3">Libre 3</string>
+    <string name="source_wizard_libre_model_3_plus">Libre 3+</string>
+    <string name="source_wizard_libre_route_bridge">Через Bluetooth-мост: BluCon, Bubble, LimiTTer, blueReader</string>
+    <string name="source_wizard_libre_route_alarm">Через Sony SmartWatch 3 (NFC) и LibreAlarm</string>
+    <string name="source_wizard_libre_route_direct">Напрямую по Bluetooth</string>
+    <string name="source_wizard_libre_route_network">Через сетевой приёмник</string>
+    <string name="source_wizard_libre_route_combined">Bluetooth и сетевой приёмник</string>
+    <string name="source_wizard_libre_route_juggluco_eversense">→ Juggluco · EverSense</string>
+    <string name="source_wizard_libre_route_juggluco_patched">→ Juggluco · Patched Libre</string>
+    <string name="source_wizard_libre_route_camaps">→ CamAPS FX</string>
 </resources>
