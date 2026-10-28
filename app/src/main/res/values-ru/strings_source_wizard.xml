@@ -256,4 +256,5 @@
     <string name="source_wizard_companion_pump_intro">Вы выбрали помпу %1$s с передачей показаний через приложение %2$s.</string>
     <string name="source_wizard_companion_pump_setup_explanation">Для получения данных в xDrip+ приложение %1$s должно быть установлено и получать показания от помпы.</string>
     <string name="source_wizard_instructions_open_pump_detail">Убедитесь, что помпа передаёт данные в %1$s и приложение показывает текущий уровень глюкозы.</string>
+    <string name="source_wizard_readiness_summary_accessibility">Проверка готовности: выполнено %1$d, не выполнено %2$d, невозможно проверить %3$d.</string>
 </resources>
