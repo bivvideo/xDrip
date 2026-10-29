@@ -147,7 +147,7 @@
     <string name="source_wizard_companion_question">Continue setup with these settings?</string>
     <string name="source_wizard_companion_installed">App installed</string>
     <string name="source_wizard_companion_missing">App not installed</string>
-    <string name="source_wizard_companion_unknown">Unable to check installation</string>
+    <string name="source_wizard_companion_unknown">Could not verify app installation</string>
     <string name="source_wizard_companion_install_and_return">Install %1$s from a trusted source and return to continue setup.</string>
     <string name="source_wizard_companion_unknown_explanation">Make sure the app is installed. Automatic checking is unavailable.</string>
     <string name="source_wizard_companion_bypass">Continue without installing</string>
@@ -260,4 +260,13 @@
     <string name="source_wizard_instructions_open_pump_detail">Make sure the pump sends readings to %1$s and the app shows the current glucose level.</string>
     <!-- EN DRAFT — final translation review before PR. -->
     <string name="source_wizard_readiness_summary_accessibility">Readiness check: %1$d ready, %2$d missing, %3$d unknown.</string>
+    <string name="source_wizard_app_lock_help_title">Keep xDrip+ running</string>
+    <string name="source_wizard_app_lock_help_intro">On some phones, you can lock xDrip+ in Recents so that clearing recent apps does not remove it.</string>
+    <string name="source_wizard_app_lock_help_step_1">1. Open recent apps using the square navigation button. If you use gestures, swipe up from the bottom and hold briefly.</string>
+    <string name="source_wizard_app_lock_help_step_2">2. Find the xDrip+ preview among your recent apps.</string>
+    <string name="source_wizard_app_lock_help_step_3">3. Touch and hold the xDrip+ preview to open its options.</string>
+    <string name="source_wizard_app_lock_help_step_4">4. Tap the padlock or pin icon if it protects the app from being cleared.</string>
+    <string name="source_wizard_app_lock_help_step_5">5. Do not swipe the xDrip+ preview away. To clear other apps, use the general X-shaped clear button if available.</string>
+    <string name="source_wizard_app_lock_help_note">Menus and gestures vary by phone. Some devices do not offer this feature. This is not Android screen pinning, and xDrip+ cannot automatically verify the lock.</string>
+    <string name="source_wizard_app_lock_help_close">Got it</string>
 </resources>
