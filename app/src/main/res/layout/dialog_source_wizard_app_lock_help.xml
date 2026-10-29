@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Compact Source Wizard-style instructions, replacing the legacy Holo AlertDialog. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -46,6 +47,17 @@
                 android:textColor="?android:attr/textColorSecondary"
                 android:textSize="14sp"
                 android:lineSpacingExtra="3dp" />
+
+            <!-- Temporary Lottie playback preview; no change to readiness checks. -->
+            <com.airbnb.lottie.LottieAnimationView
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_marginTop="8dp"
+                android:scaleType="fitCenter"
+                android:importantForAccessibility="no"
+                app:lottie_rawRes="@raw/test_anim"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true" />
 
             <TextView
                 android:layout_width="match_parent"
