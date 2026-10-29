@@ -147,7 +147,7 @@
     <string name="source_wizard_companion_question">Продолжить настройку с выбранными параметрами?</string>
     <string name="source_wizard_companion_installed">Приложение установлено</string>
     <string name="source_wizard_companion_missing">Приложение не установлено</string>
-    <string name="source_wizard_companion_unknown">Не удалось проверить установку</string>
+    <string name="source_wizard_companion_unknown">Не удалось проверить наличие приложения</string>
     <string name="source_wizard_companion_install_and_return">Установите %1$s из проверенного источника и вернитесь для продолжения настройки.</string>
     <string name="source_wizard_companion_unknown_explanation">Убедитесь, что приложение установлено. Автоматическая проверка недоступна.</string>
     <string name="source_wizard_companion_bypass">Продолжить без установки</string>
@@ -257,4 +257,13 @@
     <string name="source_wizard_companion_pump_setup_explanation">Для получения данных в xDrip+ приложение %1$s должно быть установлено и получать показания от помпы.</string>
     <string name="source_wizard_instructions_open_pump_detail">Убедитесь, что помпа передаёт данные в %1$s и приложение показывает текущий уровень глюкозы.</string>
     <string name="source_wizard_readiness_summary_accessibility">Проверка готовности: выполнено %1$d, не выполнено %2$d, невозможно проверить %3$d.</string>
+    <string name="source_wizard_app_lock_help_title">Закрепление xDrip+</string>
+    <string name="source_wizard_app_lock_help_intro">На некоторых телефонах можно закрепить xDrip+, чтобы его не удаляла обычная очистка списка недавних приложений.</string>
+    <string name="source_wizard_app_lock_help_step_1">1. Откройте недавние приложения: нажмите квадратную кнопку навигации. Если используете жесты, проведите снизу вверх и ненадолго задержите палец.</string>
+    <string name="source_wizard_app_lock_help_step_2">2. Найдите миниатюру xDrip+ среди открытых приложений.</string>
+    <string name="source_wizard_app_lock_help_step_3">3. Нажмите и удерживайте миниатюру xDrip+, чтобы открыть дополнительное меню.</string>
+    <string name="source_wizard_app_lock_help_step_4">4. Нажмите значок замка или булавки, если он обозначает защиту от очистки.</string>
+    <string name="source_wizard_app_lock_help_step_5">5. Не смахивайте миниатюру xDrip+ вручную. Для очистки остальных приложений используйте общую кнопку с крестиком, если она есть.</string>
+    <string name="source_wizard_app_lock_help_note">Названия и жесты могут отличаться. На некоторых устройствах этой функции нет. Это не закрепление экрана Android; xDrip+ не может автоматически проверить такой замок.</string>
+    <string name="source_wizard_app_lock_help_close">Понятно</string>
 </resources>
