@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="28dp"
+    android:height="28dp"
+    android:viewportWidth="28"
+    android:viewportHeight="28">
+    <!-- Only Companion installation UNKNOWN is yellow; general readiness remains gray. -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#DDBB57"
+        android:strokeWidth="1.5"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:pathData="M12.5,4.2 Q14,1.7 15.5,4.2 L25.5,21.6 Q26.9,24 24.2,24 L3.8,24 Q1.1,24 2.5,21.6 Z" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#DDBB57"
+        android:strokeWidth="2.4"
+        android:strokeLineCap="round"
+        android:pathData="M14,10.6 L14,16.8 M14,20.2 L14,20.35" />
+</vector>
