@@ -86,6 +86,8 @@ public class SourceWizard {
     private final HashSet<Tree<Item>> expandedBranches = new HashSet<>();
     private ViewModel listModel;
     private RecyclerView wizardList;
+    // Preserve the exact catalog viewport when returning from a named Companion route.
+    private android.os.Parcelable catalogScrollState;
     private Item readinessItem;
     // Navigation is organized by user intent, not by internal collector names.
     // Display-only changes: each leaf still uses an existing DexCollectionType.
@@ -842,10 +844,23 @@ public class SourceWizard {
     public void getTreeDialog(Tree<Item> branch) {
         if (branch == null || !branch.data.isCollectionType()) {
             final Dialog picker = getWizardHostDialog();
+            // Only restore when returning within this wizard session, not on a new launch.
+            final boolean returningFromRoute = wizardPageIndex > 0 && catalogScrollState != null;
             final DialogTreeSelectorBinding binding = DialogTreeSelectorBinding.inflate(
                     LayoutInflater.from(picker.getContext()));
             listModel = new ViewModel();
             binding.setViewModel(listModel);
+            if (returningFromRoute) {
+                // Restore before the catalog is displayed: no visible scroll or jump.
+                binding.executePendingBindings();
+                final RecyclerView.LayoutManager layoutManager =
+                        binding.sourceWizardList.getLayoutManager();
+                if (layoutManager != null) {
+                    layoutManager.onRestoreInstanceState(catalogScrollState);
+                }
+            } else {
+                catalogScrollState = null;
+            }
             refreshReadinessSummary();
             binding.sourceWizardList.setItemAnimator(null);
             wizardList = binding.sourceWizardList;
@@ -857,6 +872,15 @@ public class SourceWizard {
             final Item item = branch.data;
             // Generic Companion and all other source types retain the legacy path.
             if (item.isNamedCompanionRoute()) {
+                // The original list is removed during the page transition, so
+                // capture its scroll offset before opening the confirmation page.
+                if (wizardPageIndex == 0 && wizardList != null) {
+                    final RecyclerView.LayoutManager layoutManager =
+                            wizardList.getLayoutManager();
+                    if (layoutManager != null) {
+                        catalogScrollState = layoutManager.onSaveInstanceState();
+                    }
+                }
                 showNamedCompanionConfirmation(item);
                 return;
             }
