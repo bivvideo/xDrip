@@ -141,7 +141,7 @@
     <string name="source_wizard_follower_nightscout_body">xDrip+ загружает показания с вашего сервера Nightscout. Нужны рабочий адрес сервера и доступ к его данным. Показания уже должны передаваться в Nightscout.</string>
     <string name="source_wizard_follower_web_body">xDrip+ получает показания из поддерживаемого веб-сервиса. Выберите источник и при необходимости войдите в учётную запись в настройках. Доступные способы зависят от сервиса.</string>
     <string name="source_wizard_follower_xdrip_body">Этот телефон получает показания из другого xDrip+ через xDrip Sync. Сначала настройте передачу на основном телефоне, затем подключите принимающее устройство.</string>
-    <string name="source_wizard_companion_title">Настройка подключения</string>
+    <string name="source_wizard_companion_title">Сенсор и приложение</string>
     <string name="source_wizard_companion_intro">Вы выбрали сенсор %1$s с передачей показаний через приложение %2$s.</string>
     <string name="source_wizard_companion_setup_explanation">Для получения данных в xDrip+ приложение %1$s должно быть установлено и получать показания с сенсора.</string>
     <string name="source_wizard_companion_question">Продолжить настройку с выбранными параметрами?</string>
