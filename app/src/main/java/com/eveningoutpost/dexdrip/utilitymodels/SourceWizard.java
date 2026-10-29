@@ -32,6 +32,7 @@ import androidx.annotation.DrawableRes;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.databinding.BindingAdapter;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.eveningoutpost.dexdrip.BR;
@@ -2474,11 +2475,21 @@ public class SourceWizard {
             }
             if (indexOf(target) < 0) return;
             if (!expandedBranches.contains(target)) toggle(target);
+            // Keep the destination stack near the top of the viewport, rather
+            // than merely making its row visible at the bottom of the list.
+            // CareLink is nested under Followers: show its parent heading too.
+            final Tree<Item> anchor = parents.isEmpty() ? target : parents.get(0);
             if (wizardList != null) {
                 wizardList.post(() -> {
-                    if (listModel == this) {
-                        final int position = indexOf(target);
-                        if (position >= 0) wizardList.scrollToPosition(position);
+                    if (listModel != this || wizardList == null) return;
+                    final int position = indexOf(anchor);
+                    if (position < 0) return;
+                    final RecyclerView.LayoutManager manager = wizardList.getLayoutManager();
+                    if (manager instanceof LinearLayoutManager) {
+                        ((LinearLayoutManager) manager).scrollToPositionWithOffset(
+                                position, Math.round(convertDpToPixel(12)));
+                    } else {
+                        wizardList.scrollToPosition(position);
                     }
                 });
             }
