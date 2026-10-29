@@ -939,7 +939,9 @@ public class SourceWizard {
                     message = R.string.source_wizard_companion_missing;
                     break;
                 default:
-                    picture = R.drawable.source_wizard_readiness_unknown;
+                    // Installation UNKNOWN is an attention state, not a failure.
+                    // Other unknown readiness states keep their neutral gray icon.
+                    picture = R.drawable.source_wizard_companion_install_unknown;
                     message = R.string.source_wizard_companion_unknown;
             }
             icon.setImageResource(picture);
@@ -1729,8 +1731,56 @@ public class SourceWizard {
                 .show();
     }
 
+    // SW-009: compact, scrollable Source Wizard-style help for OEM recent-app locking.
+    // Read-only UI: no collector changes, no settings changes and no guessed status.
+    private void showAppLockHelp() {
+        final Dialog help = new Dialog(activity, android.R.style.Theme_Holo_Dialog);
+        help.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        final View content = LayoutInflater.from(help.getContext())
+                .inflate(R.layout.dialog_source_wizard_app_lock_help, null);
+
+        final Drawable background = activity.getDrawable(R.drawable.holo_background);
+        if (background instanceof GradientDrawable) {
+            ((GradientDrawable) background.mutate()).setCornerRadius(convertDpToPixel(6));
+        }
+        content.setBackground(background);
+        content.findViewById(R.id.appLockHelpClose).setOnClickListener(v -> help.dismiss());
+
+        final int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
+        final int screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
+        final int windowWidth = screenWidth - Math.round(convertDpToPixel(40));
+        final ScrollView body = content.findViewById(R.id.appLockHelpScroll);
+        // Measure before showing, to avoid the height jump seen in early SW-008.
+        content.measure(
+                View.MeasureSpec.makeMeasureSpec(windowWidth, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(
+                        screenHeight - Math.round(convertDpToPixel(90)),
+                        View.MeasureSpec.AT_MOST));
+        final int maxBodyHeight = Math.round(screenHeight * 0.58f);
+        if (body.getMeasuredHeight() > maxBodyHeight) {
+            final ViewGroup.LayoutParams params = body.getLayoutParams();
+            params.height = maxBodyHeight;
+            body.setLayoutParams(params);
+        }
+
+        help.setContentView(content);
+        final Window window = help.getWindow();
+        if (window != null) {
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            window.setWindowAnimations(R.style.SourceWizardReadinessWindowAnimation);
+        }
+        help.show();
+        if (window != null) {
+            window.setLayout(windowWidth, WindowManager.LayoutParams.WRAP_CONTENT);
+        }
+    }
+
     private void showReadinessHelp(final SourceWizardReadiness.Requirement requirement,
             @StringRes final int label) {
+        if (requirement == SourceWizardReadiness.Requirement.APP_LOCK) {
+            showAppLockHelp();
+            return;
+        }
         final int message;
         switch (requirement) {
             case BATTERY_OPTIMIZATION:
