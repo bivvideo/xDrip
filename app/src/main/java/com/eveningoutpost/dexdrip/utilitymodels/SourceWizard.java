@@ -1767,7 +1767,8 @@ public class SourceWizard {
         final Window window = help.getWindow();
         if (window != null) {
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            window.setWindowAnimations(R.style.SourceWizardReadinessWindowAnimation);
+            // Test: isolate the Lottie preview from the dialog window animation.
+            window.setWindowAnimations(0);
         }
         help.show();
         if (window != null) {
