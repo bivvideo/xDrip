@@ -104,19 +104,6 @@ public class SourceWizard {
         root.addChild(readinessItem);
         root.addChild(new Item(gs(R.string.source_wizard_sensors_section), true));
 
-        // CareSens Air: official broadcast or glucose notifications from PASTA.
-        Tree<Item> caresens = root.addChild(new Item("CareSens Air",
-                (String) null, R.drawable.caresens_icon));
-        caresens.addChild(new Item(gs(R.string.source_wizard_caresens_air_app),
-                gs(R.string.source_wizard_broadcast_route),
-                DexCollectionType.NSEmulator, R.drawable.caresens_icon)
-                .withDeviceIcon());
-        caresens.addChild(new Item(gs(R.string.source_wizard_caresens_pasta),
-                gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.caresens_icon)
-                .withDeviceIcon()
-                .withCompanionPackages("com.kakaohealthcare.pasta"));
-
         // SW-020: device-first Dexcom. No G7 15 Day and no Companion Bluetooth.
         Tree<Item> dex = root.addChild(new Item("Dexcom", (String) null, R.drawable.dex_icon));
         Tree<Item> dexg6 = addDexcomModel(dex, R.string.source_wizard_dexcom_model_g6, R.drawable.source_wizard_dexcom_g6_trial);
@@ -326,27 +313,6 @@ public class SourceWizard {
                 R.string.source_wizard_libre_juggluco_legacy_summary, DexCollectionType.LibreReceiver,
                 "juggluco", "Juggluco", "Juggluco");
 
-        // iCAN and rebranded GlucoMen iCan share notification collectors.
-        Tree<Item> ican = root.addChild(new Item("iCAN",
-                gs(R.string.source_wizard_ican_examples), R.drawable.ican3_icon)
-                .withSummary(gs(R.string.source_wizard_ican_examples)));
-        ican.addChild(new Item(gs(R.string.source_wizard_ican_i3_cgm),
-                gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon()
-                .withCompanionPackages("com.sinocare.cgm.ce"));
-        ican.addChild(new Item(gs(R.string.source_wizard_ican_i3_health),
-                gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon()
-                .withCompanionPackages("com.sinocare.ican.health.ce", "com.sinocare.ican.health.ru"));
-        ican.addChild(new Item(gs(R.string.source_wizard_ican_i6_cgm),
-                gs(R.string.source_wizard_pending_confirmation),
-                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon()
-                .withCompanionPackages("com.sinocare.cgm.ce"));
-        ican.addChild(new Item(gs(R.string.source_wizard_glucomen_o3),
-                gs(R.string.source_wizard_pending_confirmation),
-                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon()
-                .withCompanionPackages("com.sinocare.cgm.ce"));
-
         // SW-019/020: Medtronic device-first, one leaf per device/app route.
         // MiniMed 770G/780G are insulin pumps, NOT CGM sensor models.
         Tree<Item> medtronic = root.addChild(new Item("Medtronic",
@@ -457,7 +423,29 @@ public class SourceWizard {
                 DexCollectionType.UiBased, R.drawable.sibionics_gs1_icon).withDeviceIcon()
                 .withCompanionPackages("com.sisensing.eco"));
 
-        // Catch-all is intentionally last, with only real ungrouped devices.
+        // Sinocare iCan family also includes the rebranded GlucoMen iCan.
+        Tree<Item> ican = root.addChild(new Item("Sinocare iCan",
+                gs(R.string.source_wizard_ican_examples), R.drawable.ican3_icon)
+                .withSummary(gs(R.string.source_wizard_ican_examples)));
+        ican.addChild(new Item(gs(R.string.source_wizard_ican_i3_cgm),
+                gs(R.string.source_wizard_dexcom_app_summary),
+                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon()
+                .withCompanionPackages("com.sinocare.cgm.ce"));
+        ican.addChild(new Item(gs(R.string.source_wizard_ican_i3_health),
+                gs(R.string.source_wizard_dexcom_app_summary),
+                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon()
+                .withCompanionPackages("com.sinocare.ican.health.ce", "com.sinocare.ican.health.ru"));
+        ican.addChild(new Item(gs(R.string.source_wizard_ican_i6_cgm),
+                gs(R.string.source_wizard_pending_confirmation),
+                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon()
+                .withCompanionPackages("com.sinocare.cgm.ce"));
+        ican.addChild(new Item(gs(R.string.source_wizard_glucomen_o3),
+                gs(R.string.source_wizard_pending_confirmation),
+                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon()
+                .withCompanionPackages("com.sinocare.cgm.ce"));
+
+        // Catch-all is intentionally last; it can contain individual devices
+        // and a model stack when a single device offers multiple routes.
         Tree<Item> otherSensors = root.addChild(new Item(
                 gs(R.string.source_wizard_other_sensors),
                 gs(R.string.source_wizard_other_sensors),
@@ -467,6 +455,28 @@ public class SourceWizard {
                 gs(R.string.source_wizard_smartguide_summary),
                 DexCollectionType.GluPro, R.drawable.accucheksmartguide_icon)
                 .withDeviceIcon());
+        // SW-020: CareSens Air is one device with two connection methods.
+        // The sensor icon belongs to the model; its children are compact
+        // method-only routes, with the sensor name retained in metadata.
+        Tree<Item> caresens = otherSensors.addChild(new Item("CareSens Air",
+                (String) null, R.drawable.caresens_icon).withModelGroup());
+        final String careSensBroadcast = gs(R.string.source_wizard_caresens_air_app);
+        caresens.addChild(new Item(careSensBroadcast,
+                gs(R.string.source_wizard_broadcast_route),
+                DexCollectionType.NSEmulator, 0)
+                .withCompactRoute()
+                .withRouteMetadata(new SourceRoute("CareSens Air", "CareSens Air",
+                        "caresens.air.broadcast", careSensBroadcast,
+                        null, null, null, RouteEvidence.EXISTING_CATALOG)));
+        final String careSensPasta = gs(R.string.source_wizard_caresens_pasta);
+        caresens.addChild(new Item(careSensPasta,
+                gs(R.string.source_wizard_dexcom_app_summary),
+                DexCollectionType.UiBased, 0)
+                .withCompactRoute()
+                .withRouteMetadata(new SourceRoute("CareSens Air", "CareSens Air",
+                        "caresens.air.pasta", careSensPasta,
+                        "pasta", "PASTA", "PASTA", RouteEvidence.EXISTING_CATALOG))
+                .withCompanionPackages("com.kakaohealthcare.pasta"));
         otherSensors.addChild(new Item(gs(R.string.source_wizard_medtrum_a6),
                 gs(R.string.source_wizard_medtrum_a6_summary),
                 DexCollectionType.Medtrum, R.drawable.medtrum_a6_icon)

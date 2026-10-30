@@ -99,7 +99,7 @@
     <string name="source_wizard_smartguide">Accu-Chek SmartGuide\nDirect Bluetooth</string>
     <string name="source_wizard_smartguide_summary">[SmartGuide]</string>
     <string name="source_wizard_other_sensors">Other sensors</string>
-    <string name="source_wizard_other_sensors_examples">Accu-Chek, Medtrum, Ottai</string>
+    <string name="source_wizard_other_sensors_examples">Accu-Chek, CareSens Air, Medtrum, Ottai</string>
     <string name="source_wizard_companion_explanation">[Companion App] lets xDrip+ receive glucose readings from notifications in your sensor app.\n\nIf the app shows glucose in notifications, this method may work for you.</string>
     <string name="source_wizard_broadcast_explanation">[Inter-app broadcast] lets xDrip+ receive glucose readings from another app in a compatible format.</string>
     <string name="source_wizard_broadcast_examples_heading">Examples of compatible broadcasts</string>
@@ -111,8 +111,8 @@
     <string name="source_wizard_try_connection">Try connecting</string>
     <string name="source_wizard_not_found">Can’t find your sensor in the list?</string>
     <string name="source_wizard_broadcast_route">[Inter-app broadcast]</string>
-    <string name="source_wizard_caresens_air_app">CareSens Air\n→ CareSens Air App</string>
-    <string name="source_wizard_caresens_pasta">CareSens Air\n→ PASTA</string>
+    <string name="source_wizard_caresens_air_app">→ CareSens Air App</string>
+    <string name="source_wizard_caresens_pasta">→ PASTA</string>
     <string name="source_wizard_dexcom_camaps">Dexcom G6 and G7\n→ CamAPS FX</string>
     <string name="source_wizard_dexcom_dblg2">Dexcom G7\n→ DBLG2</string>
     <string name="source_wizard_dexcom_pasta">Dexcom G7\n→ PASTA</string>
