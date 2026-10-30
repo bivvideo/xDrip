@@ -412,6 +412,12 @@ public class SourceWizard {
                 "microtech.glucorx.glucorx",
                 DexCollectionType.AidexReceiver, RouteEvidence.EXISTING_CATALOG,
                 null, null, null);
+        addMicrotechSingleRoute(microtech, R.string.source_wizard_microtech_model_vixxa,
+                R.string.source_wizard_microtech_route_vixxa,
+                R.string.source_wizard_microtech_linx_summary, R.drawable.aidex_x_icon,
+                "microtech.vixxa.vixxa1",
+                DexCollectionType.UiBased, RouteEvidence.EXISTING_CATALOG,
+                "vixxa-1", "Vixxa 1", "Vixxa 1", "com.microtech.aidexx.grx1.mmoll");
         addMicrotechSingleRoute(microtech, R.string.source_wizard_microtech_model_linx,
                 R.string.source_wizard_microtech_route_linx,
                 R.string.source_wizard_microtech_linx_summary, R.drawable.aidex_x_icon,
@@ -431,12 +437,6 @@ public class SourceWizard {
                 "microtech.vitatok.vitatok",
                 DexCollectionType.UiBased, RouteEvidence.NEEDS_DEVELOPER_REVIEW,
                 "vitatok", "VitaTok", "VitaTok", "com.suswel.ai");
-        addMicrotechSingleRoute(microtech, R.string.source_wizard_microtech_model_vixxa,
-                R.string.source_wizard_microtech_route_vixxa,
-                R.string.source_wizard_microtech_linx_summary, R.drawable.aidex_x_icon,
-                "microtech.vixxa.vixxa1",
-                DexCollectionType.UiBased, RouteEvidence.EXISTING_CATALOG,
-                "vixxa-1", "Vixxa 1", "Vixxa 1", "com.microtech.aidexx.grx1.mmoll");
 
         // Generic fall-back remains a link to the existing Companion App page.
         Item microtechOther = new Item(gs(R.string.source_wizard_microtech_other),
