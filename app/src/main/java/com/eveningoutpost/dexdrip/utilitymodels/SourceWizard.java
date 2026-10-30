@@ -394,30 +394,11 @@ public class SourceWizard {
                 R.drawable.source_wizard_source_placeholder)
                 .withSummary(gs(R.string.source_wizard_microtech_examples)));
 
-        // Multi-route model: LinX CGM / AiDEX X.
-        Tree<Item> mtLinx = addMicrotechModel(microtech,
-                R.string.source_wizard_microtech_model_linx,
-                R.drawable.aidex_x_icon);
-        addMicrotechRoute(mtLinx, R.string.source_wizard_microtech_model_linx,
-                "microtech.linx.linx",
-                R.string.source_wizard_microtech_route_linx,
-                R.string.source_wizard_microtech_linx_summary,
-                DexCollectionType.UiBased, RouteEvidence.EXISTING_CATALOG,
-                "linx-cgm", "LinX CGM", "LinX CGM", "com.microtech.aidexx.mgdl");
-        addMicrotechRoute(mtLinx, R.string.source_wizard_microtech_model_linx,
-                "microtech.linx.vitatok",
-                R.string.source_wizard_microtech_route_vitatok,
-                R.string.source_wizard_microtech_linx_summary,
-                DexCollectionType.UiBased, RouteEvidence.NEEDS_DEVELOPER_REVIEW,
-                "vitatok", "VitaTok", "VitaTok", "com.suswel.ai");
-        addMicrotechRoute(mtLinx, R.string.source_wizard_microtech_model_linx,
-                "microtech.linx.vixxa",
-                R.string.source_wizard_microtech_route_vixxa,
-                R.string.source_wizard_microtech_linx_summary,
-                DexCollectionType.UiBased, RouteEvidence.EXISTING_CATALOG,
-                "vixxa-1", "Vixxa 1", "Vixxa 1", "com.microtech.aidexx.grx1.mmoll");
-
-        // Single-route devices: DiaExpert, GlucoRx, LinX Vista (alphabetical).
+        // SW-012/019/020: one physical device per leaf and its verified app.
+        // LinX/AiDEX X, Vixxa 2 and VitaTok may share GX hardware, but their
+        // regional Companion apps are not promised as interchangeable.
+        // Keep the existing collectors and one exact APK per UiBased route.
+        // Sensor artwork for DiaExpert Sensor 2 / LinX Vista is pending SW-018.
         addMicrotechSingleRoute(microtech, R.string.source_wizard_microtech_model_diaexpert,
                 R.string.source_wizard_microtech_route_diaexpert,
                 R.string.source_wizard_microtech_linx_summary, R.drawable.aidex_x_icon,
@@ -431,6 +412,12 @@ public class SourceWizard {
                 "microtech.glucorx.glucorx",
                 DexCollectionType.AidexReceiver, RouteEvidence.EXISTING_CATALOG,
                 null, null, null);
+        addMicrotechSingleRoute(microtech, R.string.source_wizard_microtech_model_linx,
+                R.string.source_wizard_microtech_route_linx,
+                R.string.source_wizard_microtech_linx_summary, R.drawable.aidex_x_icon,
+                "microtech.linx.linx",
+                DexCollectionType.UiBased, RouteEvidence.EXISTING_CATALOG,
+                "linx-cgm", "LinX CGM", "LinX CGM", "com.microtech.aidexx.mgdl");
         addMicrotechSingleRoute(microtech, R.string.source_wizard_microtech_model_vista,
                 R.string.source_wizard_microtech_route_vista,
                 R.string.source_wizard_microtech_linx_summary, R.drawable.aidex_x_icon,
@@ -438,6 +425,18 @@ public class SourceWizard {
                 DexCollectionType.UiBased, RouteEvidence.NEEDS_DEVELOPER_REVIEW,
                 "linx-vista", "LinX Vista", "LinX Vista",
                 "com.microtech.aidexx.linxneo.mmoll");
+        addMicrotechSingleRoute(microtech, R.string.source_wizard_microtech_model_vitatok,
+                R.string.source_wizard_microtech_route_vitatok,
+                R.string.source_wizard_microtech_linx_summary, R.drawable.aidex_x_icon,
+                "microtech.vitatok.vitatok",
+                DexCollectionType.UiBased, RouteEvidence.NEEDS_DEVELOPER_REVIEW,
+                "vitatok", "VitaTok", "VitaTok", "com.suswel.ai");
+        addMicrotechSingleRoute(microtech, R.string.source_wizard_microtech_model_vixxa,
+                R.string.source_wizard_microtech_route_vixxa,
+                R.string.source_wizard_microtech_linx_summary, R.drawable.aidex_x_icon,
+                "microtech.vixxa.vixxa1",
+                DexCollectionType.UiBased, RouteEvidence.EXISTING_CATALOG,
+                "vixxa-1", "Vixxa 1", "Vixxa 1", "com.microtech.aidexx.grx1.mmoll");
 
         // Generic fall-back remains a link to the existing Companion App page.
         Item microtechOther = new Item(gs(R.string.source_wizard_microtech_other),
@@ -1923,29 +1922,6 @@ public class SourceWizard {
                         RouteEvidence.EXISTING_CATALOG))
                 .withCompanionPackages(packages);
         if (isPump) item.withPumpDevice();
-        parent.addChild(item);
-    }
-
-    // Group by device, keep each route bound to exactly one app package.
-    // This is UI metadata only; it does not filter UiBasedCollector notifications.
-    private Tree<Item> addMicrotechModel(final Tree<Item> parent,
-            @StringRes final int modelName, @DrawableRes final int icon) {
-        return parent.addChild(new Item(gs(modelName), (String) null, icon)
-                .withModelGroup());
-    }
-
-    private void addMicrotechRoute(final Tree<Item> parent,
-            @StringRes final int modelName, final String routeId,
-            @StringRes final int routeName, @StringRes final int summaryName,
-            final DexCollectionType type, final RouteEvidence evidence,
-            final String appId, final String appDisplayName,
-            final String appSentenceName, final String... packages) {
-        final String label = gs(routeName);
-        final Item item = new Item(label, gs(summaryName), type, 0)
-                .withCompactRoute()
-                .withRouteMetadata(new SourceRoute("MicroTech", gs(modelName), routeId,
-                        label, appId, appDisplayName, appSentenceName, evidence));
-        if (packages != null && packages.length > 0) item.withCompanionPackages(packages);
         parent.addChild(item);
     }
 
