@@ -418,9 +418,17 @@ public class SourceWizard {
         sibionics.addChild(new Item(gs(R.string.source_wizard_sibionics_gs1),
                 gs(R.string.source_wizard_broadcast_route),
                 DexCollectionType.NSEmulator, R.drawable.sibionics_gs1_icon).withDeviceIcon());
+        // Keep the existing GS1 ECO card and its China-only summary.
+        // Structured identity must not be parsed from the translated title.
         sibionics.addChild(new Item(gs(R.string.source_wizard_sibionics_eco),
                 gs(R.string.source_wizard_sibionics_china_only),
                 DexCollectionType.UiBased, R.drawable.sibionics_gs1_icon).withDeviceIcon()
+                .withRouteMetadata(new SourceRoute("SIBIONICS",
+                        gs(R.string.source_wizard_sibionics_model_eco),
+                        "sibionics.gs1eco.sisensing-eco",
+                        gs(R.string.source_wizard_sibionics_route_eco),
+                        "sisensing-eco", "SiSensing Eco", "SiSensing Eco",
+                        RouteEvidence.EXISTING_CATALOG))
                 .withCompanionPackages("com.sisensing.eco"));
 
         // Sinocare iCan: alphabetical device-first rows. GlucoMen and i6 keep
@@ -510,12 +518,31 @@ public class SourceWizard {
                 gs(R.string.source_wizard_medtrum_a6_summary),
                 DexCollectionType.Medtrum, R.drawable.medtrum_a6_icon)
                 .withDeviceIcon());
-        otherSensors.addChild(new Item(gs(R.string.source_wizard_ottai_m8),
+        // Ottai M8 is one device with two regional Companion applications.
+        // Each compact route checks only its own APK; neither is a separate
+        // sensor model. Both use the standard Companion summary without any
+        // region-specific warning or extra explanatory row.
+        final String ottaiModel = gs(R.string.source_wizard_ottai_model_m8);
+        Tree<Item> ottai = otherSensors.addChild(new Item(ottaiModel,
+                (String) null, R.drawable.ottai_icon).withModelGroup());
+        final String ottaiIntl = gs(R.string.source_wizard_ottai_route_international);
+        ottai.addChild(new Item(ottaiIntl,
                 gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.ottai_icon).withDeviceIcon()
-                // Detect both international and China-only installations.
-                // This does not confirm that either app publishes valid readings.
-                .withCompanionPackages("com.ottai.seas", "com.ottai.tag"));
+                DexCollectionType.UiBased, 0).withCompactRoute()
+                .withRouteMetadata(new SourceRoute("Ottai", ottaiModel,
+                        "ottai.m8.international", ottaiIntl,
+                        "ottai-app", "Ottai App", "Ottai App",
+                        RouteEvidence.EXISTING_CATALOG))
+                .withCompanionPackages("com.ottai.seas"));
+        final String ottaiChina = gs(R.string.source_wizard_ottai_route_china);
+        ottai.addChild(new Item(ottaiChina,
+                gs(R.string.source_wizard_dexcom_app_summary),
+                DexCollectionType.UiBased, 0).withCompactRoute()
+                .withRouteMetadata(new SourceRoute("Ottai", ottaiModel,
+                        "ottai.m8.china", ottaiChina,
+                        "ottai-health-cn", "Ottai Health", "Ottai Health",
+                        RouteEvidence.NEEDS_DEVELOPER_REVIEW))
+                .withCompanionPackages("com.ottai.tag"));
 
         // These are universal fallback methods, not a second sensor catalog.
         root.addChild(new Item(gs(R.string.source_wizard_apps_section), true));

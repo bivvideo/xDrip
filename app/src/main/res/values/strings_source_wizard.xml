@@ -138,6 +138,11 @@
     <string name="source_wizard_sibionics_eco">SIBIONICS GS1 ECO (GS1-P2)\n→ SiSensing Eco</string>
     <string name="source_wizard_sibionics_china_only">China app only; international version unverified · [Companion App]</string>
     <string name="source_wizard_ottai_m8">Ottai M8\n→ Ottai App</string>
+    <string name="source_wizard_sibionics_model_eco">SIBIONICS GS1 ECO (GS1-P2)</string>
+    <string name="source_wizard_sibionics_route_eco">→ SiSensing Eco</string>
+    <string name="source_wizard_ottai_model_m8">Ottai M8</string>
+    <string name="source_wizard_ottai_route_international">→ Ottai App (international)</string>
+    <string name="source_wizard_ottai_route_china">→ Ottai Health (China)</string>
     <string name="source_wizard_follower_about">How it works</string>
     <string name="source_wizard_follower_carelink_body">xDrip+ receives glucose readings uploaded to the Medtronic CareLink cloud by compatible Guardian 3/4, Simplera or MiniMed 7xxG systems. It does not connect directly to the sensor. A supported CareLink account, internet access and glucose data uploaded to CareLink are required. Readings may be delayed; availability varies by region and configuration.</string>
     <string name="source_wizard_follower_dexshare_body">xDrip+ reads glucose data from Dexcom Share. Sharing must be enabled for the supported Dexcom system, and you need authorized access to its Share data. Service availability depends on the account and region.</string>
