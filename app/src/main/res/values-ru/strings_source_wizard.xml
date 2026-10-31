@@ -117,7 +117,10 @@
     <string name="source_wizard_dexcom_dblg2">Dexcom G7\n→ DBLG2</string>
     <string name="source_wizard_dexcom_pasta">Dexcom G7\n→ PASTA</string>
     <string name="source_wizard_libre_camaps">Libre 3 и 3+\n→ CamAPS FX</string>
-    <string name="source_wizard_ican_examples">i3, i6, GlucoMen iCan</string>
+    <string name="source_wizard_ican_examples">GlucoMen iCan, i3, i6</string>
+    <string name="source_wizard_ican_model_i3">iCan i3</string>
+    <string name="source_wizard_ican_route_cgm">→ iCan CGM</string>
+    <string name="source_wizard_ican_route_health">→ iCan Health</string>
     <string name="source_wizard_ican_i3_cgm">iCan i3\n→ iCan CGM</string>
     <string name="source_wizard_ican_i3_health">iCan i3\n→ iCan Health</string>
     <string name="source_wizard_ican_i6_cgm">iCan i6\n→ iCan CGM</string>

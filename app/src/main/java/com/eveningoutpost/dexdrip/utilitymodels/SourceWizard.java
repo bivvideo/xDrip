@@ -201,19 +201,6 @@ public class SourceWizard {
         // broadcasts to xDrip; it is not a direct sensor connection.
         Tree<Item> eversense = root.addChild(new Item("Eversense",
                 (String) null, R.drawable.wikimedia_eversense_icon_pbroks13));
-        Tree<Item> eversenseE3 = addEversenseModel(eversense, R.string.source_wizard_eversense_model_e3);
-        addEversenseRoute(eversenseE3, R.string.source_wizard_eversense_model_e3,
-                "eversense.e3.companion", R.string.source_wizard_eversense_route_e3_app,
-                R.string.source_wizard_eversense_app_summary,
-                DexCollectionType.UiBased, RouteEvidence.EXISTING_CATALOG,
-                "eversense-app", "Eversense App", "Eversense",
-                "com.senseonics.gen12androidapp", "com.senseonics.androidapp");
-        addEversenseRoute(eversenseE3, R.string.source_wizard_eversense_model_e3,
-                "eversense.e3.esel", R.string.source_wizard_eversense_route_e3_esel,
-                R.string.source_wizard_eversense_esel_summary,
-                DexCollectionType.NSEmulator, RouteEvidence.EXISTING_CATALOG,
-                null, null, null);
-
         Tree<Item> eversense365 = addEversenseModel(eversense, R.string.source_wizard_eversense_model_365);
         addEversenseRoute(eversense365, R.string.source_wizard_eversense_model_365,
                 "eversense.365.companion", R.string.source_wizard_eversense_route_365_app,
@@ -227,6 +214,19 @@ public class SourceWizard {
                 "eversense.365.esel", R.string.source_wizard_eversense_route_365_esel,
                 R.string.source_wizard_eversense_esel_summary,
                 DexCollectionType.NSEmulator, RouteEvidence.NEEDS_DEVELOPER_REVIEW,
+                null, null, null);
+
+        Tree<Item> eversenseE3 = addEversenseModel(eversense, R.string.source_wizard_eversense_model_e3);
+        addEversenseRoute(eversenseE3, R.string.source_wizard_eversense_model_e3,
+                "eversense.e3.companion", R.string.source_wizard_eversense_route_e3_app,
+                R.string.source_wizard_eversense_app_summary,
+                DexCollectionType.UiBased, RouteEvidence.EXISTING_CATALOG,
+                "eversense-app", "Eversense App", "Eversense",
+                "com.senseonics.gen12androidapp", "com.senseonics.androidapp");
+        addEversenseRoute(eversenseE3, R.string.source_wizard_eversense_model_e3,
+                "eversense.e3.esel", R.string.source_wizard_eversense_route_e3_esel,
+                R.string.source_wizard_eversense_esel_summary,
+                DexCollectionType.NSEmulator, RouteEvidence.EXISTING_CATALOG,
                 null, null, null);
 
         // SW-020: Compact model-first Libre routes. This preserves existing
@@ -423,25 +423,54 @@ public class SourceWizard {
                 DexCollectionType.UiBased, R.drawable.sibionics_gs1_icon).withDeviceIcon()
                 .withCompanionPackages("com.sisensing.eco"));
 
-        // Sinocare iCan family also includes the rebranded GlucoMen iCan.
+        // Sinocare iCan: alphabetical device-first rows. GlucoMen and i6 keep
+        // their existing single UiBased routes; i3 shares one model icon with
+        // two compact child app routes, each with its own package lookup.
         Tree<Item> ican = root.addChild(new Item("Sinocare iCan",
                 gs(R.string.source_wizard_ican_examples), R.drawable.ican3_icon)
                 .withSummary(gs(R.string.source_wizard_ican_examples)));
-        ican.addChild(new Item(gs(R.string.source_wizard_ican_i3_cgm),
-                gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon()
-                .withCompanionPackages("com.sinocare.cgm.ce"));
-        ican.addChild(new Item(gs(R.string.source_wizard_ican_i3_health),
-                gs(R.string.source_wizard_dexcom_app_summary),
-                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon()
-                .withCompanionPackages("com.sinocare.ican.health.ce", "com.sinocare.ican.health.ru"));
-        ican.addChild(new Item(gs(R.string.source_wizard_ican_i6_cgm),
-                gs(R.string.source_wizard_pending_confirmation),
-                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon()
-                .withCompanionPackages("com.sinocare.cgm.ce"));
+
+        // GlucoMen iCan (o3): a single route, with compatibility unconfirmed.
         ican.addChild(new Item(gs(R.string.source_wizard_glucomen_o3),
                 gs(R.string.source_wizard_pending_confirmation),
                 DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon()
+                .withRouteMetadata(new SourceRoute("Sinocare iCan", "GlucoMen iCan (o3)",
+                        "sinocare.glucomen.ican-cgm", gs(R.string.source_wizard_ican_route_cgm),
+                        "ican-cgm", "iCan CGM", "iCan CGM",
+                        RouteEvidence.NEEDS_DEVELOPER_REVIEW))
+                .withCompanionPackages("com.sinocare.cgm.ce"));
+
+        final String icanI3Model = gs(R.string.source_wizard_ican_model_i3);
+        Tree<Item> icanI3 = ican.addChild(new Item(icanI3Model, (String) null,
+                R.drawable.ican3_icon).withModelGroup());
+        final String icanCgm = gs(R.string.source_wizard_ican_route_cgm);
+        icanI3.addChild(new Item(icanCgm,
+                gs(R.string.source_wizard_dexcom_app_summary),
+                DexCollectionType.UiBased, 0).withCompactRoute()
+                .withRouteMetadata(new SourceRoute("Sinocare iCan", icanI3Model,
+                        "sinocare.i3.ican-cgm", icanCgm,
+                        "ican-cgm", "iCan CGM", "iCan CGM",
+                        RouteEvidence.EXISTING_CATALOG))
+                .withCompanionPackages("com.sinocare.cgm.ce"));
+        final String icanHealth = gs(R.string.source_wizard_ican_route_health);
+        icanI3.addChild(new Item(icanHealth,
+                gs(R.string.source_wizard_dexcom_app_summary),
+                DexCollectionType.UiBased, 0).withCompactRoute()
+                .withRouteMetadata(new SourceRoute("Sinocare iCan", icanI3Model,
+                        "sinocare.i3.ican-health", icanHealth,
+                        "ican-health", "iCan Health", "iCan Health",
+                        RouteEvidence.EXISTING_CATALOG))
+                .withCompanionPackages("com.sinocare.ican.health.ce",
+                        "com.sinocare.ican.health.ru"));
+
+        // iCan i6: keep the previous route and pending-verification warning.
+        ican.addChild(new Item(gs(R.string.source_wizard_ican_i6_cgm),
+                gs(R.string.source_wizard_pending_confirmation),
+                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon()
+                .withRouteMetadata(new SourceRoute("Sinocare iCan", "iCan i6",
+                        "sinocare.i6.ican-cgm", icanCgm,
+                        "ican-cgm", "iCan CGM", "iCan CGM",
+                        RouteEvidence.NEEDS_DEVELOPER_REVIEW))
                 .withCompanionPackages("com.sinocare.cgm.ce"));
 
         // Catch-all is intentionally last; it can contain individual devices
