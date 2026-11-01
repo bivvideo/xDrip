@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="source_wizard_before_connection">Перед подключением</string>
-    <string name="source_wizard_readiness_title">Необязательная проверка готовности</string>
+    <string name="source_wizard_readiness_title">Проверка готовности</string>
     <string name="source_wizard_readiness_placeholder">Здесь появятся рекомендации по фоновой работе xDrip+ и предварительные проверки разрешений. Сейчас проверки ещё не подключены.</string>
     <string name="source_wizard_readiness_close">Закрыть</string>
     <string name="source_wizard_readiness_section_stability">Стабильность фоновой работы</string>
@@ -9,7 +9,7 @@
     <string name="source_wizard_readiness_battery">Отключение энергосбережения</string>
     <string name="source_wizard_readiness_autostart">Автозапуск</string>
     <string name="source_wizard_readiness_pin">Закрепление приложения</string>
-    <string name="source_wizard_readiness_notification_listener">Доступ xDrip+ к чтению уведомлений</string>
+    <string name="source_wizard_readiness_notification_listener">Доступ к уведомлениям</string>
     <string name="source_wizard_readiness_bluetooth">Bluetooth</string>
     <string name="source_wizard_readiness_location">Геолокация</string>
     <string name="source_wizard_readiness_fix">Исправить</string>
@@ -165,7 +165,7 @@
     <string name="source_wizard_permissions_title">Разрешения</string>
     <string name="source_wizard_permissions_required">Обязательные разрешения</string>
     <string name="source_wizard_permissions_granted">Разрешение предоставлено</string>
-    <string name="source_wizard_permissions_missing_detail">Разрешите xDrip+ читать уведомления %1$s. Отдельно включите уведомления самого %1$s с показаниями глюкозы.</string>
+    <string name="source_wizard_permissions_missing_detail">Для продолжения настройки разрешите доступ к уведомлениям.</string>
     <string name="source_wizard_permissions_next_step_pending">Следующий этап — инструкция подключения. Источник данных пока не изменён.</string>
     <string name="source_wizard_permissions_error_title">Не удалось проверить разрешение</string>
     <string name="source_wizard_permissions_error_message">Продолжить настройку невозможно.</string>
@@ -180,9 +180,9 @@
     <string name="source_wizard_instructions_open_title">Проверьте показания</string>
     <string name="source_wizard_instructions_open_detail">Убедитесь, что сенсор подключён и %1$s показывает текущий уровень глюкозы.</string>
     <string name="source_wizard_instructions_notify_title">Включите уведомления</string>
-    <string name="source_wizard_instructions_notify_detail">Разрешите уведомления для %1$s в настройках Android. Это отдельное действие, не заменяющее право xDrip+ читать их.</string>
+    <string name="source_wizard_instructions_notify_detail">В приложении %1$s включите уведомления с показаниями глюкозы. При необходимости разрешите уведомления в Android.</string>
     <string name="source_wizard_instructions_check_title">Проверьте уведомления</string>
-    <string name="source_wizard_instructions_check_detail">Убедитесь, что %1$s показывает глюкозу в шторке уведомлений. Для xDrip+ отдельно требуется доступ к чтению уведомлений.</string>
+    <string name="source_wizard_instructions_check_detail">Убедитесь, что %1$s показывает показания глюкозы в шторке уведомлений.</string>
     <string name="source_wizard_finish_title">Завершение настройки</string>
     <string name="source_wizard_finish_message">Нажмите «Готово», чтобы переключить xDrip+ на получение показаний из уведомлений приложения:</string>
     <string name="source_wizard_finish_done">Готово</string>

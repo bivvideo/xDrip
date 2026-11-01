@@ -1278,8 +1278,7 @@ public class SourceWizard {
                     status.setVisibility(View.GONE);
                     action.setText(R.string.source_wizard_readiness_fix);
                     action.setVisibility(View.VISIBLE);
-                    guidance.setText(activity.getString(
-                            R.string.source_wizard_permissions_missing_detail, appName));
+                    guidance.setText(R.string.source_wizard_permissions_missing_detail);
                     guidance.setVisibility(View.VISIBLE);
                     break;
                 default:

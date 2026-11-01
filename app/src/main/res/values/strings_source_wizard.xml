@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="source_wizard_before_connection">Before connecting</string>
-    <string name="source_wizard_readiness_title">Optional readiness check</string>
+    <string name="source_wizard_readiness_title">Readiness check</string>
     <string name="source_wizard_readiness_placeholder">Background operation recommendations and preliminary permission checks will appear here. These checks are not connected yet.</string>
     <string name="source_wizard_readiness_close">Close</string>
     <string name="source_wizard_readiness_section_stability">Background operation stability</string>
@@ -9,7 +9,7 @@
     <string name="source_wizard_readiness_battery">Disable battery optimization</string>
     <string name="source_wizard_readiness_autostart">Autostart</string>
     <string name="source_wizard_readiness_pin">Keep app running</string>
-    <string name="source_wizard_readiness_notification_listener">Notification reading permission for xDrip+</string>
+    <string name="source_wizard_readiness_notification_listener">Notification access</string>
     <string name="source_wizard_readiness_bluetooth">Bluetooth</string>
     <string name="source_wizard_readiness_location">Location</string>
     <string name="source_wizard_readiness_fix">Fix</string>
@@ -166,7 +166,7 @@
     <string name="source_wizard_permissions_title">Permissions</string>
     <string name="source_wizard_permissions_required">Required permissions</string>
     <string name="source_wizard_permissions_granted">Permission granted</string>
-    <string name="source_wizard_permissions_missing_detail">Allow xDrip+ to read notifications from %1$s. Separately, enable glucose notifications for %1$s in Android.</string>
+    <string name="source_wizard_permissions_missing_detail">To continue setup, allow access to notifications.</string>
     <string name="source_wizard_permissions_next_step_pending">The next connection-instruction step is pending. Your data source has not changed.</string>
     <string name="source_wizard_permissions_error_title">Unable to check permission</string>
     <string name="source_wizard_permissions_error_message">Cannot continue setup.</string>
@@ -181,9 +181,9 @@
     <string name="source_wizard_instructions_open_title">Check glucose readings</string>
     <string name="source_wizard_instructions_open_detail">Make sure the sensor is connected and %1$s displays the current glucose reading.</string>
     <string name="source_wizard_instructions_notify_title">Enable notifications</string>
-    <string name="source_wizard_instructions_notify_detail">Enable notifications for %1$s in Android settings. This does not grant xDrip+ the separate permission to read them.</string>
+    <string name="source_wizard_instructions_notify_detail">Enable glucose notifications in %1$s. If needed, allow notifications in Android.</string>
     <string name="source_wizard_instructions_check_title">Check notifications</string>
-    <string name="source_wizard_instructions_check_detail">Make sure %1$s displays glucose readings in the notification shade. Separately, xDrip+ must have notification access.</string>
+    <string name="source_wizard_instructions_check_detail">Make sure %1$s shows glucose readings in the notification shade.</string>
     <string name="source_wizard_finish_title">Finish setup</string>
     <string name="source_wizard_finish_message">Tap Done to switch xDrip+ to receiving glucose readings from notifications sent by this app:</string>
     <string name="source_wizard_finish_done">Done</string>
