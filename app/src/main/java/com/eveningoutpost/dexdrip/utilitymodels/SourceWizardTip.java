@@ -61,17 +61,6 @@ public final class SourceWizardTip {
         }, 300L);
     }
 
-    /** Accessible from the master catalog even after "Don't show again". */
-    public static void showNow(final Activity host) {
-        if (showing || host == null || host.isFinishing() || host.isDestroyed()) return;
-        try {
-            final SharedPreferences prefs = Pref.getInstance();
-            if (prefs != null) show(host, prefs);
-        } catch (Exception e) {
-            UserError.Log.e(TAG, "Cannot reopen Source Wizard tip: " + e);
-        }
-    }
-
     private static void show(final Activity host, final SharedPreferences prefs) {
         final Dialog tip = new Dialog(host, android.R.style.Theme_Holo_Dialog);
         tip.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -87,17 +76,26 @@ public final class SourceWizardTip {
         final View rows = root.findViewById(R.id.finishMiniMenuRows);
         final View hint = root.findViewById(R.id.finishMiniMenuHint);
         final boolean[] opened = {false};
-        root.findViewById(R.id.finishMiniMenuToggle).setOnClickListener(v -> {
+        final View miniToggle = root.findViewById(R.id.finishMiniMenuToggle);
+        final Runnable updateMenuAccessibility = () ->
+                miniToggle.setContentDescription(host.getString(R.string.source_wizard_tip_menu_label)
+                        + ", " + host.getString(opened[0]
+                                ? R.string.source_wizard_a11y_expanded
+                                : R.string.source_wizard_a11y_collapsed));
+        updateMenuAccessibility.run();
+        miniToggle.setOnClickListener(v -> {
             hint.setVisibility(View.GONE);
             opened[0] = !opened[0];
             rows.setVisibility(opened[0] ? View.VISIBLE : View.GONE);
             glyph.setText(opened[0] ? "←" : "☰");
+            updateMenuAccessibility.run();
         });
         root.findViewById(R.id.finishMiniMenuMaster).setOnClickListener(v -> {
             hint.setVisibility(View.GONE);
             opened[0] = false;
             rows.setVisibility(View.GONE);
             glyph.setText("☰");
+            updateMenuAccessibility.run();
         });
         // Reserve the expanded mini-menu height before showing this dialog.
         // The empty space is deliberate when the preview is collapsed, so the

@@ -57,13 +57,15 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text="@string/source_wizard_finish_mini_status"
-                        android:textSize="10sp"
+                        android:importantForAccessibility="no"
+                         android:textSize="10sp"
                         android:textColor="?android:attr/textColorSecondary" />
                     <ImageView
                         android:layout_width="61dp"
                         android:layout_height="16dp"
                         android:src="@drawable/source_wizard_mini_status_icons"
-                        android:contentDescription="@null" />
+                        android:importantForAccessibility="no"
+                         android:contentDescription="@null" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -84,20 +86,23 @@
                         android:layout_height="40dp"
                         android:gravity="center"
                         android:text="☰"
-                        android:textSize="22sp"
+                        android:importantForAccessibility="no"
+                         android:textSize="22sp"
                         android:textColor="?android:attr/textColorPrimary"/>
                     <ImageView
                         android:layout_width="23dp"
                         android:layout_height="23dp"
                         android:layout_marginStart="9dp"
                         android:src="@drawable/ic_launcher"
-                        android:contentDescription="@null"/>
+                        android:importantForAccessibility="no"
+                         android:contentDescription="@null"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:text="xDrip+"
-                        android:textSize="15sp"
+                        android:importantForAccessibility="no"
+                         android:textSize="15sp"
                         android:fontFamily="sans-serif-medium"
                         android:textColor="?android:attr/textColorPrimary"/>
                 </LinearLayout>
@@ -110,7 +115,10 @@
                     android:visibility="gone">
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="35dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="35dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
                     android:gravity="center_vertical"
                     android:paddingStart="47dp"
                     android:paddingEnd="12dp"
@@ -147,7 +155,10 @@
                     android:background="@color/source_wizard_row_divider" />
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="35dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="35dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
                     android:gravity="center_vertical"
                     android:paddingStart="47dp"
                     android:paddingEnd="12dp"
@@ -162,7 +173,10 @@
                     android:background="@color/source_wizard_row_divider" />
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="35dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="35dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
                     android:gravity="center_vertical"
                     android:paddingStart="47dp"
                     android:paddingEnd="12dp"
@@ -177,6 +191,7 @@
                     android:id="@+id/finishMiniMenuHint"
                     android:layout_width="match_parent"
                     android:layout_height="37dp"
+                    android:importantForAccessibility="no"
                     android:gravity="center_vertical"
                     android:paddingStart="19dp"
                     android:text="@string/source_wizard_finish_mini_tap"
