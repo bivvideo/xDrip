@@ -210,7 +210,7 @@ public class SourceWizard {
         // broadcasts to xDrip; it is not a direct sensor connection.
         Tree<Item> eversense = root.addChild(new Item("Eversense",
                 (String) null, R.drawable.wikimedia_eversense_icon_pbroks13));
-        Tree<Item> eversense365 = addEversenseModel(eversense, R.string.source_wizard_eversense_model_365);
+        Tree<Item> eversense365 = addEversenseModel(eversense, R.string.source_wizard_eversense_model_365, R.drawable.eversence_360);
         addEversenseRoute(eversense365, R.string.source_wizard_eversense_model_365,
                 "eversense.365.companion", R.string.source_wizard_eversense_route_365_app,
                 R.string.source_wizard_eversense_app_summary,
@@ -225,7 +225,7 @@ public class SourceWizard {
                 DexCollectionType.NSEmulator, RouteEvidence.NEEDS_DEVELOPER_REVIEW,
                 null, null, null);
 
-        Tree<Item> eversenseE3 = addEversenseModel(eversense, R.string.source_wizard_eversense_model_e3);
+        Tree<Item> eversenseE3 = addEversenseModel(eversense, R.string.source_wizard_eversense_model_e3, R.drawable.eversence_e3_icon);
         addEversenseRoute(eversenseE3, R.string.source_wizard_eversense_model_e3,
                 "eversense.e3.companion", R.string.source_wizard_eversense_route_e3_app,
                 R.string.source_wizard_eversense_app_summary,
@@ -242,7 +242,7 @@ public class SourceWizard {
         // mappings; presence in the catalog is not proof of compatibility.
         Tree<Item> libre = root.addChild(new Item("FreeStyle Libre",
                 (String) null, R.drawable.libre_icon_image));
-        Tree<Item> libre1 = addLibreModel(libre, R.string.source_wizard_libre_model_1);
+        Tree<Item> libre1 = addLibreModel(libre, R.string.source_wizard_libre_model_1, R.drawable.libre_2_icon);
         addLibreRoute(libre1, "1", R.string.source_wizard_libre_model_1,
                 "bridge", R.string.source_wizard_libre_route_bridge,
                 R.string.source_wizard_libre_one_bridge_summary, DexCollectionType.LimiTTer,
@@ -260,7 +260,7 @@ public class SourceWizard {
                 R.string.source_wizard_libre_combined_summary, DexCollectionType.LimiTTerWifi,
                 null, null, null);
 
-        Tree<Item> libre2 = addLibreModel(libre, R.string.source_wizard_libre_model_2);
+        Tree<Item> libre2 = addLibreModel(libre, R.string.source_wizard_libre_model_2, R.drawable.libre_2_icon);
         addLibreRoute(libre2, "2", R.string.source_wizard_libre_model_2,
                 "direct", R.string.source_wizard_libre_route_direct,
                 R.string.source_wizard_libre_two_direct_summary, DexCollectionType.LimiTTer,
@@ -282,7 +282,7 @@ public class SourceWizard {
                 R.string.source_wizard_libre_juggluco_legacy_summary, DexCollectionType.LibreReceiver,
                 "juggluco", "Juggluco", "Juggluco");
 
-        Tree<Item> libre2plus = addLibreModel(libre, R.string.source_wizard_libre_model_2_plus);
+        Tree<Item> libre2plus = addLibreModel(libre, R.string.source_wizard_libre_model_2_plus, R.drawable.libre_2_icon);
         addLibreRoute(libre2plus, "2plus", R.string.source_wizard_libre_model_2_plus,
                 "juggluco-eversense", R.string.source_wizard_libre_route_juggluco_eversense,
                 R.string.source_wizard_libre_juggluco_summary, DexCollectionType.NSEmulator,
@@ -292,7 +292,7 @@ public class SourceWizard {
                 R.string.source_wizard_libre_juggluco_legacy_summary, DexCollectionType.LibreReceiver,
                 "juggluco", "Juggluco", "Juggluco");
 
-        Tree<Item> libre3 = addLibreModel(libre, R.string.source_wizard_libre_model_3);
+        Tree<Item> libre3 = addLibreModel(libre, R.string.source_wizard_libre_model_3, R.drawable.libre_3_icon);
         addLibreRoute(libre3, "3", R.string.source_wizard_libre_model_3,
                 "camaps", R.string.source_wizard_libre_route_camaps,
                 R.string.source_wizard_dexcom_app_summary, DexCollectionType.UiBased,
@@ -307,7 +307,7 @@ public class SourceWizard {
                 R.string.source_wizard_libre_juggluco_legacy_summary, DexCollectionType.LibreReceiver,
                 "juggluco", "Juggluco", "Juggluco");
 
-        Tree<Item> libre3plus = addLibreModel(libre, R.string.source_wizard_libre_model_3_plus);
+        Tree<Item> libre3plus = addLibreModel(libre, R.string.source_wizard_libre_model_3_plus, R.drawable.libre_3_icon);
         addLibreRoute(libre3plus, "3plus", R.string.source_wizard_libre_model_3_plus,
                 "camaps", R.string.source_wizard_libre_route_camaps,
                 R.string.source_wizard_dexcom_app_summary, DexCollectionType.UiBased,
@@ -376,7 +376,7 @@ public class SourceWizard {
         // Sensor artwork for DiaExpert Sensor 2 / LinX Vista is pending SW-018.
         addMicrotechSingleRoute(microtech, R.string.source_wizard_microtech_model_diaexpert,
                 R.string.source_wizard_microtech_route_diaexpert,
-                R.string.source_wizard_microtech_linx_summary, R.drawable.aidex_x_icon,
+                R.string.source_wizard_microtech_linx_summary, R.drawable.linx_icon,
                 "microtech.diaexpert.diaexpert",
                 DexCollectionType.UiBased, RouteEvidence.NEEDS_DEVELOPER_REVIEW,
                 "diaexpert-cgm-2", "DiaExpert CGM 2", "DiaExpert CGM 2",
@@ -401,7 +401,7 @@ public class SourceWizard {
                 "linx-cgm", "LinX CGM", "LinX CGM", "com.microtech.aidexx.mgdl");
         addMicrotechSingleRoute(microtech, R.string.source_wizard_microtech_model_vista,
                 R.string.source_wizard_microtech_route_vista,
-                R.string.source_wizard_microtech_linx_summary, R.drawable.aidex_x_icon,
+                R.string.source_wizard_microtech_linx_summary, R.drawable.linx_icon,
                 "microtech.vista.vista",
                 DexCollectionType.UiBased, RouteEvidence.NEEDS_DEVELOPER_REVIEW,
                 "linx-vista", "LinX Vista", "LinX Vista",
@@ -483,7 +483,7 @@ public class SourceWizard {
         // iCan i6: keep the previous route and pending-verification warning.
         ican.addChild(new Item(gs(R.string.source_wizard_ican_i6_cgm),
                 gs(R.string.source_wizard_pending_confirmation),
-                DexCollectionType.UiBased, R.drawable.ican3_icon).withDeviceIcon()
+                DexCollectionType.UiBased, R.drawable.ican6_icon).withDeviceIcon()
                 .withRouteMetadata(new SourceRoute("Sinocare iCan", "iCan i6",
                         "sinocare.i6.ican-cgm", icanCgm,
                         "ican-cgm", "iCan CGM", "iCan CGM",
@@ -2072,9 +2072,9 @@ public class SourceWizard {
     // Eversense shares the compact model/route UI with Libre and Dexcom.
     // The transmitter artwork is temporary until model-specific icons arrive.
     private Tree<Item> addEversenseModel(final Tree<Item> parent,
-            @StringRes final int modelName) {
+            @StringRes final int modelName, @DrawableRes final int icon) {
         return parent.addChild(new Item(gs(modelName), (String) null,
-                R.drawable.eversence_360).withModelGroup());
+                icon).withModelGroup());
     }
 
     private void addEversenseRoute(final Tree<Item> parent,
@@ -2115,9 +2115,10 @@ public class SourceWizard {
         parent.addChild(item);
     }
 
-    private Tree<Item> addLibreModel(final Tree<Item> family, @StringRes final int modelName) {
+    private Tree<Item> addLibreModel(final Tree<Item> family, @StringRes final int modelName,
+            @DrawableRes final int icon) {
         return family.addChild(new Item(gs(modelName), (String) null,
-                R.drawable.libra_1234_v3_icon).withModelGroup());
+                icon).withModelGroup());
     }
 
     private void addLibreRoute(final Tree<Item> parent, final String modelCode,
@@ -2127,12 +2128,18 @@ public class SourceWizard {
             final String appDisplayName, final String appSentenceName,
             final String... packages) {
         final String label = gs(routeName);
-        final Item item = new Item(label, gs(summary), type, 0)
+        // Libre 1's bridge and Sony SmartWatch have their own historical artwork.
+        final int routeIcon = "1".equals(modelCode)
+                ? ("bridge".equals(routeCode) ? R.drawable.libre_1_bridge_icon
+                : "alarm".equals(routeCode) ? R.drawable.ic_watch_grey600_48dp : 0)
+                : 0;
+        final Item item = new Item(label, gs(summary), type, routeIcon)
                 .withCompactRoute()
                 .withRouteMetadata(new SourceRoute("FreeStyle Libre", gs(modelName),
                         "libre." + modelCode + "." + routeCode, label,
                         appId, appDisplayName, appSentenceName,
                         RouteEvidence.EXISTING_CATALOG));
+        if (routeIcon != 0) item.withCompactRouteIcon();
         if (packages != null && packages.length > 0) item.withCompanionPackages(packages);
         parent.addChild(item);
     }
@@ -2151,6 +2158,7 @@ public class SourceWizard {
         private SourceRoute routeMetadata;
         private boolean modelGroup;
         private boolean compactRoute;
+        private boolean compactRouteIcon;
         private boolean section;
         private boolean deviceIcon;
         private boolean pumpDevice;
@@ -2220,6 +2228,12 @@ public class SourceWizard {
 
         Item withCompactRoute() {
             compactRoute = true;
+            return this;
+        }
+
+        Item withCompactRouteIcon() {
+            compactRouteIcon = true;
+            deviceIcon = true;
             return this;
         }
 
@@ -2359,9 +2373,9 @@ public class SourceWizard {
         }
 
         public boolean isIconVisible() {
-            // All ordinary leaves share the same icon column. Parents and
-            // auxiliary navigation rows remain icon-free on purpose.
-            return !section && (!isGroup() || modelGroup) && !compactRoute
+            // Only the two Libre 1 compact routes with artwork use the icon slot.
+            return !section && (!isGroup() || modelGroup)
+                    && (!compactRoute || compactRouteIcon)
                     && !auxiliaryTitle && !informationText
                     && !callToAction && !readinessAction;
         }
@@ -2371,7 +2385,8 @@ public class SourceWizard {
         }
 
         public boolean isLightIconPlateVisible() {
-            return isDeviceIconVisible() && resource == R.drawable.eversence_360;
+            return isDeviceIconVisible() && (resource == R.drawable.eversence_360
+                    || resource == R.drawable.eversence_e3_icon);
         }
 
         public boolean isWhiteIconPlateVisible() {
@@ -2390,11 +2405,15 @@ public class SourceWizard {
         public float getDeviceIconScale() {
             // Keep round sensors optically smaller than low-profile wide bodies.
             if (resource == R.drawable.libre_2_icon ||
+                    resource == R.drawable.libre_3_icon ||
                     resource == R.drawable.accucheksmartguide_icon) return 0.84f;
-            if (resource == R.drawable.aidex_x_icon) return 0.88f;
-            if (resource == R.drawable.ican3_icon) return 0.84f;
-            // Leave a visible margin between dark artwork and its 44dp light backing.
-            if (resource == R.drawable.eversence_360) return 0.77f;
+            if (resource == R.drawable.aidex_x_icon ||
+                    resource == R.drawable.linx_icon) return 0.88f;
+            if (resource == R.drawable.ican3_icon ||
+                    resource == R.drawable.ican6_icon) return 0.84f;
+            // Both Eversense models keep the same optical scale and light backing.
+            if (resource == R.drawable.eversence_360 ||
+                    resource == R.drawable.eversence_e3_icon) return 0.77f;
             return 1f;
         }
 
@@ -2549,7 +2568,9 @@ public class SourceWizard {
         }
 
         public int getPlateRowStartPadding() {
-            return Math.round(convertDpToPixel(compactRoute ? 84 : (depth > 0 ? 22 : 12)));
+            // 22dp + 48dp icon + 14dp gap = 84dp, matching other compact labels.
+            return Math.round(convertDpToPixel(compactRoute
+                    ? (compactRouteIcon ? 22 : 84) : (depth > 0 ? 22 : 12)));
         }
 
         // One full-weight separator after the expanded parent, followed by
