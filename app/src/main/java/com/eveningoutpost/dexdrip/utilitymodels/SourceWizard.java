@@ -2404,8 +2404,8 @@ public class SourceWizard {
 
         public float getDeviceIconScale() {
             // Keep round sensors optically smaller than low-profile wide bodies.
+            if (resource == R.drawable.libre_3_icon) return 0.95f;
             if (resource == R.drawable.libre_2_icon ||
-                    resource == R.drawable.libre_3_icon ||
                     resource == R.drawable.accucheksmartguide_icon) return 0.84f;
             if (resource == R.drawable.aidex_x_icon ||
                     resource == R.drawable.linx_icon) return 0.88f;
