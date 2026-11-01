@@ -32,7 +32,7 @@
     <string name="source_wizard_readiness_battery_help">Не удалось проверить исключение xDrip+ из энергосбережения Android. Проверьте ограничения вручную в настройках батареи приложения. Исключение не отменяет все ограничения производителя.</string>
     <string name="source_wizard_readiness_autostart_help">Автозапуск зависит от производителя, в Android нет универсальной проверки. xDrip+ пытается прочитать состояние на поддерживаемых версиях Xiaomi. Если статус неизвестен, включите автозапуск вручную. На Xiaomi: Настройки → Приложения → Разрешения → Автозапуск (названия могут отличаться).</string>
     <string name="source_wizard_readiness_bluetooth_help">Не удалось проверить Bluetooth. Включите его вручную в настройках Android. Это системный переключатель, а не разрешение на скрытое включение. Для отдельных сенсоров могут потребоваться дополнительные права.</string>
-    <string name="source_wizard_readiness_location_help">Проверяются разрешение xDrip+ на геолокацию (в том числе фоновую, когда оно требуется Bluetooth helper) и системный переключатель геолокации. Если не хватает разрешения, «Исправить» открывает настройки приложения: Разрешения → Местоположение; при необходимости выберите «Разрешить всегда». Если выключен системный переключатель — открывает настройки геолокации. Не всем Bluetooth-маршрутам нужен доступ к местоположению; общая проверка не блокирует выбор источника.</string>
+    <string name="source_wizard_readiness_location_help">Проверяется доступ xDrip+ к геолокации (включая фоновый, если он требуется для подключения по Bluetooth) и системный переключатель геолокации. Если не хватает разрешения, «Исправить» открывает настройки приложения: Разрешения → Местоположение; при необходимости выберите «Разрешить всегда». Если выключен системный переключатель — открывает настройки геолокации. Не всем Bluetooth-маршрутам нужен доступ к местоположению; общая проверка не блокирует выбор источника.</string>
     <string name="source_wizard_readiness_allow">Разрешить</string>
     <string name="source_wizard_readiness_location_permission_steps_background">Чтобы xDrip+ мог получать данные в фоне, разрешите доступ к местоположению.\n\nВ открывшихся настройках:\n1. Нажмите «Разрешения приложений» (или «Разрешения»).\n2. Выберите «Местоположение».\n3. Установите «Разрешить в любом режиме» (или «Разрешить всегда»).\n4. Вернитесь в xDrip+ — статус обновится автоматически.\n\nНазвания пунктов могут отличаться на разных телефонах. Кнопка «Разрешить» только откроет настройки — разрешение вы выдадите там.</string>
     <string name="source_wizard_readiness_location_permission_steps_foreground">Чтобы xDrip+ мог использовать геолокацию для совместимого подключения, выдайте разрешение в настройках приложения.\n\nВ открывшихся настройках:\n1. Нажмите «Разрешения приложений» (или «Разрешения»).\n2. Выберите «Местоположение».\n3. Разрешите доступ к местоположению.\n4. Вернитесь в xDrip+ — статус обновится автоматически.\n\nКнопка «Разрешить» только откроет настройки — разрешение вы выдадите там.</string>
@@ -85,7 +85,7 @@
     <string name="source_wizard_followers_group">Followers</string>
     <string name="source_wizard_companion_examples">iCan, Ottai, CamAPS FX и другие</string>
     <string name="source_wizard_title">Мастер настройки источника</string>
-    <string name="source_wizard_subtitle">Выберите датчик или приложение</string>
+    <string name="source_wizard_subtitle">Выберите устройство и способ подключения.</string>
     <string name="source_wizard_microtech_group">MicroTech</string>
     <string name="source_wizard_microtech_examples">AiDEX, LinX, GlucoRx, VitaTok</string>
     <string name="source_wizard_microtech_glucorx">GlucoRx AiDEX\n→ AiDEX App</string>
@@ -149,7 +149,7 @@
     <string name="source_wizard_follower_nightscout_body">xDrip+ загружает показания с вашего сервера Nightscout. Нужны рабочий адрес сервера и доступ к его данным. Показания уже должны передаваться в Nightscout.</string>
     <string name="source_wizard_follower_web_body">xDrip+ получает показания из поддерживаемого веб-сервиса. Выберите источник и при необходимости войдите в учётную запись в настройках. Доступные способы зависят от сервиса.</string>
     <string name="source_wizard_follower_xdrip_body">Этот телефон получает показания из другого xDrip+ через xDrip Sync. Сначала настройте передачу на основном телефоне, затем подключите принимающее устройство.</string>
-    <string name="source_wizard_companion_title">Сенсор и приложение</string>
+    <string name="source_wizard_companion_title">Подтверждение выбора</string>
     <string name="source_wizard_companion_intro">Вы выбрали сенсор %1$s с передачей показаний через приложение %2$s.</string>
     <string name="source_wizard_companion_setup_explanation">Для получения данных в xDrip+ приложение %1$s должно быть установлено и получать показания с сенсора.</string>
     <string name="source_wizard_companion_question">Продолжить настройку с выбранными параметрами?</string>
@@ -266,7 +266,7 @@
     <string name="source_wizard_companion_pump_intro">Вы выбрали помпу %1$s с передачей показаний через приложение %2$s.</string>
     <string name="source_wizard_companion_pump_setup_explanation">Для получения данных в xDrip+ приложение %1$s должно быть установлено и получать показания от помпы.</string>
     <string name="source_wizard_instructions_open_pump_detail">Убедитесь, что помпа передаёт данные в %1$s и приложение показывает текущий уровень глюкозы.</string>
-    <string name="source_wizard_readiness_summary_accessibility">Проверка готовности: выполнено %1$d, не выполнено %2$d, невозможно проверить %3$d.</string>
+    <string name="source_wizard_readiness_summary_accessibility">Проверка готовности: выполнено — %1$d, не выполнено — %2$d, не удалось проверить — %3$d.</string>
     <string name="source_wizard_app_lock_help_title">Закрепление xDrip+</string>
     <string name="source_wizard_app_lock_help_intro">На некоторых телефонах можно закрепить xDrip+, чтобы его не удаляла обычная очистка списка недавних приложений.</string>
     <string name="source_wizard_app_lock_help_step_1">1. Откройте недавние приложения: нажмите квадратную кнопку навигации. Если используете жесты, проведите снизу вверх и ненадолго задержите палец.</string>
