@@ -288,4 +288,7 @@
     <string name="source_wizard_tip_title">Where to find Source Wizard</string>
     <string name="source_wizard_tip_dont_show">Don\'t show again</string>
     <string name="source_wizard_tip_close">Close</string>
+    <string name="source_wizard_tip_reopen">Show the wizard tip again</string>
+    <string name="source_wizard_debug_error_action">Test permission error (debug only)</string>
+    <string name="source_wizard_debug_error_explanation">TEST ONLY. Android permissions have not changed. No real permission-check failure occurred.</string>
 </resources>

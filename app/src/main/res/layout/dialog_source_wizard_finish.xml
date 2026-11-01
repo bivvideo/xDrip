@@ -22,38 +22,60 @@
         android:layout_height="1dp"
         android:background="@color/source_wizard_row_divider" />
 
+    <!-- SW-026: centered variant B, with large outer margins and rounded plate. -->
     <ScrollView
         android:id="@+id/finishBodyScroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fillViewport="true"
         android:scrollbars="vertical"
         android:overScrollMode="ifContentScrolls">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="vertical"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
-            android:paddingTop="22dp"
-            android:paddingBottom="20dp">
-
-            <TextView
+            android:paddingTop="34dp"
+            android:paddingBottom="34dp">
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
-                android:text="@string/source_wizard_finish_ready_title"
-                android:textSize="19sp"
-                android:textColor="?android:attr/textColorPrimary" />
-
-            <TextView
-                android:id="@+id/finishMessage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="@string/source_wizard_finish_message"
-                android:textSize="16sp"
-                android:textColor="?android:attr/textColorPrimary" />
-
+                android:gravity="center"
+                android:orientation="vertical"
+                android:background="@drawable/source_wizard_plate_single"
+                android:paddingStart="26dp"
+                android:paddingEnd="26dp"
+                android:paddingTop="40dp"
+                android:paddingBottom="40dp">
+                <ImageView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginBottom="22dp"
+                    android:src="@drawable/source_wizard_readiness_ok"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/source_wizard_finish_ready_title"
+                    android:textSize="19sp"
+                    android:textColor="?android:attr/textColorPrimary" />
+                <TextView
+                    android:id="@+id/finishMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:text="@string/source_wizard_finish_message"
+                    android:textSize="16sp"
+                    android:textColor="?android:attr/textColorPrimary" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

@@ -61,6 +61,17 @@ public final class SourceWizardTip {
         }, 300L);
     }
 
+    /** Accessible from the master catalog even after "Don't show again". */
+    public static void showNow(final Activity host) {
+        if (showing || host == null || host.isFinishing() || host.isDestroyed()) return;
+        try {
+            final SharedPreferences prefs = Pref.getInstance();
+            if (prefs != null) show(host, prefs);
+        } catch (Exception e) {
+            UserError.Log.e(TAG, "Cannot reopen Source Wizard tip: " + e);
+        }
+    }
+
     private static void show(final Activity host, final SharedPreferences prefs) {
         final Dialog tip = new Dialog(host, android.R.style.Theme_Holo_Dialog);
         tip.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -88,6 +99,31 @@ public final class SourceWizardTip {
             rows.setVisibility(View.GONE);
             glyph.setText("☰");
         });
+        // Reserve the expanded mini-menu height before showing this dialog.
+        // The empty space is deliberate when the preview is collapsed, so the
+        // window and its Close footer stay fixed while the menu is toggled.
+        final android.widget.ScrollView scroll =
+                root.findViewById(R.id.sourceWizardTipScroll);
+        final View scrollContent = scroll.getChildAt(0);
+        final int densityWidth = Math.round(host.getResources()
+                .getDisplayMetrics().density * 40);
+        final int windowWidth = Math.max(1, host.getResources()
+                .getDisplayMetrics().widthPixels - densityWidth);
+        rows.setVisibility(View.VISIBLE);
+        hint.setVisibility(View.GONE);
+        scrollContent.measure(
+                View.MeasureSpec.makeMeasureSpec(windowWidth, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        final int expandedHeight = scrollContent.getMeasuredHeight();
+        final int maxBodyHeight = Math.max(
+                Math.round(host.getResources().getDisplayMetrics().density * 120),
+                host.getResources().getDisplayMetrics().heightPixels -
+                        Math.round(host.getResources().getDisplayMetrics().density * 210));
+        final android.view.ViewGroup.LayoutParams scrollParams = scroll.getLayoutParams();
+        scrollParams.height = Math.min(expandedHeight, maxBodyHeight);
+        scroll.setLayoutParams(scrollParams);
+        rows.setVisibility(View.GONE);
+        hint.setVisibility(View.VISIBLE);
         final CheckBox checkbox = root.findViewById(R.id.sourceWizardTipDontShow);
         checkbox.setChecked(prefs.getBoolean(HIDE, false));
         checkbox.setOnCheckedChangeListener((button, checked) ->
@@ -102,10 +138,7 @@ public final class SourceWizardTip {
         try {
             tip.show();
             if (window != null) {
-                final int screenWidth = host.getResources().getDisplayMetrics().widthPixels;
-                window.setLayout(screenWidth - Math.round(host.getResources()
-                        .getDisplayMetrics().density * 40),
-                        WindowManager.LayoutParams.WRAP_CONTENT);
+                window.setLayout(windowWidth, WindowManager.LayoutParams.WRAP_CONTENT);
             }
         } catch (Exception e) {
             showing = false;

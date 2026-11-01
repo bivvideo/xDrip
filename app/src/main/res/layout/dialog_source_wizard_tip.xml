@@ -16,6 +16,7 @@
         android:textSize="19sp"
         android:textColor="?android:attr/textColorPrimary" />
     <ScrollView
+        android:id="@+id/sourceWizardTipScroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fillViewport="false">

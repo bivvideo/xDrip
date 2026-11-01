@@ -284,4 +284,7 @@
     <string name="source_wizard_tip_title">Где найти мастер настройки</string>
     <string name="source_wizard_tip_dont_show">Больше не показывать</string>
     <string name="source_wizard_tip_close">Закрыть</string>
+    <string name="source_wizard_tip_reopen">Показать памятку ещё раз</string>
+    <string name="source_wizard_debug_error_action">Тест ошибки разрешений (отладка)</string>
+    <string name="source_wizard_debug_error_explanation">ТЕСТОВЫЙ ЭКРАН. Разрешения Android не менялись. Реального сбоя проверки разрешений не было.</string>
 </resources>
