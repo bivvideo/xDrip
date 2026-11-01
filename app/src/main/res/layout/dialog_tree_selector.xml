@@ -39,6 +39,7 @@
                 android:layout_marginEnd="20dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/source_wizard_subtitle"
+                android:visibility="gone"
                 android:textSize="16sp"
                 android:textColor="?android:attr/textColorSecondary" />
         </LinearLayout>
