@@ -112,7 +112,7 @@
     <string name="source_wizard_not_found">Не нашли свой сенсор в списке?</string>
     <string name="source_wizard_broadcast_route">[Inter-app broadcast]</string>
     <string name="source_wizard_caresens_air_app">→ CareSens Air App</string>
-    <string name="source_wizard_caresens_pasta">→ PASTA</string>
+    <string name="source_wizard_caresens_pasta">→ PASTA App</string>
     <string name="source_wizard_dexcom_camaps">Dexcom G6 и G7\n→ CamAPS FX</string>
     <string name="source_wizard_dexcom_dblg2">Dexcom G7\n→ DBLG2</string>
     <string name="source_wizard_dexcom_pasta">Dexcom G7\n→ PASTA</string>
@@ -184,7 +184,7 @@
     <string name="source_wizard_instructions_check_title">Проверьте уведомления</string>
     <string name="source_wizard_instructions_check_detail">Убедитесь, что %1$s показывает глюкозу в шторке уведомлений. Для xDrip+ отдельно требуется доступ к чтению уведомлений.</string>
     <string name="source_wizard_finish_title">Завершение настройки</string>
-    <string name="source_wizard_finish_message">Нажмите «Готово», чтобы переключить xDrip+ на получение показаний из уведомлений %1$s.</string>
+    <string name="source_wizard_finish_message">Нажмите «Готово», чтобы переключить xDrip+ на получение показаний из уведомлений приложения:</string>
     <string name="source_wizard_finish_done">Готово</string>
     <string name="source_wizard_finish_ready_title">Всё готово к подключению</string>
     <string name="source_wizard_finish_menu_hint">Повторно открыть мастер можно через боковое меню xDrip+.</string>

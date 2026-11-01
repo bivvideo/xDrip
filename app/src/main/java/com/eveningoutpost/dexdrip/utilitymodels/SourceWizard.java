@@ -528,7 +528,7 @@ public class SourceWizard {
                 .withCompactRoute()
                 .withRouteMetadata(new SourceRoute("CareSens Air", "CareSens Air",
                         "caresens.air.pasta", careSensPasta,
-                        "pasta", "PASTA", "PASTA", RouteEvidence.EXISTING_CATALOG))
+                        "pasta-app", "PASTA App", "PASTA", RouteEvidence.EXISTING_CATALOG))
                 .withCompanionPackages("com.kakaohealthcare.pasta"));
         otherSensors.addChild(new Item(gs(R.string.source_wizard_medtrum_a6),
                 gs(R.string.source_wizard_medtrum_a6_summary),
@@ -1424,8 +1424,11 @@ public class SourceWizard {
         final Dialog finish = getWizardHostDialog();
         final View content = LayoutInflater.from(finish.getContext())
                 .inflate(R.layout.dialog_source_wizard_finish, null);
+        // Keep the sentence separate from the selected app name to prevent
+        // awkward partial wrapping of names such as "Dexcom ONE+ App".
         ((TextView) content.findViewById(R.id.finishMessage))
-                .setText(activity.getString(R.string.source_wizard_finish_message, appName));
+                .setText(R.string.source_wizard_finish_message);
+        ((TextView) content.findViewById(R.id.finishAppName)).setText(appName);
         final TextView done = content.findViewById(R.id.finishDone);
 
         content.findViewById(R.id.finishBack).setOnClickListener(v ->

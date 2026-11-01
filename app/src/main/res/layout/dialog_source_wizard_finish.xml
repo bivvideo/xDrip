@@ -75,6 +75,16 @@
                     android:text="@string/source_wizard_finish_message"
                     android:textSize="16sp"
                     android:textColor="?android:attr/textColorPrimary" />
+                <TextView
+                    android:id="@+id/finishAppName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:fontFamily="sans-serif-medium"
+                    android:textSize="20sp"
+                    android:textColor="?android:attr/textColorPrimary" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

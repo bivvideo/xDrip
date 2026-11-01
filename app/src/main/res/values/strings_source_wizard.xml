@@ -112,7 +112,7 @@
     <string name="source_wizard_not_found">Can’t find your sensor in the list?</string>
     <string name="source_wizard_broadcast_route">[Inter-app broadcast]</string>
     <string name="source_wizard_caresens_air_app">→ CareSens Air App</string>
-    <string name="source_wizard_caresens_pasta">→ PASTA</string>
+    <string name="source_wizard_caresens_pasta">→ PASTA App</string>
     <string name="source_wizard_dexcom_camaps">Dexcom G6 and G7\n→ CamAPS FX</string>
     <string name="source_wizard_dexcom_dblg2">Dexcom G7\n→ DBLG2</string>
     <string name="source_wizard_dexcom_pasta">Dexcom G7\n→ PASTA</string>
@@ -185,7 +185,7 @@
     <string name="source_wizard_instructions_check_title">Check notifications</string>
     <string name="source_wizard_instructions_check_detail">Make sure %1$s displays glucose readings in the notification shade. Separately, xDrip+ must have notification access.</string>
     <string name="source_wizard_finish_title">Finish setup</string>
-    <string name="source_wizard_finish_message">Tap Done to switch xDrip+ to receiving glucose readings from %1$s notifications.</string>
+    <string name="source_wizard_finish_message">Tap Done to switch xDrip+ to receiving glucose readings from notifications sent by this app:</string>
     <string name="source_wizard_finish_done">Done</string>
     <!-- EN DRAFT — final translation review before PR -->
     <string name="source_wizard_finish_ready_title">Ready to connect</string>
