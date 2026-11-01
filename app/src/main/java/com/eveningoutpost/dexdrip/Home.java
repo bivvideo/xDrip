@@ -120,6 +120,7 @@ import com.eveningoutpost.dexdrip.utilitymodels.PrefsViewImpl;
 import com.eveningoutpost.dexdrip.utilitymodels.SendFeedBack;
 import com.eveningoutpost.dexdrip.utilitymodels.ShotStateStore;
 import com.eveningoutpost.dexdrip.utilitymodels.SourceWizard;
+import com.eveningoutpost.dexdrip.utilitymodels.SourceWizardTip;
 import com.eveningoutpost.dexdrip.utilitymodels.StatusLine;
 import com.eveningoutpost.dexdrip.utilitymodels.UndoRedo;
 import com.eveningoutpost.dexdrip.utilitymodels.UpdateActivity;
@@ -1858,6 +1859,7 @@ public class Home extends ActivityWithMenu implements ActivityCompat.OnRequestPe
     @Override
     protected void onResume() {
         super.onResume();
+        SourceWizardTip.maybeShow(this);
         xdrip.checkForcedEnglish(xdrip.getAppContext());
         handleFlairColors();
         checkEula();

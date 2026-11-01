@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="source_wizard_before_connection">Before connecting</string>
-    <string name="source_wizard_readiness_title">Readiness check</string>
+    <string name="source_wizard_readiness_title">Optional readiness check</string>
     <string name="source_wizard_readiness_placeholder">Background operation recommendations and preliminary permission checks will appear here. These checks are not connected yet.</string>
     <string name="source_wizard_readiness_close">Close</string>
     <string name="source_wizard_readiness_section_stability">Background operation stability</string>
@@ -9,7 +9,7 @@
     <string name="source_wizard_readiness_battery">Disable battery optimization</string>
     <string name="source_wizard_readiness_autostart">Autostart</string>
     <string name="source_wizard_readiness_pin">Keep app running</string>
-    <string name="source_wizard_readiness_notification_listener">Notification access</string>
+    <string name="source_wizard_readiness_notification_listener">Notification reading permission for xDrip+</string>
     <string name="source_wizard_readiness_bluetooth">Bluetooth</string>
     <string name="source_wizard_readiness_location">Location</string>
     <string name="source_wizard_readiness_fix">Fix</string>
@@ -38,7 +38,7 @@
     <string name="source_wizard_readiness_location_permission_steps_foreground">To use location for compatible connections, grant location access to xDrip+.\n\nIn the system settings that open:\n1. Tap “App permissions” (or “Permissions”).\n2. Select “Location”.\n3. Allow location access.\n4. Return to xDrip+ — the status will refresh automatically.\n\n“Allow” opens settings; you grant access there.</string>
     <string name="source_wizard_readiness_location_settings_unavailable">Could not open app settings. Open Android Settings → Apps → xDrip+ → Permissions → Location manually.</string>
     <string name="source_wizard_readiness_pin_help">xDrip+ cannot reliably detect whether it is locked in the recent-apps list. Open recent apps and lock xDrip+ using a padlock control, if your phone provides one. This is different from Android screen pinning.</string>
-    <string name="source_wizard_skip">Skip</string>
+    <string name="source_wizard_skip">Close</string>
     <string name="source_wizard_dexcom_models">Dexcom G6 and G7\nDirect Bluetooth</string>
     <string name="source_wizard_dexcom_direct_summary">[Dex]</string>
     <string name="source_wizard_dexcom_app_summary">From notifications · [Companion App]</string>
@@ -166,7 +166,7 @@
     <string name="source_wizard_permissions_title">Permissions</string>
     <string name="source_wizard_permissions_required">Required permissions</string>
     <string name="source_wizard_permissions_granted">Permission granted</string>
-    <string name="source_wizard_permissions_missing_detail">To continue setup and receive readings from %1$s, grant xDrip+ notification access.</string>
+    <string name="source_wizard_permissions_missing_detail">Allow xDrip+ to read notifications from %1$s. Separately, enable glucose notifications for %1$s in Android.</string>
     <string name="source_wizard_permissions_next_step_pending">The next connection-instruction step is pending. Your data source has not changed.</string>
     <string name="source_wizard_permissions_error_title">Unable to check permission</string>
     <string name="source_wizard_permissions_error_message">Cannot continue setup.</string>
@@ -181,9 +181,9 @@
     <string name="source_wizard_instructions_open_title">Check glucose readings</string>
     <string name="source_wizard_instructions_open_detail">Make sure the sensor is connected and %1$s displays the current glucose reading.</string>
     <string name="source_wizard_instructions_notify_title">Enable notifications</string>
-    <string name="source_wizard_instructions_notify_detail">Allow notifications from %1$s in Android settings.</string>
+    <string name="source_wizard_instructions_notify_detail">Enable notifications for %1$s in Android settings. This does not grant xDrip+ the separate permission to read them.</string>
     <string name="source_wizard_instructions_check_title">Check notifications</string>
-    <string name="source_wizard_instructions_check_detail">Check that %1$s shows glucose readings in the notification shade. Then return to xDrip+.</string>
+    <string name="source_wizard_instructions_check_detail">Make sure %1$s displays glucose readings in the notification shade. Separately, xDrip+ must have notification access.</string>
     <string name="source_wizard_finish_title">Finish setup</string>
     <string name="source_wizard_finish_message">Tap Done to switch xDrip+ to receiving glucose readings from %1$s notifications.</string>
     <string name="source_wizard_finish_done">Done</string>
@@ -280,4 +280,12 @@
     <string name="source_wizard_app_lock_help_step_5">5. Do not swipe the xDrip+ preview away. To clear other apps, use the general X-shaped clear button if available.</string>
     <string name="source_wizard_app_lock_help_note">Menus and gestures vary by phone. Some devices do not offer this feature. This is not Android screen pinning, and xDrip+ cannot automatically verify the lock.</string>
     <string name="source_wizard_app_lock_help_close">Got it</string>
+    <string name="source_wizard_diagnostic_title">Review diagnostic message</string>
+    <string name="source_wizard_diagnostic_copy">Copy</string>
+    <string name="source_wizard_diagnostic_share">Share…</string>
+    <string name="source_wizard_diagnostic_no_handler">No sharing app found. Text copied.</string>
+    <string name="source_wizard_diagnostic_copied">Diagnostic text copied</string>
+    <string name="source_wizard_tip_title">Where to find Source Wizard</string>
+    <string name="source_wizard_tip_dont_show">Don\'t show again</string>
+    <string name="source_wizard_tip_close">Close</string>
 </resources>

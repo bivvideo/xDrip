@@ -4,6 +4,13 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ActivityNotFoundException;
+import android.view.KeyEvent;
+import android.util.TypedValue;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.graphics.Color;
@@ -76,6 +83,9 @@ public class SourceWizard {
     private View wizardCurrentPage;
     private Runnable wizardPageCleanup;
     private int wizardPageIndex = -1;
+    private boolean wizardTransitioning;
+    private Item activeCompanionItem;
+    private String activeCompanionAppName;
     private static final long WIZARD_SLIDE_DURATION_MS = 210L;
     // Reserve the same scrollable distance covered by the stationary feather.
     private static final int WIZARD_BOTTOM_FEATHER_DP = 64;
@@ -741,11 +751,7 @@ public class SourceWizard {
         template.removeView(controls);
         wizardBackButton = controls.findViewById(R.id.instructionsBack);
         wizardNextButton = controls.findViewById(R.id.instructionsProceed);
-        wizardBackButton.setOnClickListener(v -> {
-            if (wizardPageBackAction != null && wizardPageBackAction.isEnabled()) {
-                wizardPageBackAction.performClick();
-            }
-        });
+        wizardBackButton.setOnClickListener(v -> performWizardBack());
         wizardNextButton.setOnClickListener(v -> {
             if (wizardPageNextAction != null && wizardPageNextAction.isEnabled()) {
                 wizardPageNextAction.performClick();
@@ -754,7 +760,25 @@ public class SourceWizard {
         wizardFooterHost.addView(controls, new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         host.setContentView(shell);
-        host.setCancelable(false);
+        host.setCancelable(true);
+        host.setCanceledOnTouchOutside(false);
+        host.setOnKeyListener((ignored, key, event) -> {
+            if (key != KeyEvent.KEYCODE_BACK) return false;
+            if (event.getAction() == KeyEvent.ACTION_UP && !event.isCanceled()) {
+                performWizardBack();
+            }
+            return true;
+        });
+        host.setOnCancelListener(ignored -> {
+            // Predictive-back fallback on Android versions without key dispatch.
+            final int step = wizardPageIndex;
+            final Item item = activeCompanionItem;
+            final String app = activeCompanionAppName;
+            if (step > 0 && item != null) {
+                activity.getWindow().getDecorView().post(() ->
+                        navigateBackAfterCancel(step, item, app));
+            } else sw = null;
+        });
         host.setOnDismissListener(ignored -> {
             if (wizardHostDialog != host) return;
             if (wizardPageCleanup != null) wizardPageCleanup.run();
@@ -771,6 +795,55 @@ public class SourceWizard {
         });
         wizardHostDialog = host;
         return host;
+    }
+
+    private void performWizardBack() {
+        if (wizardTransitioning) return;
+        if (wizardPageIndex <= 0) {
+            dismissDialog();
+            sw = null;
+        } else if (wizardPageBackAction != null && wizardPageBackAction.isEnabled()) {
+            wizardPageBackAction.performClick();
+        }
+    }
+
+    private void navigateBackAfterCancel(final int step, final Item item,
+            final String app) {
+        if (activity.isFinishing() || activity.isDestroyed()) return;
+        if (step == 1) getTreeDialog(null);
+        else if (step == 2) showNamedCompanionConfirmation(item);
+        else if (step == 3) showNamedCompanionPermissions(item, app);
+        else if (step == 4) showNamedCompanionInstructions(item, app);
+    }
+
+    // A visible Back arrow shares the same handler as the footer and Android Back.
+    private void decorateWizardBackHeader(final LinearLayout page, final int index) {
+        if (index <= 0 || page.getChildCount() == 0
+                || !(page.getChildAt(0) instanceof TextView)) return;
+        final TextView heading = (TextView) page.getChildAt(0);
+        final LinearLayout.LayoutParams old = (LinearLayout.LayoutParams) heading.getLayoutParams();
+        page.removeViewAt(0);
+        final FrameLayout wrapper = new FrameLayout(activity);
+        page.addView(wrapper, 0, old);
+        heading.setPadding(Math.round(convertDpToPixel(64)), heading.getPaddingTop(),
+                heading.getPaddingRight(), heading.getPaddingBottom());
+        wrapper.addView(heading, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        final TextView back = new TextView(activity);
+        back.setText("‹");
+        back.setTextSize(30);
+        back.setGravity(Gravity.CENTER);
+        back.setContentDescription(activity.getString(R.string.source_wizard_companion_back));
+        back.setFocusable(true);
+        back.setClickable(true);
+        final TypedValue attr = new TypedValue();
+        if (activity.getTheme().resolveAttribute(
+                android.R.attr.selectableItemBackgroundBorderless, attr, true)
+                && attr.resourceId != 0) back.setBackgroundResource(attr.resourceId);
+        back.setOnClickListener(v -> performWizardBack());
+        wrapper.addView(back, new FrameLayout.LayoutParams(
+                Math.round(convertDpToPixel(52)), Math.round(convertDpToPixel(52)),
+                Gravity.START | Gravity.CENTER_VERTICAL));
     }
 
     private void setWizardPageCleanup(final Runnable cleanup) {
@@ -837,6 +910,7 @@ public class SourceWizard {
             throw new IllegalStateException("Unsupported Source Wizard footer");
         }
         syncWizardFooter();
+        decorateWizardBackHeader(page, pageIndex);
         for (int i = 0; i < page.getChildCount(); i++) {
             final View child = page.getChildAt(i);
             if (child instanceof ScrollView || child instanceof RecyclerView) {
@@ -878,6 +952,7 @@ public class SourceWizard {
             }
         }
         if (outgoing == null) return;
+        wizardTransitioning = true;
         // Consume footer touches for 210ms, without mutating button enabled state.
         final View touchBlocker = new View(activity);
         touchBlocker.setClickable(true);
@@ -897,6 +972,7 @@ public class SourceWizard {
                     if (touchBlocker.getParent() == wizardFooterHost) {
                         wizardFooterHost.removeView(touchBlocker);
                     }
+                    wizardTransitioning = false;
                 }).start();
     }
 
@@ -996,6 +1072,8 @@ public class SourceWizard {
             appName = app;
             appSentenceName = app;
         }
+        activeCompanionItem = item;
+        activeCompanionAppName = appName;
         final Dialog panel = getWizardHostDialog();
         final View root = LayoutInflater.from(panel.getContext())
                 .inflate(R.layout.dialog_source_wizard_companion, null);
@@ -1339,29 +1417,12 @@ public class SourceWizard {
                 .inflate(R.layout.dialog_source_wizard_finish, null);
         ((TextView) content.findViewById(R.id.finishMessage))
                 .setText(activity.getString(R.string.source_wizard_finish_message, appName));
-        // Educational mini-drawer, no real source or navigation side effects.
-        final TextView miniGlyph = content.findViewById(R.id.finishMiniMenuGlyph);
-        final View miniRows = content.findViewById(R.id.finishMiniMenuRows);
-        final View miniHint = content.findViewById(R.id.finishMiniMenuHint);
-        final boolean[] miniOpen = {false};
-        content.findViewById(R.id.finishMiniMenuToggle).setOnClickListener(v -> {
-            miniHint.setVisibility(View.GONE);
-            miniOpen[0] = !miniOpen[0];
-            miniRows.setVisibility(miniOpen[0] ? View.VISIBLE : View.GONE);
-            miniGlyph.setText(miniOpen[0] ? "←" : "☰");
-        });
-        content.findViewById(R.id.finishMiniMenuMaster).setOnClickListener(v -> {
-            miniHint.setVisibility(View.GONE);
-            miniOpen[0] = false;
-            miniRows.setVisibility(View.GONE);
-            miniGlyph.setText("☰");
-        });
         final TextView done = content.findViewById(R.id.finishDone);
 
         content.findViewById(R.id.finishBack).setOnClickListener(v ->
                 showNamedCompanionInstructions(item, appName));
         done.setOnClickListener(v -> {
-            if (!finish.isShowing() || !done.isEnabled()) return;
+            if (!finish.isShowing() || !done.isEnabled() || wizardTransitioning) return;
             // Mandatory permission can be revoked while the wizard is open.
             if (!canAdvanceNamedCompanionRoute(finish, item, appName)) return;
             if (!item.isNamedCompanionRoute()) return;
@@ -1387,6 +1448,9 @@ public class SourceWizard {
             finish.dismiss();
             DexCollectionHelper.assistance(activity, selectedType);
             sw = null;
+            // Activation is complete before the optional educational dialog.
+            SourceWizardTip.queue();
+            if (previousType == selectedType) SourceWizardTip.maybeShow(activity);
 
             // The navigation drawer is built from the active collector. When a
             // named Companion route changes it, refresh the hosting Activity
@@ -1403,7 +1467,7 @@ public class SourceWizard {
         presentWizardPage(finish, content, 4);
     }
 
-    // Exceptional case only. "Report" is a local, no-network placeholder for now.
+    // UNKNOWN remains a strict blocker. Sharing is always user-initiated.
     private void showNotificationPermissionCheckError() {
         UserError.Log.e(TAG, "Source Wizard: notification permission check failed");
         final Dialog error = new Dialog(activity, android.R.style.Theme_Holo_Dialog);
@@ -1416,13 +1480,12 @@ public class SourceWizard {
         }
         content.setBackground(background);
         error.setContentView(content);
-        error.setCancelable(false);
+        error.setCancelable(true);
+        error.setCanceledOnTouchOutside(false);
         dialog = error;
-        content.findViewById(R.id.permissionsErrorReport).setOnClickListener(v -> {
-            // Prototype only: no report or personal data sent.
-            error.dismiss();
-            getTreeDialog(null);
-        });
+        error.setOnCancelListener(ignored -> getTreeDialog(null));
+        content.findViewById(R.id.permissionsErrorReport).setOnClickListener(v ->
+                showSourceWizardDiagnosticPreview());
         try {
             error.show();
             final Window window = error.getWindow();
@@ -1435,6 +1498,52 @@ public class SourceWizard {
         } catch (Exception e) {
             UserError.Log.e(TAG, "Cannot display notification permission check error: " + e);
             getTreeDialog(null);
+        }
+    }
+
+    // No readings, sensor UUID, package inventory or automatic upload.
+    private void showSourceWizardDiagnosticPreview() {
+        final String appName = activeCompanionAppName == null ? "Unknown"
+                : activeCompanionAppName;
+        final String route = activeCompanionItem != null
+                && activeCompanionItem.routeMetadata != null
+                ? activeCompanionItem.routeMetadata.routeId : "Unknown";
+        final String message = "xDrip+ Source Wizard diagnostic\n"
+                + "App version: " + com.eveningoutpost.dexdrip.BuildConfig.VERSION_NAME + "\n"
+                + "Android: " + Build.VERSION.RELEASE + "\n"
+                + "Step: Notification Listener permissions\n"
+                + "Result: UNKNOWN (permission check unavailable)\n"
+                + "Companion: " + appName + "\n"
+                + "Route: " + route + "\n";
+        new AlertDialog.Builder(activity, AlertDialog.THEME_HOLO_DARK)
+                .setTitle(R.string.source_wizard_diagnostic_title)
+                .setMessage(message)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setNeutralButton(R.string.source_wizard_diagnostic_copy,
+                        (d, which) -> copySourceWizardDiagnostic(message))
+                .setPositiveButton(R.string.source_wizard_diagnostic_share, (d, which) -> {
+                    try {
+                        final Intent send = new Intent(Intent.ACTION_SEND);
+                        send.setType("text/plain");
+                        send.putExtra(Intent.EXTRA_SUBJECT, "xDrip+ Source Wizard diagnostic");
+                        send.putExtra(Intent.EXTRA_TEXT, message);
+                        activity.startActivity(Intent.createChooser(send,
+                                activity.getString(R.string.source_wizard_diagnostic_share)));
+                    } catch (ActivityNotFoundException | SecurityException e) {
+                        copySourceWizardDiagnostic(message);
+                        Toast.makeText(activity, R.string.source_wizard_diagnostic_no_handler,
+                                Toast.LENGTH_LONG).show();
+                    }
+                }).show();
+    }
+
+    private void copySourceWizardDiagnostic(final String message) {
+        final ClipboardManager clipboard = (ClipboardManager)
+                activity.getSystemService(Context.CLIPBOARD_SERVICE);
+        if (clipboard != null) {
+            clipboard.setPrimaryClip(ClipData.newPlainText("xDrip+ diagnostic", message));
+            Toast.makeText(activity, R.string.source_wizard_diagnostic_copied,
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -2402,6 +2511,8 @@ public class SourceWizard {
             sw = null; // No new preference: same effect as the old outside tap.
         }
 
+        private boolean openingDeepLink;
+
         private void rebuild() {
             items.clear();
             for (Tree<Item> child : root.getChildren()) insertVisible(child, 0, items.size());
@@ -2416,12 +2527,17 @@ public class SourceWizard {
                     parent != null && parent != root; parent = parent.getParent()) {
                 parents.add(0, parent);
             }
-            for (Tree<Item> parent : parents) {
-                if (indexOf(parent) < 0) return;
-                if (!expandedBranches.contains(parent)) toggle(parent);
+            openingDeepLink = true;
+            try {
+                for (Tree<Item> parent : parents) {
+                    if (indexOf(parent) < 0) return;
+                    if (!expandedBranches.contains(parent)) toggle(parent);
+                }
+                if (indexOf(target) < 0) return;
+                if (!expandedBranches.contains(target)) toggle(target);
+            } finally {
+                openingDeepLink = false;
             }
-            if (indexOf(target) < 0) return;
-            if (!expandedBranches.contains(target)) toggle(target);
             // Keep the destination stack near the top of the viewport, rather
             // than merely making its row visible at the bottom of the list.
             // CareLink is nested under Followers: show its parent heading too.
@@ -2486,6 +2602,26 @@ public class SourceWizard {
             items.set(indexOf(node), node.data);
             refreshVisibleRow(oldLast);
             if (!items.isEmpty()) refreshVisibleRow(items.get(items.size() - 1));
+            if (!openingDeepLink && expandedBranches.contains(node)
+                    && wizardList != null) {
+                final int childPosition = indexOf(node) + 1;
+                wizardList.post(() -> {
+                    if (listModel != this || wizardList == null || childPosition < 0
+                            || childPosition >= items.size()) return;
+                    final RecyclerView.LayoutManager manager = wizardList.getLayoutManager();
+                    if (manager == null) return;
+                    final View firstChild = manager.findViewByPosition(childPosition);
+                    if (firstChild == null) {
+                        wizardList.smoothScrollToPosition(childPosition);
+                        return;
+                    }
+                    final int bottom = wizardList.getHeight()
+                            - Math.round(convertDpToPixel(WIZARD_BOTTOM_FEATHER_DP));
+                    final int overflow = firstChild.getBottom() - bottom;
+                    if (overflow > 0) wizardList.smoothScrollBy(0,
+                            overflow + Math.round(convertDpToPixel(8)));
+                });
+            }
         }
 
         private boolean isAncestor(Tree<Item> ancestor, Tree<Item> descendant) {
