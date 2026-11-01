@@ -37,6 +37,8 @@ import androidx.annotation.StringRes;
 import androidx.annotation.DrawableRes;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityManager;
+import android.view.accessibility.AccessibilityNodeInfo;
 import androidx.databinding.BindingAdapter;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -669,6 +671,36 @@ public class SourceWizard {
         view.setBackground(item.getPlateBackground());
     }
 
+
+    // Present a clickable catalog row as ONE TalkBack target. Its visible
+    // labels/icons remain visual-only for interactive rows. Informational rows
+    // keep normal per-paragraph reading rather than becoming fake buttons.
+    @BindingAdapter("sourceWizardAccessibilityDescription")
+    public static void bindSourceWizardAccessibilityDescription(View view, String description) {
+        final boolean interactive = description != null && !description.isEmpty();
+        view.setContentDescription(description);
+        view.setFocusable(interactive);
+        view.setImportantForAccessibility(interactive
+                ? View.IMPORTANT_FOR_ACCESSIBILITY_YES
+                : View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        if (view instanceof ViewGroup) {
+            final ViewGroup row = (ViewGroup) view;
+            for (int i = 0; i < row.getChildCount(); i++) {
+                row.getChildAt(i).setImportantForAccessibility(interactive
+                        ? View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+                        : View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+            }
+        }
+        view.setAccessibilityDelegate(interactive ? new View.AccessibilityDelegate() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(View host,
+                    AccessibilityNodeInfo info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                info.setClassName("android.widget.Button");
+            }
+        } : null);
+    }
+
     public SourceWizard(Activity activity) {
         this.activity = activity;
     }
@@ -889,6 +921,25 @@ public class SourceWizard {
                 screenHeight - Math.round(convertDpToPixel(80)));
     }
 
+
+    // Only shift screen-reader focus once the incoming page is visible. The
+    // outgoing page is hidden from accessibility during the existing slide.
+    private void focusWizardPageForTalkBack(final View page) {
+        final AccessibilityManager manager = (AccessibilityManager)
+                activity.getSystemService(Context.ACCESSIBILITY_SERVICE);
+        if (manager == null || !manager.isTouchExplorationEnabled()
+                || wizardCurrentPage != page || !page.isAttachedToWindow()) return;
+        if (!(page instanceof ViewGroup)) return;
+        View heading = ((ViewGroup) page).getChildAt(0);
+        if (heading instanceof ViewGroup && ((ViewGroup) heading).getChildCount() > 0) {
+            heading = ((ViewGroup) heading).getChildAt(0);
+        }
+        if (heading != null) {
+            heading.performAccessibilityAction(
+                    AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null);
+        }
+    }
+
     // The footer itself is never animated. Both header and body travel through
     // the clipping page viewport, so the Dialog never scales or changes height.
     private void presentWizardPage(final Dialog host, final View view, final int pageIndex) {
@@ -951,7 +1002,12 @@ public class SourceWizard {
                         wizardWindowHeight());
             }
         }
-        if (outgoing == null) return;
+        if (outgoing == null) {
+            page.post(() -> focusWizardPageForTalkBack(page));
+            return;
+        }
+        outgoing.setImportantForAccessibility(
+                View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
         wizardTransitioning = true;
         // Consume footer touches for 210ms, without mutating button enabled state.
         final View touchBlocker = new View(activity);
@@ -973,6 +1029,7 @@ public class SourceWizard {
                         wizardFooterHost.removeView(touchBlocker);
                     }
                     wizardTransitioning = false;
+                    focusWizardPageForTalkBack(page);
                 }).start();
     }
 
@@ -1733,6 +1790,7 @@ public class SourceWizard {
                 R.drawable.source_wizard_readiness_unknown,
                 R.string.source_wizard_readiness_status_unknown, false, false, last);
         final View row = (View) icon.getParent();
+        final TextView labelView = row.findViewById(R.id.readinessRowLabel);
         final TextView fix = row.findViewById(R.id.readinessRowFix);
         final TextView info = row.findViewById(R.id.readinessRowInfo);
         fix.setOnClickListener(v -> {
@@ -1768,7 +1826,8 @@ public class SourceWizard {
                     break;
             }
             icon.setImageResource(drawable);
-            icon.setContentDescription(activity.getString(label) + ": " + activity.getString(description));
+            labelView.setContentDescription(activity.getString(label) + ": "
+                    + activity.getString(description));
             fix.setVisibility(result.state == SourceWizardReadiness.State.MISSING && result.canFix
                     ? View.VISIBLE : View.GONE);
             info.setVisibility(result.state == SourceWizardReadiness.State.UNKNOWN
@@ -1782,7 +1841,7 @@ public class SourceWizard {
             info.setVisibility(View.GONE);
             if (animate) {
                 icon.setImageResource(R.drawable.source_wizard_readiness_checking);
-                icon.setContentDescription(
+                labelView.setContentDescription(
                         activity.getString(label) + ": "
                                 + activity.getString(R.string.source_wizard_readiness_state_checking));
                 icon.startAnimation(AnimationUtils.loadAnimation(
@@ -1905,16 +1964,23 @@ public class SourceWizard {
             boolean fix, boolean info, boolean last) {
         final View row = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.source_wizard_readiness_row, parent, false);
-        ((TextView) row.findViewById(R.id.readinessRowLabel)).setText(label);
+        final TextView labelView = row.findViewById(R.id.readinessRowLabel);
+        labelView.setText(label);
+        labelView.setContentDescription(activity.getString(label) + ": "
+                + activity.getString(statusDescription));
         final ImageView icon = row.findViewById(R.id.readinessRowStatus);
         icon.setImageResource(statusIcon);
-        icon.setContentDescription(activity.getString(statusDescription));
+        icon.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
 
         final TextView fixAction = row.findViewById(R.id.readinessRowFix);
+        fixAction.setContentDescription(activity.getString(R.string.source_wizard_readiness_fix)
+                + ": " + activity.getString(label));
         fixAction.setVisibility(fix ? View.VISIBLE : View.GONE);
         if (fix) fixAction.setOnClickListener(v -> showReadinessPreviewNotice());
 
         final TextView infoAction = row.findViewById(R.id.readinessRowInfo);
+        infoAction.setContentDescription(activity.getString(R.string.source_wizard_readiness_info)
+                + ": " + activity.getString(label));
         infoAction.setVisibility(info ? View.VISIBLE : View.GONE);
         if (info) infoAction.setOnClickListener(v -> showReadinessPreviewNotice());
 
@@ -2241,6 +2307,26 @@ public class SourceWizard {
                     ? activity.getString(R.string.source_wizard_readiness_summary_accessibility,
                             readinessReady, readinessMissing, readinessUnknown)
                     : "";
+        }
+
+        // One localized utterance per actionable catalog row, including the
+        // expanded/collapsed state. No redundant icon/chevron announcements.
+        public String getAccessibilityDescription() {
+            if (section || informationText) return null;
+            final StringBuilder value = new StringBuilder(getDisplayTitle());
+            final String route = getDisplayRoute();
+            if (!route.isEmpty()) value.append(", ").append(route);
+            final String summaryText = getDisplaySummary();
+            if (!summaryText.isEmpty()) value.append(", ").append(summaryText);
+            if (readinessAction && readinessSummaryAvailable) {
+                value.append(", ").append(getReadinessSummaryDescription());
+            }
+            if (isGroup()) {
+                value.append(", ").append(activity.getString(isExpanded()
+                        ? R.string.source_wizard_a11y_expanded
+                        : R.string.source_wizard_a11y_collapsed));
+            }
+            return value.toString();
         }
 
         Item withCallToAction() {

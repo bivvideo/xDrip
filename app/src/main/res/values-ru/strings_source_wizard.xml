@@ -287,4 +287,6 @@
     <string name="source_wizard_tip_reopen">Показать памятку ещё раз</string>
     <string name="source_wizard_debug_error_action">Тест ошибки разрешений (отладка)</string>
     <string name="source_wizard_debug_error_explanation">ТЕСТОВЫЙ ЭКРАН. Разрешения Android не менялись. Реального сбоя проверки разрешений не было.</string>
+    <string name="source_wizard_a11y_expanded">Развёрнуто</string>
+    <string name="source_wizard_a11y_collapsed">Свёрнуто</string>
 </resources>

@@ -291,4 +291,6 @@
     <string name="source_wizard_tip_reopen">Show the wizard tip again</string>
     <string name="source_wizard_debug_error_action">Test permission error (debug only)</string>
     <string name="source_wizard_debug_error_explanation">TEST ONLY. Android permissions have not changed. No real permission-check failure occurred.</string>
+    <string name="source_wizard_a11y_expanded">Expanded</string>
+    <string name="source_wizard_a11y_collapsed">Collapsed</string>
 </resources>

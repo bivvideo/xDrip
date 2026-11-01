@@ -29,7 +29,8 @@
             android:textSize="14sp"
             android:letterSpacing="0.045"
             android:textColor="?android:attr/textColorSecondary"
-            android:visibility="@{item.section ? View.VISIBLE : View.GONE}" />
+            android:visibility="@{item.section ? View.VISIBLE : View.GONE}"
+            android:accessibilityHeading="true" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -77,6 +78,7 @@
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
                 android:foreground="?android:attr/selectableItemBackground"
+                app:sourceWizardAccessibilityDescription="@{item.accessibilityDescription}"
                 android:onClick="@{item::onClick}">
 
             <!-- One 48dp icon slot for every regular leaf. A blank title or
