@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
-import android.content.pm.ApplicationInfo;
 import android.os.Build;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -46,9 +45,7 @@ import com.eveningoutpost.dexdrip.xdrip;
 import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Collections;
 import java.util.Set;
-import java.util.TreeSet;
 
 import me.tatarka.bindingcollectionadapter2.ItemBinding;
 
@@ -955,6 +952,8 @@ public class SourceWizard {
             builder.setMessage(activity.getString(R.string.set_data_source_to, item.getConfirmationName()));
             builder.setPositiveButton(R.string.yes, (ignored, which) -> {
                 DexCollectionType.setDexCollectionType(item.getCollectionType());
+                // An explicit generic or legacy route supersedes any named Companion preset.
+                SourceWizardCompanionSelection.clear();
                 dismissDialog();
                 DexCollectionHelper.assistance(activity, item.getCollectionType());
                 sw = null;
@@ -1242,34 +1241,14 @@ public class SourceWizard {
             showNamedCompanionPermissions(item, appName);
         });
         final TextView continueButton = content.findViewById(R.id.instructionsProceed);
-        final boolean[] checking = {false};
+        // SW-024: only the selected app is checked elsewhere. Installing other
+        // Companion apps does not imply that they generate conflicting readings.
         continueButton.setOnClickListener(v -> {
-            if (!instructions.isShowing() || checking[0]
+            if (!instructions.isShowing() || !continueButton.isEnabled()
+                    || !isCurrentWizardPage(content)
                     || !canAdvanceNamedCompanionRoute(instructions, item, appName)) return;
-            checking[0] = true;
             continueButton.setEnabled(false);
-            continueButton.setAlpha(0.65f);
-            // Keep "Continue" unchanged while the package scan runs: replacing
-            // it with longer text briefly pushes the fixed "Back" button left.
-            syncWizardFooter();
-            // PackageManager queries run off the UI thread. No collector change.
-            new Thread(() -> {
-                final List<String> otherApps = findOtherInstalledCompanionApps(item);
-                activity.runOnUiThread(() -> {
-                    if (!isCurrentWizardPage(content) || dialog != instructions
-                            || activity.isFinishing() || activity.isDestroyed()) return;
-                    checking[0] = false;
-                    continueButton.setEnabled(true);
-                    continueButton.setAlpha(1f);
-                    syncWizardFooter();
-                    if (!canAdvanceNamedCompanionRoute(instructions, item, appName)) return;
-                    if (otherApps.isEmpty()) {
-                        showNamedCompanionFinish(item, appName, otherApps);
-                    } else {
-                        showOtherCompanionWarning(item, appName, otherApps);
-                    }
-                });
-            }, "source-wizard-companion-check").start();
+            showNamedCompanionFinish(item, appName);
         });
 
         presentWizardPage(instructions, content, 3);
@@ -1336,109 +1315,6 @@ public class SourceWizard {
         parent.addView(row);
     }
 
-    // Advisory scan from the existing named UiBased wizard catalog.
-    // Installed does not mean running; no collector behavior is modified.
-    private void collectNamedCompanionPackages(final Tree<Item> node,
-            final Set<String> candidates) {
-        if (node == null) return;
-        final Item route = node.data;
-        if (route != null && route.type == DexCollectionType.UiBased
-                && route.companionPackages != null) {
-            Collections.addAll(candidates, route.companionPackages);
-        }
-        for (Tree<Item> child : node.getChildren()) {
-            collectNamedCompanionPackages(child, candidates);
-        }
-    }
-
-    private List<String> findOtherInstalledCompanionApps(final Item selected) {
-        final android.content.Context context = xdrip.getAppContext();
-        if (context == null) return Collections.emptyList();
-        final PackageManager manager = context.getPackageManager();
-        if (manager == null) return Collections.emptyList();
-
-        final Set<String> candidates = new HashSet<>();
-        collectNamedCompanionPackages(root, candidates);
-        // Each selected route already lists its known regional package variants.
-        if (selected.companionPackages != null) {
-            for (String chosen : selected.companionPackages) candidates.remove(chosen);
-        }
-        // Labels are actual installed app labels, not hard-coded package descriptions.
-        final Set<String> foundNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-        for (String packageName : candidates) {
-            try {
-                final ApplicationInfo app = manager.getApplicationInfo(packageName, 0);
-                final CharSequence label = manager.getApplicationLabel(app);
-                final String name = label == null || label.toString().trim().isEmpty()
-                        ? packageName : label.toString().trim();
-                foundNames.add(name);
-            } catch (PackageManager.NameNotFoundException ignored) {
-                // Not installed or not visible; no assertion about active notifications.
-            } catch (SecurityException | IllegalArgumentException e) {
-                UserError.Log.e(TAG, "Cannot inspect Companion package "
-                        + packageName + ": " + e);
-            }
-        }
-        return new ArrayList<>(foundNames);
-    }
-
-    // Optional warning, not a readiness failure and not permission to switch sources.
-    private void showOtherCompanionWarning(final Item item, final String appName,
-            final List<String> otherApps) {
-        if (otherApps == null || otherApps.isEmpty()) {
-            showNamedCompanionFinish(item, appName, Collections.emptyList());
-            return;
-        }
-        final Dialog warning = getWizardHostDialog();
-        final View content = LayoutInflater.from(warning.getContext())
-                .inflate(R.layout.dialog_source_wizard_companion_warning, null);
-        final LinearLayout apps = content.findViewById(R.id.companionWarningApps);
-        final LayoutInflater inflater = LayoutInflater.from(content.getContext());
-        // List selected app only when installed; this does not prove active readings.
-        if (inspectCompanionPackages(item.companionPackages) == CompanionInstallState.INSTALLED) {
-            final TextView selectedRow = (TextView) inflater.inflate(
-                    android.R.layout.simple_list_item_1, apps, false);
-            selectedRow.setText(appName + "  ·  "
-                    + activity.getString(R.string.source_wizard_companion_warning_selected));
-            selectedRow.setTextSize(15f);
-            selectedRow.setMinHeight(Math.round(convertDpToPixel(48)));
-            selectedRow.setPadding(Math.round(convertDpToPixel(14)), 0,
-                    Math.round(convertDpToPixel(14)), 0);
-            apps.addView(selectedRow);
-            final View divider = new View(content.getContext());
-            divider.setBackgroundResource(R.color.source_wizard_row_divider);
-            apps.addView(divider, new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, Math.round(convertDpToPixel(1))));
-        }
-        for (int i = 0; i < otherApps.size(); i++) {
-            final TextView label = (TextView) inflater.inflate(
-                    android.R.layout.simple_list_item_1, apps, false);
-            label.setText(otherApps.get(i));
-            label.setTextSize(15f);
-            label.setMinHeight(Math.round(convertDpToPixel(44)));
-            label.setPadding(Math.round(convertDpToPixel(14)), 0,
-                    Math.round(convertDpToPixel(14)), 0);
-            apps.addView(label);
-            if (i + 1 < otherApps.size()) {
-                final View divider = new View(content.getContext());
-                divider.setBackgroundResource(R.color.source_wizard_row_divider);
-                apps.addView(divider, new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        Math.round(convertDpToPixel(1))));
-            }
-        }
-        content.findViewById(R.id.companionWarningBack).setOnClickListener(v -> {
-            showNamedCompanionInstructions(item, appName);
-        });
-        content.findViewById(R.id.companionWarningProceed).setOnClickListener(v -> {
-            if (!warning.isShowing()
-                    || !canAdvanceNamedCompanionRoute(warning, item, appName)) return;
-            showNamedCompanionFinish(item, appName, otherApps);
-        });
-
-        presentWizardPage(warning, content, 4);
-    }
-
     // Reuse the same mandatory Notification Listener check at the two forward
     // boundaries. A missing/unknown right never silently switches the source.
     private boolean canAdvanceNamedCompanionRoute(final Dialog current, final Item item,
@@ -1457,8 +1333,7 @@ public class SourceWizard {
 
     // SW-011: only an explicit Done can alter the current data source.
     // No extra "Are you sure?" and no requirement for a fresh glucose reading.
-    private void showNamedCompanionFinish(final Item item, final String appName,
-            final List<String> otherApps) {
+    private void showNamedCompanionFinish(final Item item, final String appName) {
         final Dialog finish = getWizardHostDialog();
         final View content = LayoutInflater.from(finish.getContext())
                 .inflate(R.layout.dialog_source_wizard_finish, null);
@@ -1483,13 +1358,8 @@ public class SourceWizard {
         });
         final TextView done = content.findViewById(R.id.finishDone);
 
-        content.findViewById(R.id.finishBack).setOnClickListener(v -> {
-            if (otherApps.isEmpty()) {
-                showNamedCompanionInstructions(item, appName);
-            } else {
-                showOtherCompanionWarning(item, appName, otherApps);
-            }
-        });
+        content.findViewById(R.id.finishBack).setOnClickListener(v ->
+                showNamedCompanionInstructions(item, appName));
         done.setOnClickListener(v -> {
             if (!finish.isShowing() || !done.isEnabled()) return;
             // Mandatory permission can be revoked while the wizard is open.
@@ -1503,6 +1373,17 @@ public class SourceWizard {
             final DexCollectionType previousType = DexCollectionType.getDexCollectionType();
             final DexCollectionType selectedType = item.getCollectionType();
             DexCollectionType.setDexCollectionType(selectedType);
+            // SW-023: a single versioned preference snapshot, only after Done and
+            // the mandatory Notification Listener check. Never filter readings here.
+            final SourceRoute selectedRoute = item.routeMetadata;
+            if (selectedRoute != null) {
+                SourceWizardCompanionSelection.save(selectedRoute.routeId,
+                        selectedRoute.appId, selectedRoute.appDisplayName,
+                        item.companionPackages);
+            } else {
+                SourceWizardCompanionSelection.clear();
+                UserError.Log.e(TAG, "Named Companion route has no metadata");
+            }
             finish.dismiss();
             DexCollectionHelper.assistance(activity, selectedType);
             sw = null;
@@ -1519,7 +1400,7 @@ public class SourceWizard {
             }
         });
 
-        presentWizardPage(finish, content, 5);
+        presentWizardPage(finish, content, 4);
     }
 
     // Exceptional case only. "Report" is a local, no-network placeholder for now.

@@ -110,6 +110,7 @@ import com.eveningoutpost.dexdrip.utilitymodels.Inevitable;
 import com.eveningoutpost.dexdrip.utilitymodels.Intents;
 import com.eveningoutpost.dexdrip.utilitymodels.Pref;
 import com.eveningoutpost.dexdrip.utilitymodels.ShotStateStore;
+import com.eveningoutpost.dexdrip.utilitymodels.SourceWizardCompanionSelection;
 import com.eveningoutpost.dexdrip.utilitymodels.SpeechUtil;
 import com.eveningoutpost.dexdrip.utilitymodels.UpdateActivity;
 import com.eveningoutpost.dexdrip.utilitymodels.WholeHouse;
@@ -2676,6 +2677,10 @@ public class Preferences extends BasePreferenceActivity implements SearchPrefere
                     //} else {
                     //    CollectionServiceStarter.restartCollectionService(preference.getContext());
                     }
+                    // Only a confirmed user selection in Settings invalidates
+                    // the named route, even when UiBased is selected again.
+                    // Programmatic DexCollectionType changes do not hit this listener.
+                    SourceWizardCompanionSelection.clear();
                     CollectionServiceStarter.restartCollectionServiceBackground();
 
                     // This generically refreshes the fragment which may well nullify some of the ui logic above as it does a complete rebuild
