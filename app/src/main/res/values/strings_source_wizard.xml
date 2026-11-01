@@ -4,11 +4,11 @@
     <string name="source_wizard_readiness_title">Readiness check</string>
     <string name="source_wizard_readiness_placeholder">Background operation recommendations and preliminary permission checks will appear here. These checks are not connected yet.</string>
     <string name="source_wizard_readiness_close">Close</string>
-    <string name="source_wizard_readiness_section_stability">Background operation stability</string>
+    <string name="source_wizard_readiness_section_stability">Background reliability</string>
     <string name="source_wizard_readiness_section_access">Recommended permissions</string>
     <string name="source_wizard_readiness_battery">Disable battery optimization</string>
     <string name="source_wizard_readiness_autostart">Autostart</string>
-    <string name="source_wizard_readiness_pin">Keep app running</string>
+    <string name="source_wizard_readiness_pin">Lock app in Recents</string>
     <string name="source_wizard_readiness_notification_listener">Notification access</string>
     <string name="source_wizard_readiness_bluetooth">Bluetooth</string>
     <string name="source_wizard_readiness_location">Location</string>
@@ -32,7 +32,7 @@
     <string name="source_wizard_readiness_battery_help">Could not verify the Android battery optimization exemption for xDrip+. Open the app battery settings and check restrictions manually. An exemption does not cover all manufacturer-specific background limits.</string>
     <string name="source_wizard_readiness_autostart_help">Autostart is managed by some phone manufacturers, and Android has no universal way to read its state. xDrip+ tries a read-only check on supported Xiaomi systems. If the status is unknown, enable autostart manually in system settings. On Xiaomi, look under Settings → Apps → Permissions → Autostart (names may vary).</string>
     <string name="source_wizard_readiness_bluetooth_help">Could not check Bluetooth. Open Android Bluetooth settings and turn it on manually. This is a system switch, not permission to change it silently. Individual sensor routes can require additional permissions.</string>
-    <string name="source_wizard_readiness_location_help">Location readiness checks xDrip+ location access (including background access where the existing Bluetooth helper requires it) and the system Location switch. If app permission is missing, Fix opens Android app settings: Permissions → Location; choose Allow all the time if available and needed. If the system Location switch is off, Fix opens Location settings. Some Bluetooth routes do not require location; this general check never blocks source selection.</string>
+    <string name="source_wizard_readiness_location_help">Location readiness checks xDrip+ location access (including background access when a Bluetooth connection requires it) and the system Location switch. If app permission is missing, Fix opens Android app settings: Permissions → Location; choose Allow all the time if available and needed. If the system Location switch is off, Fix opens Location settings. Some Bluetooth routes do not require location; this general check never blocks source selection.</string>
     <string name="source_wizard_readiness_allow">Allow</string>
     <string name="source_wizard_readiness_location_permission_steps_background">To receive data in the background, xDrip+ needs location access.\n\nIn the system settings that open:\n1. Tap “App permissions” (or “Permissions”).\n2. Select “Location”.\n3. Choose “Allow all the time” (or the equivalent option).\n4. Return to xDrip+ — the status will refresh automatically.\n\nMenu names vary between phones. “Allow” opens settings; you grant access there.</string>
     <string name="source_wizard_readiness_location_permission_steps_foreground">To use location for compatible connections, grant location access to xDrip+.\n\nIn the system settings that open:\n1. Tap “App permissions” (or “Permissions”).\n2. Select “Location”.\n3. Allow location access.\n4. Return to xDrip+ — the status will refresh automatically.\n\n“Allow” opens settings; you grant access there.</string>
@@ -76,16 +76,16 @@
     <string name="source_wizard_other_notifications_details">Read glucose from its notifications</string>
     <string name="source_wizard_caresens_summary">CareSens Air and compatible integrations</string>
     <string name="source_wizard_wixel_section">Wixel / xBridge</string>
-    <string name="source_wizard_followers_section">Sync and follower services</string>
+    <string name="source_wizard_followers_section">Sync and cloud sources</string>
     <string name="source_wizard_other_systems_section">Other devices and apps</string>
     <string name="source_wizard_sensors_section">Sensors and systems</string>
     <string name="source_wizard_apps_section">Connection via an app</string>
     <string name="source_wizard_bridges_section">Adapters and bridges</string>
     <string name="source_wizard_sync_section">Sync and cloud sources</string>
     <string name="source_wizard_followers_group">Followers</string>
-    <string name="source_wizard_companion_examples">iCAN, Ottai, CamAPS FX and more</string>
+    <string name="source_wizard_companion_examples">iCan, Ottai, CamAPS FX and more</string>
     <string name="source_wizard_title">Source setup wizard</string>
-    <string name="source_wizard_subtitle">Choose your sensor or app</string>
+    <string name="source_wizard_subtitle">Choose a device and connection method.</string>
     <string name="source_wizard_microtech_group">MicroTech</string>
     <string name="source_wizard_microtech_examples">AiDEX, LinX, GlucoRx, VitaTok</string>
     <string name="source_wizard_microtech_glucorx">GlucoRx AiDEX\n→ AiDEX App</string>
@@ -149,7 +149,7 @@
     <string name="source_wizard_follower_nightscout_body">xDrip+ downloads readings from your Nightscout server. You need a working Nightscout address and permission to read its data. Glucose readings must already be uploaded to Nightscout.</string>
     <string name="source_wizard_follower_web_body">xDrip+ reads glucose data from a supported web service. Choose the provider and sign in as needed in the source settings. Available integrations depend on the service.</string>
     <string name="source_wizard_follower_xdrip_body">This phone receives glucose readings from another xDrip+ installation via xDrip Sync. First configure data sharing on the sending phone, then connect this follower.</string>
-    <string name="source_wizard_companion_title">Connection setup</string>
+    <string name="source_wizard_companion_title">Confirm selection</string>
     <string name="source_wizard_companion_intro">You selected the %1$s sensor with readings provided by %2$s.</string>
     <string name="source_wizard_companion_setup_explanation">To receive glucose readings in xDrip+, %1$s must be installed and receiving data from the sensor.</string>
     <string name="source_wizard_companion_question">Continue setup with these settings?</string>
@@ -201,7 +201,7 @@
     <string name="source_wizard_instructions_units_title">Match measurement units</string>
     <string name="source_wizard_instructions_units_detail">Set the units in %1$s to match those in xDrip+.</string>
     <string name="source_wizard_instructions_units_set">Current</string>
-    <string name="source_wizard_instructions_units_choose">Set this value</string>
+    <string name="source_wizard_instructions_units_choose">Set to</string>
     <string name="source_wizard_instructions_units_mgdl">mg/dL</string>
     <string name="source_wizard_instructions_units_mmol">mmol/L</string>
     <string name="source_wizard_finish_mini_tap">↰  Tap the menu icon</string>
@@ -266,12 +266,12 @@
     <string name="source_wizard_medtronic_route_guardian_app">→ Guardian App</string>
     <string name="source_wizard_medtronic_route_minimed_mobile">→ MiniMed Mobile</string>
     <string name="source_wizard_medtronic_route_simplera_app">→ Simplera App</string>
-    <string name="source_wizard_companion_pump_intro">You selected the %1$s insulin pump and will receive glucose data through the %2$s app.</string>
+    <string name="source_wizard_companion_pump_intro">You selected the %1$s insulin pump to receive glucose readings through %2$s.</string>
     <string name="source_wizard_companion_pump_setup_explanation">To receive data in xDrip+, %1$s must be installed and receiving readings from the pump.</string>
     <string name="source_wizard_instructions_open_pump_detail">Make sure the pump sends readings to %1$s and the app shows the current glucose level.</string>
     <!-- EN DRAFT — final translation review before PR. -->
-    <string name="source_wizard_readiness_summary_accessibility">Readiness check: %1$d ready, %2$d missing, %3$d unknown.</string>
-    <string name="source_wizard_app_lock_help_title">Keep xDrip+ running</string>
+    <string name="source_wizard_readiness_summary_accessibility">Readiness check: %1$d ready, %2$d not ready, %3$d could not be verified.</string>
+    <string name="source_wizard_app_lock_help_title">Lock xDrip+ in Recents</string>
     <string name="source_wizard_app_lock_help_intro">On some phones, you can lock xDrip+ in Recents so that clearing recent apps does not remove it.</string>
     <string name="source_wizard_app_lock_help_step_1">1. Open recent apps using the square navigation button. If you use gestures, swipe up from the bottom and hold briefly.</string>
     <string name="source_wizard_app_lock_help_step_2">2. Find the xDrip+ preview among your recent apps.</string>
