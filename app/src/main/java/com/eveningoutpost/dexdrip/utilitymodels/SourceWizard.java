@@ -109,15 +109,6 @@ public class SourceWizard {
         readinessItem = new Item(gs(R.string.source_wizard_readiness_title), (String) null, 0)
                 .withReadinessAction();
         root.addChild(readinessItem);
-        // Optional wizard help is reachable even when "Don't show again" is set.
-        root.addChild(new Item(gs(R.string.source_wizard_tip_reopen),
-                (String) null, 0).withTipAction());
-        // Only in debuggable builds: open the REAL error dialog in simulation mode.
-        // Never change Android permissions or a DexCollectionType to test this UI.
-        if (com.eveningoutpost.dexdrip.BuildConfig.DEBUG) {
-            root.addChild(new Item(gs(R.string.source_wizard_debug_error_action),
-                    (String) null, 0).withDebugErrorAction());
-        }
         root.addChild(new Item(gs(R.string.source_wizard_sensors_section), true));
 
         // SW-020: device-first Dexcom. No G7 15 Day and no Companion Bluetooth.
@@ -1481,11 +1472,7 @@ public class SourceWizard {
 
     // UNKNOWN remains a strict blocker. Sharing is always user-initiated.
     private void showNotificationPermissionCheckError() {
-        showNotificationPermissionCheckError(false);
-    }
-
-    private void showNotificationPermissionCheckError(final boolean simulated) {
-        if (!simulated) UserError.Log.e(TAG, "Source Wizard: notification permission check failed");
+        UserError.Log.e(TAG, "Source Wizard: notification permission check failed");
         final Dialog error = new Dialog(activity, android.R.style.Theme_Holo_Dialog);
         error.requestWindowFeature(Window.FEATURE_NO_TITLE);
         final View content = LayoutInflater.from(error.getContext())
@@ -1495,17 +1482,13 @@ public class SourceWizard {
             ((GradientDrawable) background.mutate()).setCornerRadius(convertDpToPixel(6));
         }
         content.setBackground(background);
-        if (simulated) {
-            ((TextView) content.findViewById(R.id.permissionsErrorMessage))
-                    .setText(R.string.source_wizard_debug_error_explanation);
-        }
         error.setContentView(content);
         error.setCancelable(true);
         error.setCanceledOnTouchOutside(false);
         dialog = error;
         error.setOnCancelListener(ignored -> getTreeDialog(null));
         content.findViewById(R.id.permissionsErrorReport).setOnClickListener(v ->
-                showSourceWizardDiagnosticPreview(simulated));
+                showSourceWizardDiagnosticPreview());
         try {
             error.show();
             final Window window = error.getWindow();
@@ -1522,7 +1505,7 @@ public class SourceWizard {
     }
 
     // No readings, sensor UUID, package inventory or automatic upload.
-    private void showSourceWizardDiagnosticPreview(final boolean simulated) {
+    private void showSourceWizardDiagnosticPreview() {
         final String appName = activeCompanionAppName == null ? "Unknown"
                 : activeCompanionAppName;
         final String route = activeCompanionItem != null
@@ -1532,9 +1515,7 @@ public class SourceWizard {
                 + "App version: " + com.eveningoutpost.dexdrip.BuildConfig.VERSION_NAME + "\n"
                 + "Android: " + Build.VERSION.RELEASE + "\n"
                 + "Step: Notification Listener permissions\n"
-                + (simulated
-                        ? "Result: SIMULATED UNKNOWN (debug preview; permission unchanged)\n"
-                        : "Result: UNKNOWN (permission check unavailable)\n")
+                + "Result: UNKNOWN (permission check unavailable)\n"
                 + "Companion: " + appName + "\n"
                 + "Route: " + route + "\n";
         new AlertDialog.Builder(activity, AlertDialog.THEME_HOLO_DARK)
@@ -2113,8 +2094,6 @@ public class SourceWizard {
         private boolean informationText;
         private boolean broadcastInformation;
         private boolean readinessAction;
-        private boolean tipAction;
-        private boolean debugErrorAction;
         private boolean callToAction;
         private int readinessReady;
         private int readinessMissing;
@@ -2219,16 +2198,6 @@ public class SourceWizard {
             return this;
         }
 
-        Item withTipAction() {
-            tipAction = true;
-            return this;
-        }
-
-        Item withDebugErrorAction() {
-            debugErrorAction = true;
-            return this;
-        }
-
         public boolean isReadinessAction() {
             return readinessAction;
         }
@@ -2301,8 +2270,7 @@ public class SourceWizard {
         }
 
         public boolean isNavigationChevronVisible() {
-            return isGroup() || callToAction || tipAction
-                    || debugErrorAction || isNavigationLink();
+            return isGroup() || callToAction || isNavigationLink();
         }
 
         public boolean isIconVisible() {
@@ -2310,8 +2278,7 @@ public class SourceWizard {
             // auxiliary navigation rows remain icon-free on purpose.
             return !section && (!isGroup() || modelGroup) && !compactRoute
                     && !auxiliaryTitle && !informationText
-                    && !callToAction && !readinessAction
-                    && !tipAction && !debugErrorAction;
+                    && !callToAction && !readinessAction;
         }
 
         public boolean isDeviceIconVisible() {
@@ -2382,12 +2349,6 @@ public class SourceWizard {
             if (node == null || section || informationText) return;
             if (readinessAction) {
                 showReadinessPlaceholder();
-            } else if (tipAction) {
-                SourceWizardTip.showNow(activity);
-            } else if (debugErrorAction && com.eveningoutpost.dexdrip.BuildConfig.DEBUG) {
-                activeCompanionItem = null;
-                activeCompanionAppName = null;
-                showNotificationPermissionCheckError(true);
             } else if (navigationTarget != null) {
                 if (listModel != null) listModel.open(navigationTarget);
             } else if (isCollectionType()) {
@@ -2524,8 +2485,7 @@ public class SourceWizard {
 
         public boolean isGroup() {
             return !section && !isCollectionType() && !informationText
-                    && !readinessAction && !tipAction && !debugErrorAction
-                    && navigationTarget == null;
+                    && !readinessAction && navigationTarget == null;
         }
 
         public boolean isExpanded() {
