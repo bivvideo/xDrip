@@ -64,9 +64,11 @@ android {
     }
 
     defaultConfig {
-        applicationId wizardPilotBuild
-                ? "com.eveningoutpost.dexdrip.wizardpilot"
-                : "com.eveningoutpost.dexdrip"
+        if (wizardPilotBuild) {
+            applicationId "com.eveningoutpost.dexdrip.wizardpilot"
+        } else {
+            applicationId "com.eveningoutpost.dexdrip"
+        }
         minSdkVersion 26
         // increasing target SDK version can cause compatibility issues with Android 7+
         //noinspection ExpiredTargetSdkVersion
