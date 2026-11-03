@@ -14,6 +14,11 @@ apply plugin: 'com.android.application'
 apply from: '../common.gradle'
 apply plugin: 'kotlin-android'
 
+// Opt-in, disposable side-by-side phone pilot. Normal APK identity stays unchanged.
+// Build: ./gradlew :app:assembleProdDev -PwizardPilot=true
+// No Firebase/Google Services client is registered for the pilot package.
+def wizardPilotBuild = project.findProperty('wizardPilot')?.toString()?.toBoolean() ?: false
+
 if (project.file('local.gradle').exists()) {
     apply from: 'local.gradle'
 }
@@ -59,7 +64,11 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.eveningoutpost.dexdrip"
+        if (wizardPilotBuild) {
+            applicationId "com.eveningoutpost.dexdrip.wizardpilot"
+        } else {
+            applicationId "com.eveningoutpost.dexdrip"
+        }
         minSdkVersion 26
         // increasing target SDK version can cause compatibility issues with Android 7+
         //noinspection ExpiredTargetSdkVersion
@@ -422,4 +431,8 @@ tasks.withType(Test) {
     }
 }
 
-apply plugin: 'com.google.gms.google-services'
+// The existing google-services.json only contains the original applicationId.
+// The isolated pilot is for local Source Wizard checks, not Google-backed features.
+if (!wizardPilotBuild) {
+    apply plugin: 'com.google.gms.google-services'
+}
