@@ -84,7 +84,7 @@
     <string name="source_wizard_sync_section">Sync and cloud sources</string>
     <string name="source_wizard_followers_group">Followers</string>
     <string name="source_wizard_companion_examples">iCan, Ottai, CamAPS FX and more</string>
-    <string name="source_wizard_title">Source setup wizard</string>
+    <string name="source_wizard_title">Source Wizard</string>
     <string name="source_wizard_subtitle">Choose a device and connection method.</string>
     <string name="source_wizard_microtech_group">MicroTech</string>
     <string name="source_wizard_microtech_examples">AiDEX, LinX, GlucoRx, VitaTok</string>
@@ -191,7 +191,7 @@
     <string name="source_wizard_finish_ready_title">Ready to connect</string>
     <string name="source_wizard_finish_menu_hint">You can reopen the wizard from the xDrip+ navigation menu.</string>
     <string name="source_wizard_finish_mini_menu_title">xDrip+ menu</string>
-    <string name="source_wizard_drawer_entry">Source setup wizard</string>
+    <string name="source_wizard_drawer_entry">Source Wizard</string>
     <!-- SW-010: advisory-only warning about other installed Companion apps (EN DRAFT) -->
     <string name="source_wizard_companion_warning_title">Companion apps detected</string>
     <string name="source_wizard_companion_warning_intro">xDrip+ uses one Companion App source to process notifications from these installed apps:</string>

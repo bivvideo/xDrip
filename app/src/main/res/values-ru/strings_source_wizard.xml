@@ -84,7 +84,7 @@
     <string name="source_wizard_sync_section">Синхронизация и облачные источники</string>
     <string name="source_wizard_followers_group">Followers</string>
     <string name="source_wizard_companion_examples">iCan, Ottai, CamAPS FX и другие</string>
-    <string name="source_wizard_title">Мастер настройки источника</string>
+    <string name="source_wizard_title">Мастер настройки</string>
     <string name="source_wizard_subtitle">Выберите устройство и способ подключения.</string>
     <string name="source_wizard_microtech_group">MicroTech</string>
     <string name="source_wizard_microtech_examples">AiDEX, LinX, GlucoRx, VitaTok</string>
@@ -189,7 +189,7 @@
     <string name="source_wizard_finish_ready_title">Всё готово к подключению</string>
     <string name="source_wizard_finish_menu_hint">Повторно открыть мастер можно через боковое меню xDrip+.</string>
     <string name="source_wizard_finish_mini_menu_title">Меню xDrip+</string>
-    <string name="source_wizard_drawer_entry">Мастер настройки источника</string>
+    <string name="source_wizard_drawer_entry">Мастер настройки</string>
     <!-- SW-010: advisory-only warning about other installed Companion apps -->
     <string name="source_wizard_companion_warning_title">Обнаружены приложения Companion App</string>
     <string name="source_wizard_companion_warning_intro">xDrip+ использует один источник Companion App для обработки уведомлений следующих установленных приложений:</string>
