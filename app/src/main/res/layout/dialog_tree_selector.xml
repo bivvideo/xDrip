@@ -23,14 +23,31 @@
             android:paddingBottom="20dp"
             android:background="#12FFFFFF">
 
-            <TextView
+            <!-- The Wizard mark is decorative; the adjacent title is announced once. -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
-                android:text="@string/source_wizard_title"
-                android:textSize="22sp"
-                android:textColor="?android:attr/textColorPrimary" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/wizard_icon"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/source_wizard_title"
+                    android:textSize="22sp"
+                    android:textColor="?android:attr/textColorPrimary" />
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"

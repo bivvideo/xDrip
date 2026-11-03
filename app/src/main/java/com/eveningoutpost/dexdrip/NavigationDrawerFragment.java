@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -20,10 +21,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.preference.PreferenceManager;
 
@@ -142,21 +145,13 @@ public class NavigationDrawerFragment extends Fragment {
 //        String[] menu_options = menu_option_list.toArray(new String[menu_option_list.size()]);
 
         try {
-            mDrawerListView.setAdapter(new ArrayAdapter<String>(
-                    actionBar.getThemedContext(),
-                    android.R.layout.simple_list_item_activated_1,
-                    android.R.id.text1,
-                    menu_options
-            ));
+            mDrawerListView.setAdapter(createWizardDrawerAdapter(
+                    actionBar.getThemedContext(), menu_options));
 
         } catch (NullPointerException e) {
             try {
-                mDrawerListView.setAdapter(new ArrayAdapter<String>(
-                        getActivity().getActionBar().getThemedContext(),
-                        android.R.layout.simple_list_item_activated_1,
-                        android.R.id.text1,
-                        menu_options
-                ));
+                mDrawerListView.setAdapter(createWizardDrawerAdapter(
+                        getActivity().getActionBar().getThemedContext(), menu_options));
             } catch (NullPointerException ex) {
                 Log.d("NavigationDrawerFrag", "Got second null pointer: " + ex.toString());
             }
@@ -209,6 +204,36 @@ public class NavigationDrawerFragment extends Fragment {
         });
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+    }
+
+    // Trial: show the existing Wizard icon on its drawer action only.
+    // Clear compound drawables on recycled rows so all other entries stay plain.
+    private ArrayAdapter<String> createWizardDrawerAdapter(Context context, String[] options) {
+        return new ArrayAdapter<String>(context,
+                android.R.layout.simple_list_item_activated_1, android.R.id.text1, options) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                final View row = super.getView(position, convertView, parent);
+                final TextView title = row.findViewById(android.R.id.text1);
+                if (title != null) {
+                    if (getString(R.string.source_wizard_drawer_entry).equals(getItem(position))) {
+                        final Drawable icon = ContextCompat.getDrawable(getContext(),
+                                R.drawable.wizard_icon);
+                        if (icon != null) {
+                            final float density = getResources().getDisplayMetrics().density;
+                            final int size = Math.round(28 * density);
+                            icon.setBounds(0, 0, size, size);
+                            title.setCompoundDrawables(icon, null, null, null);
+                            title.setCompoundDrawablePadding(Math.round(8 * density));
+                        }
+                    } else {
+                        title.setCompoundDrawables(null, null, null, null);
+                        title.setCompoundDrawablePadding(0);
+                    }
+                }
+                return row;
+            }
+        };
     }
 
     private void selectItem(int position) {
